@@ -30,80 +30,87 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel1" max="32767" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel9" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
-                                  <Component id="jComboBoxStatus" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jComboBoxCategory" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
-                                  <Component id="jLabel8" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <Component id="jLabel14" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
-                          <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel3" min="-2" pref="129" max="-2" attributes="0"/>
-                                  <Component id="txtItemNumber" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel2" min="-2" pref="129" max="-2" attributes="0"/>
-                                  <Component id="txtItemDesc" min="-2" pref="266" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel4" min="-2" pref="129" max="-2" attributes="0"/>
-                                  <Component id="jComboBoxItemClass" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="txtBaseUoM" min="-2" pref="266" max="-2" attributes="0"/>
-                                  <Component id="jLabel5" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="txtPurchUoM" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
-                                  <Component id="jLabel10" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
-                                  <Component id="txtCurrCost" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
-                                  <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                                  <Component id="txtQtyUoM" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
-                                  <Component id="jLabel12" min="-2" pref="171" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="txtPriceList" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
-                                  <Component id="txtStandardCost" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
-                                  <Component id="jLabel13" alignment="0" min="-2" pref="120" max="-2" attributes="0"/>
-                                  <Component id="txtSchUoM" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
-                                  <Component id="jLabel11" alignment="0" min="-2" pref="181" max="-2" attributes="0"/>
-                                  <Component id="jLabel7" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <Component id="jComboBoxOutletName" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="btnAdd" min="-2" pref="152" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btnReset" min="-2" pref="152" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btnDelete" min="-2" pref="152" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btnUpdate" min="-2" pref="152" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                  </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jScrollPane1" min="-2" pref="771" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="scrollbar1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="6" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="156" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jLabel1" max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="txtPurchUoM" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
+                                          <Component id="jLabel10" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
+                                          <Component id="txtCurrCost" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
+                                          <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                                          <Component id="txtQtyUoM" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
+                                          <Component id="jLabel12" min="-2" pref="171" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="txtPriceList" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
+                                          <Component id="txtStandardCost" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
+                                          <Component id="jLabel13" alignment="0" min="-2" pref="120" max="-2" attributes="0"/>
+                                          <Component id="jLabel7" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
+                                          <Component id="txtSchUoM" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
+                                          <Component id="jLabel11" alignment="0" min="-2" pref="181" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="jLabel3" min="-2" pref="129" max="-2" attributes="0"/>
+                                          <Component id="txtItemNumber" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="jLabel2" min="-2" pref="129" max="-2" attributes="0"/>
+                                          <Component id="txtItemDesc" min="-2" pref="266" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="jLabel4" min="-2" pref="129" max="-2" attributes="0"/>
+                                          <Component id="jComboBoxItemClass" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="txtBaseUoM" min="-2" pref="266" max="-2" attributes="0"/>
+                                          <Component id="jLabel5" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="jLabel9" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
+                                          <Component id="jComboBoxStatus" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
+                                          <Component id="jLabel14" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
+                                          <Component id="jComboBoxOutletName" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="jLabel15" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
+                                          <Component id="jComboBoxCategory" alignment="0" min="-2" pref="266" max="-2" attributes="0"/>
+                                          <Component id="jLabel8" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
+                                          <Component id="jComboBoxClassification" min="-2" pref="266" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="btnAdd" min="-2" pref="152" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="btnReset" min="-2" pref="152" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="btnDelete" min="-2" pref="152" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="btnUpdate" min="-2" pref="152" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace min="0" pref="309" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -183,10 +190,18 @@
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jLabel14" min="-2" pref="22" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jComboBoxOutletName" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="jLabel14" min="-2" pref="22" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jComboBoxOutletName" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jComboBoxClassification" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <Component id="jLabel15" alignment="0" min="-2" pref="22" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace pref="16" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -196,7 +211,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane1" pref="418" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" pref="412" max="32767" attributes="0"/>
                           <Component id="scrollbar1" max="32767" attributes="0"/>
                       </Group>
                   </Group>
@@ -466,7 +481,8 @@
     </Component>
     <Component class="java.awt.Button" name="btnUpdate">
       <Properties>
-        <Property name="label" type="java.lang.String" value="Delete Item"/>
+        <Property name="actionCommand" type="java.lang.String" value="Update Item"/>
+        <Property name="label" type="java.lang.String" value="Update Item"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnUpdateActionPerformed"/>
@@ -523,6 +539,30 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBoxItemClassActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel15">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Segoe UI" size="12" style="1"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="User Classification"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="jComboBoxClassification">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="2">
+            <StringItem index="0" value="FOOD"/>
+            <StringItem index="1" value="NON-FOOD"/>
+          </StringArray>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBoxClassificationActionPerformed"/>
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>

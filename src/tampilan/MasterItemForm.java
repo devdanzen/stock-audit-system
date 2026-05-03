@@ -4,19 +4,144 @@
  */
 package tampilan;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import koneksi.Koneksi;
+
 /**
  *
  * @author dayen
  */
 public class MasterItemForm extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MasterItemForm.class.getName());
+
+    private Connection conn;
 
     /**
      * Creates new form MasterItemForm
      */
     public MasterItemForm() {
         initComponents();
+        conn = Koneksi.connect();
+        loadCombo();
+        datatable();
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableMouseClicked();
+            }
+        });
+    }
+
+    private void kosong() {
+        txtItemNumber.setText("");
+        txtItemDesc.setText("");
+        txtBaseUoM.setText("");
+        txtPurchUoM.setText("");
+        txtStandardCost.setText("");
+        txtCurrCost.setText("");
+        txtSchUoM.setText("");
+        txtQtyUoM.setText("");
+        txtPriceList.setText("");
+        if (jComboBoxItemClass.getItemCount() > 0)   jComboBoxItemClass.setSelectedIndex(0);
+        if (jComboBoxStatus.getItemCount() > 0)      jComboBoxStatus.setSelectedIndex(0);
+        if (jComboBoxCategory.getItemCount() > 0)    jComboBoxCategory.setSelectedIndex(0);
+        if (jComboBoxOutletName.getItemCount() > 0)  jComboBoxOutletName.setSelectedIndex(0);
+        if (jComboBoxClassification.getItemCount() > 0) jComboBoxClassification.setSelectedIndex(0);
+        aktif();
+    }
+
+    private void aktif() {
+        txtItemNumber.requestFocus();
+    }
+
+    private void loadCombo() {
+        if (conn == null) return;
+        try (Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery("SELECT name FROM category ORDER BY name")) {
+            jComboBoxCategory.removeAllItems();
+            while (rs.next()) {
+                jComboBoxCategory.addItem(rs.getString("name"));
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal load Category: " + e.getMessage());
+        }
+        try (Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery("SELECT name FROM user_classification ORDER BY name")) {
+            jComboBoxClassification.removeAllItems();
+            while (rs.next()) {
+                jComboBoxClassification.addItem(rs.getString("name"));
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal load Classification: " + e.getMessage());
+        }
+    }
+
+    private void datatable() {
+        if (conn == null) return;
+        String[] cols = {
+            "Item Number", "Description", "Item Class", "UoM Schedule",
+            "Base UoM", "Purch UoM", "Std Cost", "Curr Cost",
+            "Qty Purch UoM", "Price List", "Status", "User Class",
+            "Category", "Outlet"
+        };
+        DefaultTableModel model = new DefaultTableModel(cols, 0);
+        try (Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery("SELECT * FROM item ORDER BY item_number")) {
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    rs.getString("item_number"),
+                    rs.getString("item_description"),
+                    rs.getString("item_class"),
+                    rs.getString("uom_schedule"),
+                    rs.getString("base_uom"),
+                    rs.getString("purchasing_uom"),
+                    rs.getBigDecimal("standard_cost"),
+                    rs.getBigDecimal("current_cost"),
+                    rs.getBigDecimal("qty_purchase_uom"),
+                    rs.getBigDecimal("price_list"),
+                    rs.getString("status"),
+                    rs.getString("user_classification"),
+                    rs.getString("item_category"),
+                    rs.getString("outlet_name")
+                });
+            }
+            jTable1.setModel(model);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal load tabel: " + e.getMessage());
+        }
+    }
+
+    private double parseNum(String s) {
+        if (s == null) return 0;
+        s = s.trim().replace(",", ".");
+        if (s.isEmpty()) return 0;
+        try { return Double.parseDouble(s); } catch (NumberFormatException e) { return 0; }
+    }
+
+    private void tableMouseClicked() {
+        int row = jTable1.getSelectedRow();
+        if (row < 0) return;
+        txtItemNumber.setText(String.valueOf(jTable1.getValueAt(row, 0)));
+        txtItemDesc.setText(String.valueOf(jTable1.getValueAt(row, 1)));
+        jComboBoxItemClass.setSelectedItem(String.valueOf(jTable1.getValueAt(row, 2)));
+        txtSchUoM.setText(String.valueOf(jTable1.getValueAt(row, 3)));
+        txtBaseUoM.setText(String.valueOf(jTable1.getValueAt(row, 4)));
+        txtPurchUoM.setText(String.valueOf(jTable1.getValueAt(row, 5)));
+        txtStandardCost.setText(String.valueOf(jTable1.getValueAt(row, 6)));
+        txtCurrCost.setText(String.valueOf(jTable1.getValueAt(row, 7)));
+        txtQtyUoM.setText(String.valueOf(jTable1.getValueAt(row, 8)));
+        txtPriceList.setText(String.valueOf(jTable1.getValueAt(row, 9)));
+        Object st = jTable1.getValueAt(row, 10);
+        jComboBoxStatus.setSelectedItem(st == null ? "YES" : st.toString().equalsIgnoreCase("Yes") ? "YES" : "NO");
+        jComboBoxClassification.setSelectedItem(String.valueOf(jTable1.getValueAt(row, 11)));
+        jComboBoxCategory.setSelectedItem(String.valueOf(jTable1.getValueAt(row, 12)));
+        jComboBoxOutletName.setSelectedItem(String.valueOf(jTable1.getValueAt(row, 13)));
     }
 
     /**
@@ -63,6 +188,8 @@ public class MasterItemForm extends javax.swing.JFrame {
         scrollbar1 = new java.awt.Scrollbar();
         btnUpdate = new java.awt.Button();
         jComboBoxItemClass = new javax.swing.JComboBox<>();
+        jLabel15 = new javax.swing.JLabel();
+        jComboBoxClassification = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -156,11 +283,18 @@ public class MasterItemForm extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(jTable1);
 
-        btnUpdate.setLabel("Delete Item");
+        btnUpdate.setActionCommand("Update Item");
+        btnUpdate.setLabel("Update Item");
         btnUpdate.addActionListener(this::btnUpdateActionPerformed);
 
         jComboBoxItemClass.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "ALKOHOL", "ASSET", "ATK", "EQUIPMENT", "CHEMICAL", "CK", "DESSERT", "DRY GOODS", "IKAN", "OLAHAN", "DRY CHINA", "GARNISH", "SAYUR", "NONALKOHOL", "PACKAGING", "UTENSIL", "SAKE WINE", "SOFTDRINK", "SUPPLIES", "UNIFORM", "UTN IMP", "ALKOHOL", "ASSET", "ATK", "EQUIPMENT", "CHEMICAL", "CK", "DESSERT", "DRY GOODS", "IKAN", "OLAHAN", "DRY CHINA", "GARNISH", "SAYUR", "NONALKOHOL", "PACKAGING", "UTENSIL", "SAKE WINE", "SOFTDRINK", "SUPPLIES", "UNIFORM", "UTN IMP" }));
         jComboBoxItemClass.addActionListener(this::jComboBoxItemClassActionPerformed);
+
+        jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel15.setText("User Classification");
+
+        jComboBoxClassification.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FOOD", "NON-FOOD" }));
+        jComboBoxClassification.addActionListener(this::jComboBoxClassificationActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -170,64 +304,69 @@ public class MasterItemForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 771, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(scrollbar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 156, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jComboBoxStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(46, 46, 46)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jComboBoxCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtItemNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(46, 46, 46)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtItemDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jComboBoxItemClass, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(46, 46, 46)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtBaseUoM, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtPurchUoM, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtCurrCost, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel6)
-                                    .addComponent(txtQtyUoM, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(46, 46, 46)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtPriceList, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtStandardCost, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtSchUoM, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jComboBoxOutletName, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 771, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(scrollbar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 6, Short.MAX_VALUE))))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtPurchUoM, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtCurrCost, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel6)
+                                            .addComponent(txtQtyUoM, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(46, 46, 46)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtPriceList, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtStandardCost, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtSchUoM, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtItemNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(46, 46, 46)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtItemDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jComboBoxItemClass, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(46, 46, 46)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtBaseUoM, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jComboBoxStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jComboBoxOutletName, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(46, 46, 46)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jComboBoxCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jComboBoxClassification, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 309, Short.MAX_VALUE)))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -288,10 +427,15 @@ public class MasterItemForm extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jComboBoxCategory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBoxOutletName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jComboBoxOutletName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jComboBoxClassification, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -300,7 +444,7 @@ public class MasterItemForm extends javax.swing.JFrame {
                             .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
                             .addComponent(scrollbar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -352,24 +496,113 @@ public class MasterItemForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBoxStatusActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // TODO add your handling code here:
+        String key = txtItemNumber.getText().trim();
+        if (key.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Pilih baris atau isi Item Number dulu");
+            return;
+        }
+        int ok = JOptionPane.showConfirmDialog(this, "Hapus item " + key + " ?",
+                "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
+        if (ok != JOptionPane.YES_OPTION) return;
+        String sql = "DELETE FROM item WHERE item_number=?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, key);
+            int n = ps.executeUpdate();
+            if (n > 0) {
+                JOptionPane.showMessageDialog(this, "Data berhasil dihapus");
+                kosong();
+                datatable();
+            } else {
+                JOptionPane.showMessageDialog(this, "Item tidak ditemukan");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Data gagal dihapus: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
-        // TODO add your handling code here:
+        kosong();
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
+        if (txtItemNumber.getText().trim().isEmpty() || txtItemDesc.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Item Number dan Description wajib diisi");
+            return;
+        }
+        String sql = "INSERT INTO item (item_number, item_description, item_class, uom_schedule, "
+                   + "base_uom, purchasing_uom, standard_cost, current_cost, qty_purchase_uom, "
+                   + "price_list, status, user_classification, item_category, outlet_name) "
+                   + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, txtItemNumber.getText().trim());
+            ps.setString(2, txtItemDesc.getText().trim());
+            ps.setString(3, String.valueOf(jComboBoxItemClass.getSelectedItem()));
+            ps.setString(4, txtSchUoM.getText().trim());
+            ps.setString(5, txtBaseUoM.getText().trim());
+            ps.setString(6, txtPurchUoM.getText().trim());
+            ps.setDouble(7, parseNum(txtStandardCost.getText()));
+            ps.setDouble(8, parseNum(txtCurrCost.getText()));
+            ps.setDouble(9, parseNum(txtQtyUoM.getText()));
+            ps.setDouble(10, parseNum(txtPriceList.getText()));
+            ps.setString(11, "YES".equalsIgnoreCase(String.valueOf(jComboBoxStatus.getSelectedItem())) ? "Yes" : "No");
+            ps.setString(12, String.valueOf(jComboBoxClassification.getSelectedItem()));
+            ps.setString(13, String.valueOf(jComboBoxCategory.getSelectedItem()));
+            ps.setString(14, String.valueOf(jComboBoxOutletName.getSelectedItem()));
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Data berhasil disimpan");
+            kosong();
+            datatable();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Data gagal disimpan: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        // TODO add your handling code here:
+        String key = txtItemNumber.getText().trim();
+        if (key.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Pilih baris dulu untuk update");
+            return;
+        }
+        String sql = "UPDATE item SET item_description=?, item_class=?, uom_schedule=?, "
+                   + "base_uom=?, purchasing_uom=?, standard_cost=?, current_cost=?, "
+                   + "qty_purchase_uom=?, price_list=?, status=?, user_classification=?, "
+                   + "item_category=?, outlet_name=? "
+                   + "WHERE item_number=?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, txtItemDesc.getText().trim());
+            ps.setString(2, String.valueOf(jComboBoxItemClass.getSelectedItem()));
+            ps.setString(3, txtSchUoM.getText().trim());
+            ps.setString(4, txtBaseUoM.getText().trim());
+            ps.setString(5, txtPurchUoM.getText().trim());
+            ps.setDouble(6, parseNum(txtStandardCost.getText()));
+            ps.setDouble(7, parseNum(txtCurrCost.getText()));
+            ps.setDouble(8, parseNum(txtQtyUoM.getText()));
+            ps.setDouble(9, parseNum(txtPriceList.getText()));
+            ps.setString(10, "YES".equalsIgnoreCase(String.valueOf(jComboBoxStatus.getSelectedItem())) ? "Yes" : "No");
+            ps.setString(11, String.valueOf(jComboBoxClassification.getSelectedItem()));
+            ps.setString(12, String.valueOf(jComboBoxCategory.getSelectedItem()));
+            ps.setString(13, String.valueOf(jComboBoxOutletName.getSelectedItem()));
+            ps.setString(14, key);
+            int n = ps.executeUpdate();
+            if (n > 0) {
+                JOptionPane.showMessageDialog(this, "Data berhasil diubah");
+                kosong();
+                datatable();
+            } else {
+                JOptionPane.showMessageDialog(this, "Item tidak ditemukan");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Data gagal diubah: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void jComboBoxItemClassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxItemClassActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBoxItemClassActionPerformed
+
+    private void jComboBoxClassificationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxClassificationActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBoxClassificationActionPerformed
 
     /**
      * @param args the command line arguments
@@ -403,6 +636,7 @@ public class MasterItemForm extends javax.swing.JFrame {
     private java.awt.Button btnUpdate;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> jComboBoxCategory;
+    private javax.swing.JComboBox<String> jComboBoxClassification;
     private javax.swing.JComboBox<String> jComboBoxItemClass;
     private javax.swing.JComboBox<String> jComboBoxOutletName;
     private javax.swing.JComboBox<String> jComboBoxStatus;
@@ -412,6 +646,7 @@ public class MasterItemForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
