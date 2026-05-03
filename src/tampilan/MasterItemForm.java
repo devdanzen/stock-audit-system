@@ -227,6 +227,7 @@ public class MasterItemForm extends javax.swing.JFrame {
         jLabel8.setText("Category");
 
         jComboBoxCategory.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "CENTRAL KITCHEN", "DIRECT ITEM", "FOOD", "NON FOOD", "OTHERS" }));
+        jComboBoxCategory.addActionListener(this::jComboBoxCategoryActionPerformed);
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel9.setText("Status");
@@ -603,6 +604,10 @@ public class MasterItemForm extends javax.swing.JFrame {
     private void jComboBoxClassificationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxClassificationActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBoxClassificationActionPerformed
+
+    private void jComboBoxCategoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxCategoryActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBoxCategoryActionPerformed
 
     /**
      * @param args the command line arguments
