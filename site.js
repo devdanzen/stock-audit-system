@@ -176,7 +176,7 @@ function renderLanding() {
   return `
     <div class="landing">
       <div class="landing-card">
-        <h1>Inventory Management System Plan</h1>
+        <h1>Stock Audit System Plan</h1>
         <div class="landing-sub">Final Project · Team of 8 · Java Swing application — design, specs, and build reference</div>
         <div class="tiles">
           <a class="tile" href="#/${firstOf('mockups')}">
