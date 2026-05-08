@@ -166,7 +166,16 @@ function render() {
     return;
   }
   setActive(slug);
-  main.innerHTML = `<div class="frame-wrap"><iframe src="${item.file}" title="${item.title}"></iframe></div>`;
+  main.innerHTML = `
+    <div class="frame-wrap">
+      <div class="frame-loader" aria-hidden="true">Loading slide…</div>
+      <iframe src="${item.file}" title="${item.title}"></iframe>
+    </div>`;
+  const iframe = main.querySelector('iframe');
+  iframe.addEventListener('load', () => {
+    const loader = main.querySelector('.frame-loader');
+    if (loader) loader.remove();
+  });
   const active = document.querySelector('.nav-item.active');
   if (active) active.scrollIntoView({ block: 'nearest' });
 }
