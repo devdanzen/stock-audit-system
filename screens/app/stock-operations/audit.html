@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Audit — Inventory Management</title>
+<link rel="stylesheet" href="../../app-shell.css" />
+<style>
+  .group {
+    position: relative;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    padding: 14px 14px 12px;
+    margin: 16px 14px 14px;
+  }
+  .group > .legend {
+    position: absolute;
+    top: -8px;
+    left: 10px;
+    background: #fff;
+    padding: 0 5px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .filter-row .field-block {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .filter-row label { font-size: 12px; }
+  .filter-row .field { width: 180px; }
+  .filter-row .spacer { flex: 1; }
+
+  .table-wrap {
+    margin: 0 14px 8px;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+  }
+  .table-wrap .jtable { border: 0; }
+
+  /* editable cell (Physical Count) */
+  td.editable {
+    background: #e8f1fb !important;
+    padding: 0 !important;
+  }
+  td.editable input {
+    width: 100%;
+    height: 22px;
+    background: transparent;
+    border: 0;
+    padding: 0 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text);
+    text-align: right;
+    outline: none;
+    box-sizing: border-box;
+  }
+  td.editable input:focus { background: #fff; outline: 1px solid var(--primary); outline-offset: -1px; }
+
+  .var-neg { color: var(--danger); font-weight: 700; }
+  .var-pos { color: #1e7e0c; font-weight: 700; }
+  .var-zero { color: var(--text); }
+
+  .summary-strip {
+    margin: 0 14px 8px;
+    height: 30px;
+    background: var(--bg-window);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+  .summary-strip .right .neg { color: var(--danger); font-weight: 700; }
+
+  .footer-text {
+    margin: 0 14px 10px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .btn-bar {
+    margin: 0 14px 14px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="jframe" data-screen-label="07 Audit">
+
+  <div class="titlebar">
+    <span class="title-text">Inventory Management System</span>
+    <div class="winbtns">
+      <button class="winbtn">&#x2014;</button>
+      <button class="winbtn">&#x25A1;</button>
+      <button class="winbtn close">&#x2715;</button>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <span class="app-name">Inventory Management</span>
+    <span class="spacer"></span>
+    <span class="right">User: admin</span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="nav">
+      <div class="nav-item">Dashboard</div>
+
+      <div class="nav-section">--- Master Data ---</div>
+      <div class="nav-item">Items</div>
+      <div class="nav-item">Categories</div>
+      <div class="nav-item">Outlets</div>
+      <div class="nav-item">Vendors</div>
+      <div class="nav-item">Users</div>
+
+      <div class="nav-section">--- Transactions ---</div>
+      <div class="nav-item">Receiving</div>
+      <div class="nav-item">Sales</div>
+      <div class="nav-item">Movement</div>
+      <div class="nav-item">Recipes</div>
+
+      <div class="nav-section">--- Stock Operations ---</div>
+      <div class="nav-item">Stock On Hand</div>
+      <div class="nav-item active">Audit</div>
+      <div class="nav-item">End Balance</div>
+
+      <div class="nav-section">--- Reports &amp; Charts ---</div>
+      <div class="nav-item">Reports</div>
+      <div class="nav-item">Charts</div>
+    </div>
+    <div class="nav-footer">
+      <div class="nav-item">Logout</div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="screen">
+
+      <div class="screen-header" style="padding:10px 14px;height:40px;box-sizing:border-box;">
+        <div class="screen-title">Stock Audit — Physical Count</div>
+      </div>
+
+      <!-- Filter group -->
+      <div class="group">
+        <span class="legend">Filter</span>
+        <div class="filter-row">
+          <div class="field-block">
+            <label>Audit Date:</label>
+            <input class="field" value="2025-12-31" />
+          </div>
+          <div class="field-block">
+            <label>Category:</label>
+            <select class="field"><option>All</option></select>
+          </div>
+          <div class="field-block">
+            <label>Outlet:</label>
+            <select class="field"><option>SHLMP</option></select>
+          </div>
+          <div class="spacer"></div>
+          <button class="btn btn-wide">Load Items</button>
+        </div>
+      </div>
+
+      <!-- Audit table -->
+      <div style="margin:0 14px 4px;font-size:12px;font-weight:700;">Audit Table</div>
+      <div class="table-wrap">
+        <table class="jtable">
+          <thead>
+            <tr>
+              <th style="width:100px;">Item Code</th>
+              <th>Description</th>
+              <th style="width:100px;">Category</th>
+              <th style="width:80px;">Unit</th>
+              <th class="num" style="width:110px;">System SOH</th>
+              <th class="num" style="width:130px;">Physical Count</th>
+              <th class="num" style="width:110px;">Variance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">DRY-0497</td>
+              <td>Edamame</td>
+              <td>Kitchen</td>
+              <td>GRAM</td>
+              <td class="num">43.5</td>
+              <td class="editable"><input value="42.0" /></td>
+              <td class="num var-neg">-1.5</td>
+            </tr>
+            <tr>
+              <td class="mono">FISH-0042</td>
+              <td>Salmon Trout</td>
+              <td>Sushi</td>
+              <td>GRAM</td>
+              <td class="num">12.5</td>
+              <td class="editable"><input value="12.5" /></td>
+              <td class="num var-zero">0.0</td>
+            </tr>
+            <tr>
+              <td class="mono">LIQ-0001</td>
+              <td>Absolut Blue Vodka</td>
+              <td>Bar</td>
+              <td>BOTTLE</td>
+              <td class="num">9.0</td>
+              <td class="editable"><input value="10.0" /></td>
+              <td class="num var-pos">+1.0</td>
+            </tr>
+            <tr>
+              <td class="mono">FISH-0098</td>
+              <td>Tuna Akami</td>
+              <td>Sushi</td>
+              <td>GRAM</td>
+              <td class="num">22.0</td>
+              <td class="editable"><input value="21.8" /></td>
+              <td class="num var-neg">-0.2</td>
+            </tr>
+            <tr>
+              <td class="mono">DRY-0103</td>
+              <td>Salt</td>
+              <td>Kitchen</td>
+              <td>GRAM</td>
+              <td class="num">500.0</td>
+              <td class="editable"><input value="500.0" /></td>
+              <td class="num var-zero">0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="summary-strip">
+        <span>5 items audited &middot; 2 with variance</span>
+        <span class="right">Total variance value: <span class="neg">-Rp 92,500</span></span>
+      </div>
+
+      <div class="footer-text">Editable cells highlighted blue · Variance recalculates instantly</div>
+
+      <div class="btn-bar">
+        <button class="btn btn-wide">Cancel</button>
+        <button class="btn btn-primary btn-wide">Save Audit Results</button>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="statusbar">
+    <span>Connected to MySQL · inventory_db</span>
+    <span>admin · v1.0.0</span>
+  </div>
+
+</div>
+
+</body>
+</html>

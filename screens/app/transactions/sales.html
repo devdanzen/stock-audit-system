@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Sales — Inventory Management</title>
+<link rel="stylesheet" href="../../app-shell.css" />
+<style>
+  /* ===== Classic Swing TitledBorder group box ===== */
+  .group {
+    position: relative;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    padding: 16px 12px 12px;
+    margin: 0 14px 12px;
+  }
+  .group.shaded { background: var(--bg-window); }
+  .group > .legend {
+    position: absolute;
+    top: -8px;
+    left: 10px;
+    background: #fff;  /* matches content bg */
+    padding: 0 5px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .group.shaded > .legend { background: var(--bg-window); }
+  /* When group sits on a non-white parent, legend bg should match it; here parents are white */
+
+  .header-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px 18px;
+  }
+  .field-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .field-row label { font-size: 12px; min-width: 110px; }
+  .field-row .field { flex: 1; max-width: none; }
+
+  /* date field with calendar button */
+  .date-field {
+    display: flex;
+    align-items: stretch;
+    flex: 1;
+  }
+  .date-field input.field { flex: 1; border-right: 0; }
+  .date-field .cal-btn {
+    width: 24px;
+    height: 22px;
+    background: var(--bg-button);
+    border: 1px solid var(--border-dark);
+    font-size: 11px;
+    cursor: default;
+    line-height: 1;
+    padding: 0;
+  }
+  .date-field .cal-btn:hover { background: var(--bg-button-hover); }
+
+  /* Add line item row */
+  .additem-row {
+    display: grid;
+    grid-template-columns: 1fr 110px 150px auto;
+    gap: 8px;
+    align-items: center;
+  }
+  .additem-row .field-block {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .additem-row label { font-size: 11px; }
+
+  .table-wrap {
+    margin: 0 14px 12px;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+  }
+  .table-wrap .jtable { border: 0; }
+
+  .btn-x {
+    background: transparent;
+    border: 0;
+    color: var(--danger);
+    font-weight: 700;
+    font-size: 12px;
+    cursor: default;
+    padding: 0 6px;
+    text-decoration: underline;
+  }
+  .btn-x:hover { color: #ff0000; }
+
+  /* Totals strip */
+  .totals-strip {
+    margin: 0 14px 10px;
+    height: 50px;
+    background: var(--bg-window);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 14px;
+  }
+  .totals-strip .tot-block { text-align: right; }
+  .totals-strip .tot-block .grand { font-size: 14px; font-weight: 700; }
+  .totals-strip .tot-block .sub { font-size: 11px; color: var(--text-muted); }
+
+  /* Bottom buttons */
+  .btn-bar {
+    margin: 0 14px 14px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="jframe" data-screen-label="04 Sales">
+
+  <!-- Title bar -->
+  <div class="titlebar">
+    <span class="title-text">Inventory Management System</span>
+    <div class="winbtns">
+      <button class="winbtn">&#x2014;</button>
+      <button class="winbtn">&#x25A1;</button>
+      <button class="winbtn close">&#x2715;</button>
+    </div>
+  </div>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <span class="app-name">Inventory Management</span>
+    <span class="spacer"></span>
+    <span class="right">User: admin</span>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="nav">
+      <div class="nav-item">Dashboard</div>
+
+      <div class="nav-section">--- Master Data ---</div>
+      <div class="nav-item">Items</div>
+      <div class="nav-item">Categories</div>
+      <div class="nav-item">Outlets</div>
+      <div class="nav-item">Vendors</div>
+      <div class="nav-item">Users</div>
+
+      <div class="nav-section">--- Transactions ---</div>
+      <div class="nav-item">Receiving</div>
+      <div class="nav-item active">Sales</div>
+      <div class="nav-item">Movement</div>
+      <div class="nav-item">Recipes</div>
+
+      <div class="nav-section">--- Stock Operations ---</div>
+      <div class="nav-item">Stock On Hand</div>
+      <div class="nav-item">Audit</div>
+      <div class="nav-item">End Balance</div>
+
+      <div class="nav-section">--- Reports &amp; Charts ---</div>
+      <div class="nav-item">Reports</div>
+      <div class="nav-item">Charts</div>
+    </div>
+    <div class="nav-footer">
+      <div class="nav-item">Logout</div>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <main class="content">
+    <div class="screen">
+
+      <!-- Header strip -->
+      <div class="screen-header" style="padding:10px 14px;height:40px;box-sizing:border-box;">
+        <div class="screen-title">New Sale — Invoice Entry</div>
+      </div>
+
+      <!-- Invoice Header group -->
+      <div class="group" style="margin-top:18px;">
+        <span class="legend">Invoice Header</span>
+        <div class="header-row">
+          <div class="field-row">
+            <label>Invoice Number:</label>
+            <input class="field mono" value="INV-250039434" />
+          </div>
+          <div class="field-row">
+            <label>Sale Date:</label>
+            <div class="date-field">
+              <input class="field" value="2025-12-31" />
+              <button class="cal-btn" tabindex="-1">...</button>
+            </div>
+          </div>
+          <div class="field-row">
+            <label>Outlet:</label>
+            <select class="field"><option>SHLMP — SH Lippo Mall Puri</option></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Line Item group (shaded) -->
+      <div class="group shaded">
+        <span class="legend">Add Line Item</span>
+        <div class="additem-row">
+          <div class="field-block">
+            <label>Item:</label>
+            <select class="field"><option>MENU-001 — Edamame</option></select>
+          </div>
+          <div class="field-block">
+            <label>Quantity:</label>
+            <input class="field num" value="2" style="text-align:right;" />
+          </div>
+          <div class="field-block">
+            <label>Unit Price:</label>
+            <input class="field num" value="35,000" style="text-align:right;" />
+          </div>
+          <div class="field-block">
+            <label>&nbsp;</label>
+            <button class="btn">+ Add to Invoice</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invoice Lines -->
+      <div style="margin:0 14px 4px;font-size:12px;font-weight:700;">Invoice Lines</div>
+      <div class="table-wrap">
+        <table class="jtable">
+          <thead>
+            <tr>
+              <th style="width:30px;">#</th>
+              <th style="width:110px;">Item Code</th>
+              <th>Description</th>
+              <th class="num" style="width:90px;">Quantity</th>
+              <th class="num" style="width:120px;">Unit Price</th>
+              <th class="num" style="width:130px;">Subtotal</th>
+              <th style="width:70px;">Remove</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td class="mono">MENU-001</td>
+              <td>Edamame (finished)</td>
+              <td class="num">2</td>
+              <td class="num">35,000</td>
+              <td class="num">70,000</td>
+              <td><button class="btn-x">[X]</button></td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td class="mono">MENU-045</td>
+              <td>Salmon Sashimi</td>
+              <td class="num">1</td>
+              <td class="num">185,000</td>
+              <td class="num">185,000</td>
+              <td><button class="btn-x">[X]</button></td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td class="mono">MENU-099</td>
+              <td>Absolut Blue Vodka</td>
+              <td class="num">1</td>
+              <td class="num">850,000</td>
+              <td class="num">850,000</td>
+              <td><button class="btn-x">[X]</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Totals -->
+      <div class="totals-strip">
+        <div class="tot-block">
+          <div class="grand">Total: Rp 1,105,000</div>
+          <div class="sub">3 line items</div>
+        </div>
+      </div>
+
+      <!-- Bottom buttons -->
+      <div class="btn-bar">
+        <button class="btn btn-wide">Cancel</button>
+        <button class="btn btn-primary btn-wide">Save Transaction</button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Status bar -->
+  <div class="statusbar">
+    <span>Connected to MySQL · inventory_db</span>
+    <span>admin · v1.0.0</span>
+  </div>
+
+</div>
+
+</body>
+</html>

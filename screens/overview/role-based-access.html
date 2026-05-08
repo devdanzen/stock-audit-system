@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Role-Based Access Overview — Inventory Management</title>
+<link rel="stylesheet" href="../app-shell.css" />
+<style>
+  body { padding: 24px; background: #b8b8b8; }
+
+  .slide {
+    width: 1280px;
+    min-height: 800px;
+    background: #ffffff;
+    border: 1px solid #404040;
+    padding: 26px 36px 20px;
+    box-sizing: border-box;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .slide-title { font-size: 22px; font-weight: 700; margin: 0; }
+  .slide-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+  /* ===== Cards grid ===== */
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .card {
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .card-head {
+    background: var(--bg-window);
+    border-bottom: 1px solid var(--border-dark);
+    padding: 10px 14px;
+  }
+  .card.tier-1 .card-head { background: #dcdcdc; }
+  .card.tier-2 .card-head { background: #e8e8e8; }
+  .card.tier-3 .card-head { background: #f4f4f4; }
+
+  .card-head .role-name {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: var(--text);
+    margin: 0;
+  }
+  .card-head .role-sub {
+    font-size: 11.5px;
+    font-style: italic;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .card-body {
+    padding: 12px 16px 14px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .section-head {
+    font-size: 12px;
+    font-weight: 700;
+    color: #3a3a3a;
+    margin: 0 0 3px;
+    text-transform: none;
+  }
+  .bullets {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 12.5px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .bullets li { margin-bottom: 1px; }
+  .bullets li .star {
+    color: var(--primary);
+    font-weight: 700;
+    margin-left: 2px;
+  }
+
+  .card-footer {
+    margin-top: auto;
+    border-top: 1px solid var(--border);
+    padding: 8px 14px;
+    background: #fafafa;
+    font-size: 12px;
+    color: var(--text);
+  }
+  .card-footer .total { font-weight: 700; }
+  .card-footer .note { font-size: 11px; color: var(--text-muted); font-style: italic; margin-top: 2px; }
+
+  /* ===== Bottom legend ===== */
+  .legend {
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .legend .item { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .star {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+
+  <!-- Header -->
+  <div>
+    <h1 class="slide-title">Role-Based Access Overview</h1>
+    <div class="slide-subtitle">What each user type can do in the system</div>
+  </div>
+
+  <!-- Cards -->
+  <div class="cards">
+
+    <!-- ADMINISTRATOR -->
+    <div class="card tier-1">
+      <div class="card-head">
+        <div class="role-name">ADMINISTRATOR</div>
+        <div class="role-sub">Full system access &middot; Head Office role</div>
+      </div>
+      <div class="card-body">
+        <div>
+          <div class="section-head">Master Data</div>
+          <ul class="bullets">
+            <li>Manage Items</li>
+            <li>Manage Categories</li>
+            <li>Manage Outlets</li>
+            <li>Manage Vendors</li>
+            <li>Manage Users <span class="star">&#9733;</span></li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-head">Transactions</div>
+          <ul class="bullets">
+            <li>Record Sale</li>
+            <li>Record Receipt</li>
+            <li>Record Movement</li>
+            <li>Manage Recipes</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-head">Stock Operations</div>
+          <ul class="bullets">
+            <li>View Stock On Hand</li>
+            <li>Perform Audit</li>
+            <li>Close Period <span class="star">&#9733;</span></li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-head">Reporting</div>
+          <ul class="bullets">
+            <li>View Dashboard</li>
+            <li>Generate Reports</li>
+            <li>View Charts</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-head">Authentication</div>
+          <ul class="bullets">
+            <li>Login / Logout</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="total">Total: 17 capabilities</div>
+      </div>
+    </div>
+
+    <!-- MANAGER -->
+    <div class="card tier-2">
+      <div class="card-head">
+        <div class="role-name">MANAGER</div>
+        <div class="role-sub">Operational + reporting access &middot; Outlet manager role</div>
+      </div>
+      <div class="card-body">
+        <div>
+          <div class="section-head">Master Data</div>
+          <ul class="bullets">
+            <li>Manage Items</li>
+            <li>Manage Categories</li>
+            <li>Manage Outlets</li>
+            <li>Manage Vendors</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-head">Transactions</div>
+          <ul class="bullets">
+            <li>Record Sale</li>
+            <li>Record Receipt</li>
+            <li>Record Movement</li>
+            <li>Manage Recipes</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-head">Stock Operations</div>
+          <ul class="bullets">
+            <li>View Stock On Hand</li>
+            <li>Perform Audit</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-head">Reporting</div>
+          <ul class="bullets">
+            <li>View Dashboard</li>
+            <li>Generate Reports</li>
+            <li>View Charts</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-head">Authentication</div>
+          <ul class="bullets">
+            <li>Login / Logout</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="total">Total: 15 capabilities</div>
+        <div class="note">Cannot Manage Users or Close Period</div>
+      </div>
+    </div>
+
+    <!-- STAFF -->
+    <div class="card tier-3">
+      <div class="card-head">
+        <div class="role-name">STAFF</div>
+        <div class="role-sub">Transaction entry only &middot; Front-line operations role</div>
+      </div>
+      <div class="card-body">
+        <div>
+          <div class="section-head">Transactions</div>
+          <ul class="bullets">
+            <li>Record Sale</li>
+            <li>Record Receipt</li>
+            <li>Record Movement</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-head">Reporting</div>
+          <ul class="bullets">
+            <li>View Dashboard</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-head">Authentication</div>
+          <ul class="bullets">
+            <li>Login / Logout</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="total">Total: 6 capabilities</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom legend -->
+  <div class="legend">
+    <div class="item"><span class="star">&#9733;</span> = exclusive to this role</div>
+    <div class="item">Access scopes increase top to bottom across cards: Staff &rarr; Manager &rarr; Administrator</div>
+  </div>
+
+</div>
+
+</body>
+</html>

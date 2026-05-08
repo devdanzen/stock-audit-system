@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Items — Inventory Management</title>
+<link rel="stylesheet" href="../../app-shell.css" />
+<style>
+  /* Items-specific tweaks */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--bg-window);
+    border-bottom: 1px solid var(--border);
+    height: 38px;
+  }
+  .toolbar .spacer { flex: 1; }
+  .toolbar .search-row { display: flex; align-items: center; gap: 6px; }
+  .toolbar .search-row input.field { width: 180px; }
+
+  .form-panel {
+    border: 1px solid var(--border);
+    background: #fff;
+    margin: 12px 14px;
+  }
+  .form-panel .panel-head {
+    background: var(--bg-window);
+    border-bottom: 1px solid var(--border);
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .form-panel .form-body {
+    padding: 10px 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 24px;
+  }
+  .form-panel .form-col {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 6px 8px;
+    align-items: center;
+  }
+  .form-panel label { font-size: 12px; }
+  .form-panel .field { width: 100%; max-width: 320px; }
+
+  .table-wrap {
+    margin: 0 14px 12px;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    overflow: hidden;
+  }
+  .table-wrap .jtable { border: 0; }
+
+  .row-info {
+    margin: 0 14px 8px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="jframe" data-screen-label="03 Items">
+
+  <!-- Title bar -->
+  <div class="titlebar">
+    <span class="title-text">Inventory Management System</span>
+    <div class="winbtns">
+      <button class="winbtn">&#x2014;</button>
+      <button class="winbtn">&#x25A1;</button>
+      <button class="winbtn close">&#x2715;</button>
+    </div>
+  </div>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <span class="app-name">Inventory Management</span>
+    <span class="spacer"></span>
+    <span class="right">User: admin</span>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="nav">
+      <div class="nav-item">Dashboard</div>
+
+      <div class="nav-section">--- Master Data ---</div>
+      <div class="nav-item active">Items</div>
+      <div class="nav-item">Categories</div>
+      <div class="nav-item">Outlets</div>
+      <div class="nav-item">Vendors</div>
+      <div class="nav-item">Users</div>
+
+      <div class="nav-section">--- Transactions ---</div>
+      <div class="nav-item">Receiving</div>
+      <div class="nav-item">Sales</div>
+      <div class="nav-item">Movement</div>
+      <div class="nav-item">Recipes</div>
+
+      <div class="nav-section">--- Stock Operations ---</div>
+      <div class="nav-item">Stock On Hand</div>
+      <div class="nav-item">Audit</div>
+      <div class="nav-item">End Balance</div>
+
+      <div class="nav-section">--- Reports &amp; Charts ---</div>
+      <div class="nav-item">Reports</div>
+      <div class="nav-item">Charts</div>
+    </div>
+    <div class="nav-footer">
+      <div class="nav-item">Logout</div>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <main class="content">
+    <div class="screen">
+
+      <!-- Screen header -->
+      <div class="screen-header" style="padding:10px 14px;height:40px;box-sizing:border-box;">
+        <div class="screen-title">Master Item — Manage Items</div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <button class="btn btn-primary">+ Add</button>
+        <button class="btn">Update</button>
+        <button class="btn btn-danger">Delete</button>
+        <button class="btn">Clear</button>
+        <button class="btn">Refresh</button>
+        <span class="spacer"></span>
+        <div class="search-row">
+          <label for="search">Search:</label>
+          <input id="search" class="field" type="text" />
+        </div>
+      </div>
+
+      <!-- Form fields panel -->
+      <div class="form-panel">
+        <div class="panel-head">Item Details</div>
+        <div class="form-body">
+          <div class="form-col">
+            <label>Item Code:</label>
+            <input class="field" value="LIQ-0001" />
+
+            <label>Description:</label>
+            <input class="field" value="Absolut Blue Vodka" />
+
+            <label>Item Class: <span class="muted" style="font-size:10px; font-weight:normal;">(coarse axis: Drink / Dry / Fish / Menu)</span></label>
+            <select class="field"><option>Drink</option></select>
+
+            <label>Category:</label>
+            <select class="field"><option>B — Bar</option></select>
+
+            <label>Outlet:</label>
+            <select class="field"><option>SHLMP — SH Lippo Mall Puri</option></select>
+          </div>
+          <div class="form-col">
+            <label>Base Unit:</label>
+            <select class="field"><option>BOTTLE</option></select>
+
+            <label>Purchase Unit:</label>
+            <select class="field"><option>CARTON</option></select>
+
+            <label>Current Cost:</label>
+            <input class="field num" value="485,000.00" style="text-align:right;" />
+
+            <label>Selling Price:</label>
+            <input class="field num" value="850,000.00" style="text-align:right;" />
+
+            <label>Status:</label>
+            <select class="field"><option>Active</option></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Items table -->
+      <div class="table-wrap">
+        <table class="jtable">
+          <thead>
+            <tr>
+              <th style="width:100px;">Item Code</th>
+              <th>Description</th>
+              <th style="width:80px;">Item Class</th>
+              <th style="width:90px;">Category</th>
+              <th style="width:80px;">Outlet</th>
+              <th style="width:80px;">Base Unit</th>
+              <th class="num" style="width:100px;">Cost</th>
+              <th class="num" style="width:100px;">Price</th>
+              <th style="width:70px;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="selected">
+              <td class="mono">LIQ-0001</td>
+              <td>Absolut Blue Vodka</td>
+              <td>Drink</td>
+              <td>Bar</td>
+              <td>SHLMP</td>
+              <td>BOTTLE</td>
+              <td class="num">485,000</td>
+              <td class="num">850,000</td>
+              <td>Active</td>
+            </tr>
+            <tr>
+              <td class="mono">DRY-0497</td>
+              <td>Edamame</td>
+              <td>Dry</td>
+              <td>Kitchen</td>
+              <td>SHLMP</td>
+              <td>GRAM</td>
+              <td class="num">450</td>
+              <td class="num">—</td>
+              <td>Active</td>
+            </tr>
+            <tr>
+              <td class="mono">FISH-0042</td>
+              <td>Salmon Trout</td>
+              <td>Fish</td>
+              <td>Sushi</td>
+              <td>SHLMP</td>
+              <td>GRAM</td>
+              <td class="num">180,000</td>
+              <td class="num">—</td>
+              <td>Active</td>
+            </tr>
+            <tr>
+              <td class="mono">MENU-001</td>
+              <td>Edamame (finished)</td>
+              <td>Menu</td>
+              <td>Kitchen</td>
+              <td>SHLMP</td>
+              <td>PORTION</td>
+              <td class="num">—</td>
+              <td class="num">35,000</td>
+              <td>Active</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="row-info">Showing 4 of 5,247 items</div>
+
+    </div>
+  </main>
+
+  <!-- Status bar -->
+  <div class="statusbar">
+    <span>Connected to MySQL · inventory_db</span>
+    <span>admin · v1.0.0</span>
+  </div>
+
+</div>
+
+</body>
+</html>

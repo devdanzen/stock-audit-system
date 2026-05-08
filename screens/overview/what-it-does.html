@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>What Does This App Do? — Inventory Management</title>
+<link rel="stylesheet" href="../app-shell.css" />
+<style>
+  body { padding: 24px; background: #b8b8b8; }
+
+  .slide {
+    width: 1280px;
+    min-height: 800px;
+    background: #ffffff;
+    border: 1px solid #404040;
+    padding: 24px 30px 22px;
+    box-sizing: border-box;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .slide-title { font-size: 22px; font-weight: 700; margin: 0; }
+  .slide-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+  /* ===== Section common ===== */
+  .section { display: flex; flex-direction: column; gap: 10px; }
+  .section-head {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+    letter-spacing: 0.2px;
+  }
+
+  /* ===== Section 1: business problem ===== */
+  .problem-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .problem-panel {
+    border: 1px solid var(--border);
+    background: #fff;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .problem-panel .sym {
+    font-size: 24px;
+    line-height: 1;
+    background: var(--bg-window);
+    border: 1px solid var(--border);
+    width: 42px; height: 42px;
+    display: grid;
+    place-items: center;
+  }
+  .problem-panel .body {
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  /* ===== Section 2: day in life timeline ===== */
+  .timeline {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+  .step {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid var(--border);
+    background: #fff;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .step .time {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .step .step-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .step .desc {
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: var(--text);
+    flex: 1;
+  }
+  .step .screens {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--border);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .step .screens b { color: var(--text); font-weight: 600; }
+
+  .arrow {
+    flex: 0 0 14px;
+    display: grid;
+    place-items: center;
+    color: var(--text);
+    font-size: 14px;
+    font-family: var(--font-mono);
+    user-select: none;
+  }
+
+  /* ===== Section 3: who uses what ===== */
+  .users-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .user-col {
+    border: 1px solid var(--border);
+    background: #fff;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .user-col .role {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+  }
+  .user-col ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .user-col ul li { margin-bottom: 2px; }
+  .user-col ul li b { font-weight: 600; }
+
+  .team-note {
+    font-size: 11px;
+    font-style: italic;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: -4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+
+  <!-- Header -->
+  <div>
+    <h1 class="slide-title">What Does This App Do?</h1>
+    <div class="slide-subtitle">A plain-English overview of the Inventory Management System &middot; for team onboarding</div>
+  </div>
+
+  <div class="team-note">Internal reference &middot; covers the same ground as the presentation deck but in one self-contained slide</div>
+
+  <!-- ===== SECTION 1 ===== -->
+  <div class="section">
+    <div class="section-head">The Business Problem We're Solving</div>
+    <div class="problem-row">
+      <div class="problem-panel">
+        <div class="sym">📊</div>
+        <div class="body">Restaurant chains lose money when stock isn't tracked. Items expire, get stolen, or run out at the wrong time.</div>
+      </div>
+      <div class="problem-panel">
+        <div class="sym">📋</div>
+        <div class="body">Manual Excel tracking is error-prone. Numbers don't match between sheets. Nobody knows the real stock level.</div>
+      </div>
+      <div class="problem-panel">
+        <div class="sym">💡</div>
+        <div class="body">Our app replaces messy spreadsheets with one organized system where every transaction updates inventory automatically.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 2 ===== -->
+  <div class="section">
+    <div class="section-head">A Day in the Life of the Restaurant Manager</div>
+    <div class="timeline">
+
+      <div class="step">
+        <div class="time">09:00</div>
+        <div class="step-title">Morning Check</div>
+        <div class="desc">Manager opens the Dashboard. Sees 3 items running low. Decides what to order today.</div>
+        <div class="screens"><b>Screen used:</b> Dashboard, Stock On Hand</div>
+      </div>
+      <div class="arrow">&rarr;</div>
+
+      <div class="step">
+        <div class="time">10:30</div>
+        <div class="step-title">New Delivery Arrives</div>
+        <div class="desc">Vendor delivers fish. Manager records the receipt — what came in, from whom, how much. Stock goes <b>UP</b> automatically.</div>
+        <div class="screens"><b>Screen used:</b> Receiving</div>
+      </div>
+      <div class="arrow">&rarr;</div>
+
+      <div class="step">
+        <div class="time">12:15</div>
+        <div class="step-title">Lunch Rush</div>
+        <div class="desc">Customers order food. Each invoice is recorded. Stock goes <b>DOWN</b> automatically for ingredients used.</div>
+        <div class="screens"><b>Screen used:</b> Sales</div>
+      </div>
+      <div class="arrow">&rarr;</div>
+
+      <div class="step">
+        <div class="time">14:00</div>
+        <div class="step-title">Kitchen Waste</div>
+        <div class="desc">Chef accidentally burns a batch of edamame. Manager records the waste to track losses.</div>
+        <div class="screens"><b>Screen used:</b> Movement (WASTE)</div>
+      </div>
+      <div class="arrow">&rarr;</div>
+
+      <div class="step">
+        <div class="time">18:00</div>
+        <div class="step-title">Transfer to Sister Outlet</div>
+        <div class="desc">SHLMP runs out of salmon but SHMTA has extra. Manager records the transfer between outlets.</div>
+        <div class="screens"><b>Screen used:</b> Movement (OUT)</div>
+      </div>
+      <div class="arrow">&rarr;</div>
+
+      <div class="step">
+        <div class="time">22:00</div>
+        <div class="step-title">End of Day</div>
+        <div class="desc">Manager runs an audit, walks the storage, counts items. App compares real stock vs system stock. Any difference is flagged for investigation.</div>
+        <div class="screens"><b>Screen used:</b> Audit</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== SECTION 3 ===== -->
+  <div class="section">
+    <div class="section-head">Who Uses Which Screens</div>
+    <div class="users-row">
+
+      <div class="user-col">
+        <div class="role">Restaurant Staff <span style="font-weight:normal; font-size:11px; color:var(--text-muted);">(role = Staff)</span></div>
+        <ul>
+          <li>Records daily sales <b>(Sales)</b></li>
+          <li>Records goods receipt when a vendor arrives <b>(Receiving)</b></li>
+          <li>Records waste, transfers, consumption <b>(Movement)</b></li>
+        </ul>
+      </div>
+
+      <div class="user-col">
+        <div class="role">Outlet Manager <span style="font-weight:normal; font-size:11px; color:var(--text-muted);">(role = Manager)</span></div>
+        <ul>
+          <li>Reviews the <b>Dashboard</b> each morning</li>
+          <li>Approves audits at end of period <b>(Audit)</b></li>
+          <li>Generates reports for headquarters <b>(Reports)</b></li>
+          <li>Reviews sales trends <b>(Charts)</b></li>
+        </ul>
+      </div>
+
+      <div class="user-col">
+        <div class="role">Head Office / Administrator <span style="font-weight:normal; font-size:11px; color:var(--text-muted);">(role = Administrator)</span></div>
+        <ul>
+          <li>Manages master data <b>(Items, Categories, Vendors, Outlets, Users)</b></li>
+          <li>Reviews charts across all outlets <b>(Charts)</b></li>
+          <li>Closes monthly periods <b>(End Balance)</b></li>
+          <li>Manages user access <b>(Users)</b></li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

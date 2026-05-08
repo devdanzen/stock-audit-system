@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Users — Inventory Management</title>
+<link rel="stylesheet" href="../../app-shell.css" />
+<style>
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--bg-window);
+    border-bottom: 1px solid var(--border);
+    height: 38px;
+  }
+  .toolbar .spacer { flex: 1; }
+  .toolbar .search-row { display: flex; align-items: center; gap: 6px; }
+  .toolbar .search-row input.field { width: 180px; }
+
+  .form-panel {
+    border: 1px solid var(--border);
+    background: #fff;
+    margin: 12px 14px 6px;
+  }
+  .form-panel .panel-head {
+    background: var(--bg-window);
+    border-bottom: 1px solid var(--border);
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .form-panel .form-body {
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 24px;
+  }
+  .form-panel .form-col {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 6px 8px;
+    align-items: center;
+  }
+  .form-panel label { font-size: 12px; }
+  .form-panel .field { width: 100%; max-width: 320px; }
+  .form-panel input.field.password { letter-spacing: 2px; }
+  .form-panel input.field.placeholder { color: #9a9a9a; font-style: italic; letter-spacing: 0; }
+
+  .form-note {
+    margin: 0 14px 12px;
+    font-size: 11px;
+    font-style: italic;
+    color: var(--text-muted);
+  }
+
+  .table-wrap {
+    margin: 0 14px 12px;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    overflow: hidden;
+  }
+  .table-wrap .jtable { border: 0; }
+
+  .row-info {
+    margin: 0 14px 8px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="jframe" data-screen-label="Users">
+
+  <div class="titlebar">
+    <span class="title-text">Inventory Management System</span>
+    <div class="winbtns">
+      <button class="winbtn">&#x2014;</button>
+      <button class="winbtn">&#x25A1;</button>
+      <button class="winbtn close">&#x2715;</button>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <span class="app-name">Inventory Management</span>
+    <span class="spacer"></span>
+    <span class="right">User: admin</span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="nav">
+      <div class="nav-item">Dashboard</div>
+
+      <div class="nav-section">--- Master Data ---</div>
+      <div class="nav-item">Items</div>
+      <div class="nav-item">Categories</div>
+      <div class="nav-item">Outlets</div>
+      <div class="nav-item">Vendors</div>
+      <div class="nav-item active">Users</div>
+
+      <div class="nav-section">--- Transactions ---</div>
+      <div class="nav-item">Receiving</div>
+      <div class="nav-item">Sales</div>
+      <div class="nav-item">Movement</div>
+      <div class="nav-item">Recipes</div>
+
+      <div class="nav-section">--- Stock Operations ---</div>
+      <div class="nav-item">Stock On Hand</div>
+      <div class="nav-item">Audit</div>
+      <div class="nav-item">End Balance</div>
+
+      <div class="nav-section">--- Reports &amp; Charts ---</div>
+      <div class="nav-item">Reports</div>
+      <div class="nav-item">Charts</div>
+    </div>
+    <div class="nav-footer">
+      <div class="nav-item">Logout</div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="screen">
+
+      <div class="screen-header" style="padding:10px 14px;height:40px;box-sizing:border-box;">
+        <div class="screen-title">Users — Manage Application Users</div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <button class="btn btn-primary">+ Add</button>
+        <button class="btn">Update</button>
+        <button class="btn btn-danger">Delete</button>
+        <button class="btn">Clear</button>
+        <button class="btn">Refresh</button>
+        <span class="spacer"></span>
+        <div class="search-row">
+          <label for="search">Search:</label>
+          <input id="search" class="field" type="text" />
+        </div>
+      </div>
+
+      <!-- Form panel -->
+      <div class="form-panel">
+        <div class="panel-head">User Details</div>
+        <div class="form-body">
+          <div class="form-col">
+            <label>Username:</label>
+            <input class="field" value="admin" />
+
+            <label>Password:</label>
+            <input class="field placeholder" value="(Leave blank to keep current)" />
+
+            <label>Confirm Password:</label>
+            <input class="field placeholder" value="(Leave blank to keep current)" />
+          </div>
+          <div class="form-col">
+            <label>Role:</label>
+            <select class="field">
+              <option>Administrator</option>
+              <option>Manager</option>
+              <option>Staff</option>
+            </select>
+
+            <label>Outlet:</label>
+            <select class="field"><option>SHLMP</option></select>
+
+            <label>Status:</label>
+            <select class="field"><option>Active</option></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-note">Note: Passwords are stored as BCrypt hashes. Plain passwords are never stored or logged.</div>
+
+      <!-- Users table -->
+      <div class="table-wrap">
+        <table class="jtable">
+          <thead>
+            <tr>
+              <th style="width:140px;">Username</th>
+              <th style="width:130px;">Role</th>
+              <th style="width:100px;">Outlet</th>
+              <th style="width:120px;">Created</th>
+              <th style="width:160px;">Last Login</th>
+              <th style="width:90px;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="selected">
+              <td class="mono">admin</td>
+              <td>Administrator</td>
+              <td class="mono">SHLMP</td>
+              <td class="mono">2025-01-15</td>
+              <td class="mono">2025-12-15 14:32</td>
+              <td>Active</td>
+            </tr>
+            <tr>
+              <td class="mono">manager_lmp</td>
+              <td>Manager</td>
+              <td class="mono">SHLMP</td>
+              <td class="mono">2025-02-08</td>
+              <td class="mono">2025-12-15 09:15</td>
+              <td>Active</td>
+            </tr>
+            <tr>
+              <td class="mono">staff_lmp01</td>
+              <td>Staff</td>
+              <td class="mono">SHLMP</td>
+              <td class="mono">2025-03-22</td>
+              <td class="mono">2025-12-14 18:45</td>
+              <td>Active</td>
+            </tr>
+            <tr>
+              <td class="mono">staff_mta01</td>
+              <td>Staff</td>
+              <td class="mono">SHMTA</td>
+              <td class="mono">2025-04-10</td>
+              <td class="mono">2025-12-13 10:22</td>
+              <td>Active</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="row-info">Showing 4 of 12 users</div>
+
+    </div>
+  </main>
+
+  <div class="statusbar">
+    <span>Connected to MySQL · inventory_db</span>
+    <span>admin · v1.0.0</span>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>How the Data Connects — Inventory Management</title>
+<link rel="stylesheet" href="../app-shell.css" />
+<style>
+  body { padding: 24px; background: #b8b8b8; }
+
+  .slide {
+    width: 1280px;
+    min-height: 800px;
+    background: #ffffff;
+    border: 1px solid #404040;
+    padding: 24px 30px 22px;
+    box-sizing: border-box;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .slide-title { font-size: 22px; font-weight: 700; margin: 0; }
+  .slide-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+  /* ===== Section common ===== */
+  .section { display: flex; flex-direction: column; gap: 10px; }
+  .section-head {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+    letter-spacing: 0.2px;
+  }
+
+  /* ===== Horizontal flow (Rows 1 & 2) ===== */
+  .flow {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+  .step {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid var(--border);
+    background: #fff;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--text);
+  }
+  .step .step-num {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .step .lead {
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 3px;
+    font-size: 12.5px;
+  }
+  .step .body { font-size: 12px; }
+  .step ul {
+    margin: 4px 0 0;
+    padding-left: 16px;
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
+  .step ul li { margin-bottom: 1px; }
+
+  .arrow {
+    flex: 0 0 18px;
+    display: grid;
+    place-items: center;
+    color: var(--text);
+    font-size: 16px;
+    font-family: var(--font-mono);
+    user-select: none;
+  }
+
+  /* Color cues for stock direction without colored badges */
+  .stock-up { color: var(--success); font-weight: 700; }
+  .stock-down { color: var(--danger); font-weight: 700; }
+
+  /* ===== Row 3: equation flow ===== */
+  .equation {
+    display: grid;
+    grid-template-columns: 40px 1fr 240px;
+    column-gap: 14px;
+    row-gap: 6px;
+    align-items: center;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .equation .op {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    color: var(--text);
+  }
+  .equation .op.plus  { color: var(--success); }
+  .equation .op.minus { color: var(--danger); }
+  .equation .op.eq    { color: var(--primary); }
+  .equation .term {
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    color: var(--text);
+  }
+  .equation .term.start { background: var(--bg-window); font-weight: 600; }
+  .equation .term.result { background: #e8f1fb; border-color: var(--primary); font-weight: 700; }
+  .equation .src {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .equation .src .arr { font-family: var(--font-mono); }
+
+  .eq-note {
+    margin-top: 8px;
+    font-size: 11.5px;
+    font-style: italic;
+    color: var(--text-muted);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+
+  <!-- Header -->
+  <div>
+    <h1 class="slide-title">How the Data Connects</h1>
+    <div class="slide-subtitle">One action on one screen — many screens updated automatically. Plain English overview.</div>
+  </div>
+
+  <!-- ===== ROW 1: Sale ===== -->
+  <div class="section">
+    <div class="section-head">What happens when you record a SALE?</div>
+    <div class="flow">
+
+      <div class="step">
+        <div class="step-num">1 · User action</div>
+        <div class="lead">Cashier opens the Sales screen</div>
+        <div class="body">Picks 3 items from the dropdown and enters quantities.</div>
+      </div>
+      <div class="arrow">&rarr;</div>
+
+      <div class="step">
+        <div class="step-num">2 · System saves</div>
+        <div class="lead">Clicks "Save Transaction"</div>
+        <div class="body">System creates one <b>invoice</b> record plus a separate <b>line item</b> record for each item sold.</div>
+      </div>
+      <div class="arrow">&rarr;</div>
+
+      <div class="step">
+        <div class="step-num">3 · Stock effect</div>
+        <div class="lead">Stock goes <span class="stock-down">DOWN</span></div>
+        <div class="body">Quantity for each sold item is deducted automatically — no manual update.</div>
+      </div>
+      <div class="arrow">&rarr;</div>
+
+      <div class="step">
+        <div class="step-num">4 · Now visible in</div>
+        <div class="body">
+          <ul>
+            <li><b>Dashboard</b> — today's sales updates</li>
+            <li><b>Stock On Hand</b> — lower quantities</li>
+            <li><b>Charts</b> — Top Sellers refreshes</li>
+            <li><b>Reports</b> — sales report shows it</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== ROW 2: Receiving ===== -->
+  <div class="section">
+    <div class="section-head">What happens when goods ARRIVE from a vendor?</div>
+    <div class="flow">
+
+      <div class="step">
+        <div class="step-num">1 · User action</div>
+        <div class="lead">Staff opens the Receiving screen</div>
+        <div class="body">Picks a vendor from the dropdown and lists what was delivered.</div>
+      </div>
+      <div class="arrow">&rarr;</div>
+
+      <div class="step">
+        <div class="step-num">2 · System saves</div>
+        <div class="lead">Clicks "Save Receipt"</div>
+        <div class="body">System creates one <b>receipt</b> record plus a separate <b>line item</b> record for each delivered item.</div>
+      </div>
+      <div class="arrow">&rarr;</div>
+
+      <div class="step">
+        <div class="step-num">3 · Stock effect</div>
+        <div class="lead">Stock goes <span class="stock-up">UP</span></div>
+        <div class="body">Quantity for each received item is added automatically — no manual update.</div>
+      </div>
+      <div class="arrow">&rarr;</div>
+
+      <div class="step">
+        <div class="step-num">4 · Now visible in</div>
+        <div class="body">
+          <ul>
+            <li><b>Dashboard</b> — recent transactions list</li>
+            <li><b>Stock On Hand</b> — higher quantities</li>
+            <li><b>Reports</b> — receiving log report</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== ROW 3: Stock On Hand equation ===== -->
+  <div class="section">
+    <div class="section-head">How does Stock On Hand know the current quantity?</div>
+
+    <div class="equation">
+
+      <div class="op"></div>
+      <div class="term start">Starting Balance from last month-end</div>
+      <div class="src"><span class="arr">&larr;</span> from End Balance snapshot</div>
+
+      <div class="op plus">+</div>
+      <div class="term">All Receivings this period</div>
+      <div class="src"><span class="arr">&larr;</span> from Receiving screen</div>
+
+      <div class="op plus">+</div>
+      <div class="term">All Transfers IN</div>
+      <div class="src"><span class="arr">&larr;</span> from Movement screen</div>
+
+      <div class="op minus">&minus;</div>
+      <div class="term">All Sales</div>
+      <div class="src"><span class="arr">&larr;</span> from Sales screen</div>
+
+      <div class="op minus">&minus;</div>
+      <div class="term">All Waste</div>
+      <div class="src"><span class="arr">&larr;</span> from Movement screen</div>
+
+      <div class="op minus">&minus;</div>
+      <div class="term">All Transfers OUT</div>
+      <div class="src"><span class="arr">&larr;</span> from Movement screen</div>
+
+      <div class="op minus">&minus;</div>
+      <div class="term">All Consumption</div>
+      <div class="src"><span class="arr">&larr;</span> from Movement screen</div>
+
+      <div class="op eq">=</div>
+      <div class="term result">Current Stock On Hand</div>
+      <div class="src"><span class="arr">&larr;</span> shown in Stock On Hand panel</div>
+
+    </div>
+
+    <div class="eq-note">The system recalculates this automatically every time you open the Stock On Hand screen — no manual updates needed.</div>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Developer Handoff — Inventory Management</title>
+<link rel="stylesheet" href="../app-shell.css" />
+<style>
+  body { padding: 24px; background: #b8b8b8; }
+
+  .slide {
+    width: 1280px;
+    min-height: 800px;
+    background: #ffffff;
+    border: 1px solid #404040;
+    padding: 24px 30px 18px;
+    box-sizing: border-box;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .slide-title { font-size: 22px; font-weight: 700; margin: 0; }
+  .slide-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+  /* ===== Quadrant grid ===== */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 12px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .quad {
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .quad-head {
+    background: var(--bg-window);
+    border-bottom: 1px solid var(--border-dark);
+    padding: 6px 12px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .quad-head .label {
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .quad-head .tag {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--text-muted);
+  }
+  .quad-body {
+    padding: 8px 12px 10px;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--text);
+    overflow: hidden;
+  }
+
+  /* Folder tree */
+  .tree {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    line-height: 1.45;
+    color: var(--text);
+    white-space: pre;
+  }
+  .tree .c { color: var(--text-muted); }
+
+  /* Naming conventions table */
+  .conv-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .conv-table th, .conv-table td {
+    text-align: left;
+    padding: 3px 8px;
+    border-bottom: 1px solid #ececec;
+    vertical-align: top;
+  }
+  .conv-table th {
+    background: #f5f5f5;
+    font-weight: 700;
+    font-size: 10.5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .conv-table .lbl { width: 110px; font-weight: 700; color: var(--text); }
+  .conv-table .style { width: 110px; color: var(--text-muted); }
+  .conv-table .example { color: #134d85; }
+
+  /* Code block */
+  .code {
+    margin: 0;
+    background: #f7f7f5;
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    line-height: 1.45;
+    color: var(--text);
+    white-space: pre;
+    overflow: hidden;
+  }
+  .code .kw { color: #0a4080; font-weight: 700; }
+  .code .str { color: #134d85; }
+  .code .cm { color: var(--text-muted); font-style: italic; }
+  .code .id { color: #6a3a8c; }
+
+  /* Rules list */
+  .rules {
+    margin: 0;
+    padding-left: 16px;
+    font-size: 11.5px;
+    line-height: 1.55;
+  }
+  .rules li { margin-bottom: 2px; }
+  .rules li code,
+  .rules li .mono {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: #f0f0f0;
+    border: 1px solid #e0e0e0;
+    padding: 0 3px;
+    border-radius: 2px;
+  }
+
+  /* Bottom rule-of-thumb strip */
+  .footer-strip {
+    border: 1px solid var(--border);
+    background: var(--bg-window);
+    padding: 9px 14px;
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .footer-strip .lab {
+    font-weight: 700;
+    color: var(--primary-press, #134d85);
+    margin-right: 8px;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+  .footer-strip .mono {
+    font-family: var(--font-mono);
+    background: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    padding: 0 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+
+  <!-- Header -->
+  <div>
+    <h1 class="slide-title">Developer Handoff — Orchestrator Cheat Sheet</h1>
+    <div class="slide-subtitle">Project conventions, patterns, and rules for code-generation sessions</div>
+  </div>
+
+  <!-- 2x2 grid -->
+  <div class="grid">
+
+    <!-- Q1: Folder Structure -->
+    <div class="quad">
+      <div class="quad-head">
+        <span class="label">Folder &amp; Package Structure</span>
+        <span class="tag">src/main/java</span>
+      </div>
+      <div class="quad-body">
+<pre class="tree">com.inventory/
+├── Main.java
+├── <span class="c">view/</span>
+│   ├── LoginFrame.java
+│   ├── MainFrame.java          <span class="c">// holds CardLayout</span>
+│   └── <span class="c">panels/</span>
+│       ├── DashboardPanel.java
+│       ├── MasterItemPanel.java
+│       ├── SalesPanel.java
+│       └── ... (13 more)
+├── <span class="c">dao/</span>
+│   ├── UserDAO.java
+│   ├── MasterItemDAO.java
+│   ├── SalesDAO.java
+│   └── ... (8 more)
+├── <span class="c">model/</span>
+│   ├── User.java
+│   ├── MasterItem.java
+│   └── ...                     <span class="c">// plain POJOs</span>
+└── <span class="c">util/</span>
+    ├── DbConnection.java       <span class="c">// JDBC factory</span>
+    └── PasswordUtil.java       <span class="c">// BCrypt wrapper</span>
+
+<span class="c">src/main/resources/</span>
+└── inventory_schema_final.sql</pre>
+      </div>
+    </div>
+
+    <!-- Q2: Naming conventions -->
+    <div class="quad">
+      <div class="quad-head">
+        <span class="label">Naming Conventions</span>
+        <span class="tag">case rules</span>
+      </div>
+      <div class="quad-body">
+        <table class="conv-table">
+          <thead>
+            <tr><th>Element</th><th>Style</th><th>Example</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="lbl">Class</td><td class="style">PascalCase</td><td class="example">SalesDetailDAO</td></tr>
+            <tr><td class="lbl">Method</td><td class="style">camelCase</td><td class="example">getStockOnHand()</td></tr>
+            <tr><td class="lbl">Variable</td><td class="style">camelCase</td><td class="example">int categoryId</td></tr>
+            <tr><td class="lbl">Constant</td><td class="style">UPPER_SNAKE</td><td class="example">MAX_QTY = 9999</td></tr>
+            <tr><td class="lbl">Package</td><td class="style">lowercase</td><td class="example">com.inventory.dao</td></tr>
+            <tr><td class="lbl">Panel file</td><td class="style">XxxPanel.java</td><td class="example">SalesPanel.java</td></tr>
+            <tr><td class="lbl">DAO file</td><td class="style">XxxDAO.java</td><td class="example">MovementDAO.java</td></tr>
+            <tr><td class="lbl">Model file</td><td class="style">Xxx.java (POJO)</td><td class="example">SalesHeader.java</td></tr>
+            <tr><td class="lbl">DB table</td><td class="style">snake_case</td><td class="example">sales_detail</td></tr>
+            <tr><td class="lbl">DB column</td><td class="style">snake_case</td><td class="example">qty_received</td></tr>
+            <tr><td class="lbl">PK column</td><td class="style">{table}_id</td><td class="example">item_id, sales_id</td></tr>
+            <tr><td class="lbl">FK column</td><td class="style">{ref}_id</td><td class="example">category_id</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Q3: DAO + Transaction Pattern -->
+    <div class="quad">
+      <div class="quad-head">
+        <span class="label">DAO &amp; Transaction Pattern</span>
+        <span class="tag">JDBC PreparedStatement</span>
+      </div>
+      <div class="quad-body">
+<pre class="code"><span class="kw">public</span> <span class="id">List&lt;MasterItem&gt;</span> findByCategory(<span class="kw">int</span> categoryId)
+        <span class="kw">throws</span> SQLException {
+    <span class="kw">String</span> sql = <span class="str">"SELECT * FROM master_item WHERE category_id = ?"</span>;
+    <span class="id">List&lt;MasterItem&gt;</span> out = <span class="kw">new</span> ArrayList&lt;&gt;();
+    <span class="kw">try</span> (Connection c = DbConnection.get();
+         PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setInt(1, categoryId);
+        <span class="kw">try</span> (ResultSet rs = ps.executeQuery()) {
+            <span class="kw">while</span> (rs.next()) out.add(MasterItem.fromRow(rs));
+        }
+    }
+    <span class="kw">return</span> out;
+}
+
+<span class="cm">// Header + Detail: wrap in a transaction</span>
+conn.setAutoCommit(<span class="kw">false</span>);
+<span class="kw">try</span> {
+    <span class="kw">int</span> salesId = insertHeader(conn, header);
+    <span class="kw">for</span> (SalesDetail d : lines) insertDetail(conn, salesId, d);
+    conn.commit();
+} <span class="kw">catch</span> (SQLException ex) {
+    conn.rollback();
+    <span class="kw">throw</span> ex;
+} <span class="kw">finally</span> {
+    conn.setAutoCommit(<span class="kw">true</span>);
+}</pre>
+      </div>
+    </div>
+
+    <!-- Q4: Rules / Best Practices -->
+    <div class="quad">
+      <div class="quad-head">
+        <span class="label">Rules &amp; Best Practices</span>
+        <span class="tag">don't skip</span>
+      </div>
+      <div class="quad-body">
+        <ol class="rules">
+          <li><b>try-with-resources</b> for every JDBC object (auto-closes Connection / Statement / ResultSet).</li>
+          <li><b>Header + Detail</b> INSERTs always wrapped in <code>setAutoCommit(false)</code> + commit / rollback.</li>
+          <li><b>BCrypt only</b> for passwords. Never log <code>password</code> field; only call <code>BCrypt.hashpw()</code> on save and <code>BCrypt.checkpw()</code> on login.</li>
+          <li><b>Long DB calls</b> run on <code>SwingWorker</code>, never on the Event Dispatch Thread (UI freeze).</li>
+          <li><b>JTable</b> uses <code>DefaultTableModel</code>; per-column <code>DefaultTableCellRenderer</code> sets colored text (red Critical, amber Low, etc.).</li>
+          <li><b>ActionListeners</b> wired in a single <code>bindHandlers()</code> method called after <code>initComponents()</code> — never inside the generated GUI builder code.</li>
+          <li><b>Validate in the panel</b> (qty &gt; 0, fields not empty) <b>before</b> calling DAO. DAO throws on DB-level violations only.</li>
+          <li><b>Dates</b> formatted with <code>DateTimeFormatter.ISO_LOCAL_DATE</code> ("yyyy-MM-dd"). Never <code>SimpleDateFormat</code>.</li>
+          <li><b>Sidebar nav</b> swaps screens via <code>cardLayout.show(contentPane, "SalesPanel")</code>. Update active style on the clicked label.</li>
+          <li><b>Money columns</b> are <code>DECIMAL(18,4)</code> in DB → <code>BigDecimal</code> in Java. Never <code>double</code>.</li>
+        </ol>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer / rule of thumb -->
+  <div class="footer-strip">
+    <span class="lab">When in doubt:</span>
+    Match the existing pattern in <span class="mono">MasterItemPanel</span> + <span class="mono">MasterItemDAO</span> + <span class="mono">MasterItem</span> (View / DAO / Model) — they're the reference triple every other CRUD follows.
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Quick Feature Guide — Inventory Management</title>
+<link rel="stylesheet" href="../app-shell.css" />
+<style>
+  body { padding: 24px; background: #b8b8b8; }
+
+  .slide {
+    width: 1280px;
+    min-height: 800px;
+    background: #ffffff;
+    border: 1px solid #404040;
+    padding: 26px 36px 22px;
+    box-sizing: border-box;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .slide-title { font-size: 22px; font-weight: 700; margin: 0; }
+  .slide-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+  /* ===== Feature table ===== */
+  .feature-wrap {
+    border: 1px solid var(--border-dark);
+    background: #fff;
+  }
+  table.feature {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  table.feature thead th {
+    background: var(--bg-header);
+    border-bottom: 1px solid var(--border-dark);
+    border-right: 1px solid var(--border);
+    text-align: left;
+    padding: 6px 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  table.feature thead th:last-child { border-right: 0; }
+  table.feature tbody td {
+    padding: 5px 14px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+  table.feature tbody tr:last-child td { border-bottom: 0; }
+  table.feature tbody td:last-child { border-right: 0; }
+  table.feature tbody tr:nth-child(even) td { background: var(--bg-alt); }
+  table.feature td.col-screen {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    width: 1%;
+    white-space: nowrap;
+    padding-right: 28px;
+  }
+  table.feature .section-row td {
+    background: var(--bg-window);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    padding: 3px 14px;
+  }
+
+  /* ===== Glossary ===== */
+  .glossary {
+    border: 1px solid var(--border);
+    background: #fff;
+    padding: 12px 14px;
+  }
+  .glossary-head {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0 0 8px;
+  }
+  .glossary-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    column-gap: 16px;
+    row-gap: 6px;
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+  .glossary-grid .term {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--text);
+  }
+  .glossary-grid .def {
+    color: var(--text);
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+
+  <!-- Header -->
+  <div>
+    <h1 class="slide-title">Quick Feature Guide</h1>
+    <div class="slide-subtitle">What each screen does, in plain English</div>
+  </div>
+
+  <!-- Feature table -->
+  <div class="feature-wrap">
+    <table class="feature">
+      <thead>
+        <tr>
+          <th>Screen / Feature</th>
+          <th>What It Does</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="col-screen">Dashboard</td><td>Homepage with daily summary and quick alerts</td></tr>
+
+        <tr class="section-row"><td colspan="2">Master Data</td></tr>
+        <tr><td class="col-screen">Items</td><td>The catalog of everything the restaurant sells</td></tr>
+        <tr><td class="col-screen">Categories</td><td>Groups items by section (Bar, Food, Kitchen, Sushi)</td></tr>
+        <tr><td class="col-screen">Outlets</td><td>All restaurant locations in the chain</td></tr>
+        <tr><td class="col-screen">Vendors</td><td>Suppliers we buy from</td></tr>
+        <tr><td class="col-screen">Users</td><td>Staff accounts with login access</td></tr>
+
+        <tr class="section-row"><td colspan="2">Transactions</td></tr>
+        <tr><td class="col-screen">Receiving</td><td>Record incoming deliveries &mdash; stock goes UP</td></tr>
+        <tr><td class="col-screen">Sales</td><td>Record customer purchases &mdash; stock goes DOWN</td></tr>
+        <tr><td class="col-screen">Movement</td><td>Record stock changes that aren't sales: waste, transfers between outlets, internal use</td></tr>
+        <tr><td class="col-screen">Recipes</td><td>How each dish breaks down into ingredients &mdash; selling one dish deducts all its ingredients from stock</td></tr>
+
+        <tr class="section-row"><td colspan="2">Stock Operations</td></tr>
+        <tr><td class="col-screen">Stock On Hand</td><td>Live view of how much of everything we have now</td></tr>
+        <tr><td class="col-screen">Audit</td><td>Walk the storage, count items, system flags any differences as inventory variance</td></tr>
+        <tr><td class="col-screen">End Balance</td><td>Lock in the month's closing inventory value for financial reports</td></tr>
+
+        <tr class="section-row"><td colspan="2">Reports &amp; Charts</td></tr>
+        <tr><td class="col-screen">Reports</td><td>Stock cards, sales summaries, receiving logs &mdash; printable for management</td></tr>
+        <tr><td class="col-screen">Charts</td><td>Top sellers, daily sales trend, sales by category, top waste items &mdash; at a glance</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Glossary -->
+  <div class="glossary">
+    <div class="glossary-head">Common Terms</div>
+    <div class="glossary-grid">
+      <div class="term">SOH (Stock On Hand)</div>
+      <div class="def">Current quantity of an item in storage right now</div>
+
+      <div class="term">M-M Relationship</div>
+      <div class="def">When two things relate to many of each other (e.g. one invoice has many items, one item appears on many invoices)</div>
+
+      <div class="term">Audit</div>
+      <div class="def">Physical inventory count to verify accuracy</div>
+
+      <div class="term">Movement</div>
+      <div class="def">Any stock change that's not a sale or receipt (waste, transfer, consumption)</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

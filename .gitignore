@@ -1,0 +1,10 @@
+# Claude Code
+CLAUDE.md
+.claude/
+
+# Authoritative spec — kept local only
+docs/
+
+# OS junk
+.DS_Store
+Thumbs.db

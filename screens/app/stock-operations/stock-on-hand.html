@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Stock On Hand — Inventory Management</title>
+<link rel="stylesheet" href="../../app-shell.css" />
+<style>
+  .group {
+    position: relative;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    padding: 14px 14px 12px;
+    margin: 16px 14px 14px;
+  }
+  .group > .legend {
+    position: absolute;
+    top: -8px;
+    left: 10px;
+    background: #fff;
+    padding: 0 5px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+  .filter-row .fb { display: flex; align-items: center; gap: 6px; }
+  .filter-row label { font-size: 12px; }
+  .filter-row .field { width: 160px; }
+  .filter-row .field.search { width: 180px; }
+  .filter-row .spacer { flex: 1; }
+
+  .table-wrap {
+    margin: 0 14px 8px;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+  }
+  .table-wrap .jtable { border: 0; }
+
+  .stock-critical { color: var(--danger); font-weight: 700; }
+  .stock-low      { color: #b4790b; font-weight: 700; }
+  .stock-ok       { color: var(--text); }
+  .stock-na       { color: var(--text-disabled); }
+
+  .summary-strip {
+    margin: 0 14px 8px;
+    height: 30px;
+    background: var(--bg-window);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+  .summary-strip .right { margin-left: auto; }
+
+  .sql-footer {
+    margin: 0 14px 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-style: italic;
+    color: var(--text-muted);
+  }
+
+  .btn-bar {
+    margin: 0 14px 14px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="jframe" data-screen-label="Stock On Hand">
+
+  <div class="titlebar">
+    <span class="title-text">Inventory Management System</span>
+    <div class="winbtns">
+      <button class="winbtn">&#x2014;</button>
+      <button class="winbtn">&#x25A1;</button>
+      <button class="winbtn close">&#x2715;</button>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <span class="app-name">Inventory Management</span>
+    <span class="spacer"></span>
+    <span class="right">User: admin</span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="nav">
+      <div class="nav-item">Dashboard</div>
+
+      <div class="nav-section">--- Master Data ---</div>
+      <div class="nav-item">Items</div>
+      <div class="nav-item">Categories</div>
+      <div class="nav-item">Outlets</div>
+      <div class="nav-item">Vendors</div>
+      <div class="nav-item">Users</div>
+
+      <div class="nav-section">--- Transactions ---</div>
+      <div class="nav-item">Receiving</div>
+      <div class="nav-item">Sales</div>
+      <div class="nav-item">Movement</div>
+      <div class="nav-item">Recipes</div>
+
+      <div class="nav-section">--- Stock Operations ---</div>
+      <div class="nav-item active">Stock On Hand</div>
+      <div class="nav-item">Audit</div>
+      <div class="nav-item">End Balance</div>
+
+      <div class="nav-section">--- Reports &amp; Charts ---</div>
+      <div class="nav-item">Reports</div>
+      <div class="nav-item">Charts</div>
+    </div>
+    <div class="nav-footer">
+      <div class="nav-item">Logout</div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="screen">
+
+      <div class="screen-header" style="padding:10px 14px;height:40px;box-sizing:border-box;">
+        <div class="screen-title">Stock On Hand — Current Inventory</div>
+      </div>
+
+      <!-- Filter -->
+      <div class="group">
+        <span class="legend">Filter</span>
+        <div class="filter-row">
+          <div class="fb">
+            <label>Category:</label>
+            <select class="field"><option>All</option></select>
+          </div>
+          <div class="fb">
+            <label>Outlet:</label>
+            <select class="field"><option>SHLMP</option></select>
+          </div>
+          <div class="fb">
+            <label>Show:</label>
+            <select class="field"><option>Active items only</option></select>
+          </div>
+          <div class="spacer"></div>
+          <div class="fb">
+            <label>Search:</label>
+            <input class="field search" type="text" />
+          </div>
+          <button class="btn">Apply Filter</button>
+        </div>
+      </div>
+
+      <!-- Stock table -->
+      <div class="table-wrap">
+        <table class="jtable">
+          <thead>
+            <tr>
+              <th style="width:100px;">Item Code</th>
+              <th>Description</th>
+              <th style="width:90px;">Category</th>
+              <th style="width:80px;">Outlet</th>
+              <th style="width:80px;">Unit</th>
+              <th class="num" style="width:110px;">On-Hand Qty</th>
+              <th class="num" style="width:110px;">Unit Cost</th>
+              <th class="num" style="width:130px;">Stock Value</th>
+              <th style="width:120px;">Reorder Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">DRY-0210</td>
+              <td>Soy Sauce</td>
+              <td>Kitchen</td>
+              <td class="mono">SHLMP</td>
+              <td>ML</td>
+              <td class="num stock-critical">8.0</td>
+              <td class="num">250</td>
+              <td class="num">2,000</td>
+              <td class="stock-critical">Critical</td>
+            </tr>
+            <tr>
+              <td class="mono">LIQ-0001</td>
+              <td>Absolut Blue Vodka</td>
+              <td>Bar</td>
+              <td class="mono">SHLMP</td>
+              <td>BOTTLE</td>
+              <td class="num stock-low">9.0</td>
+              <td class="num">485,000</td>
+              <td class="num">4,365,000</td>
+              <td class="stock-low">Low</td>
+            </tr>
+            <tr>
+              <td class="mono">FISH-0042</td>
+              <td>Salmon Trout</td>
+              <td>Sushi</td>
+              <td class="mono">SHLMP</td>
+              <td>GRAM</td>
+              <td class="num stock-critical">12.5</td>
+              <td class="num">180,000</td>
+              <td class="num">2,250,000</td>
+              <td class="stock-critical">Critical</td>
+            </tr>
+            <tr>
+              <td class="mono">DRY-0497</td>
+              <td>Edamame</td>
+              <td>Kitchen</td>
+              <td class="mono">SHLMP</td>
+              <td>GRAM</td>
+              <td class="num">43.5</td>
+              <td class="num">450</td>
+              <td class="num">19,575</td>
+              <td>OK</td>
+            </tr>
+            <tr>
+              <td class="mono">FISH-0098</td>
+              <td>Tuna Akami</td>
+              <td>Sushi</td>
+              <td class="mono">SHLMP</td>
+              <td>GRAM</td>
+              <td class="num stock-low">22.0</td>
+              <td class="num">165,000</td>
+              <td class="num">3,630,000</td>
+              <td class="stock-low">Low</td>
+            </tr>
+            <tr>
+              <td class="mono">DRY-0103</td>
+              <td>Salt</td>
+              <td>Kitchen</td>
+              <td class="mono">SHLMP</td>
+              <td>GRAM</td>
+              <td class="num">500.0</td>
+              <td class="num">250</td>
+              <td class="num">125,000</td>
+              <td>OK</td>
+            </tr>
+            <tr>
+              <td class="mono">LIQ-0042</td>
+              <td>Sake Premium</td>
+              <td>Bar</td>
+              <td class="mono">SHLMP</td>
+              <td>BOTTLE</td>
+              <td class="num">18.0</td>
+              <td class="num">425,000</td>
+              <td class="num">7,650,000</td>
+              <td>OK</td>
+            </tr>
+            <tr>
+              <td class="mono">MENU-001</td>
+              <td>Edamame (finished)</td>
+              <td>Kitchen</td>
+              <td class="mono">SHLMP</td>
+              <td>PORTION</td>
+              <td class="num">0.0</td>
+              <td class="num stock-na">—</td>
+              <td class="num stock-na">—</td>
+              <td class="stock-na">N/A</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="summary-strip">
+        <span>8 items shown &middot; Total stock value: Rp 20,041,575</span>
+        <span class="right">Critical: 2 &middot; Low: 2</span>
+      </div>
+
+      <div class="sql-footer">
+        Data source: SELECT * FROM v_stock_on_hand JOIN master_item USING(item_id) WHERE status = 'Active'
+      </div>
+
+      <div class="btn-bar">
+        <button class="btn btn-wide">Export to PDF</button>
+        <button class="btn btn-wide">Print</button>
+        <button class="btn btn-primary btn-wide">Refresh</button>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="statusbar">
+    <span>Connected to MySQL · inventory_db</span>
+    <span>admin · v1.0.0</span>
+  </div>
+
+</div>
+
+</body>
+</html>

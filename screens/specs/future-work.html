@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Future Work &amp; Roadmap — Inventory Management</title>
+<link rel="stylesheet" href="../app-shell.css" />
+<style>
+  body { padding: 24px; background: #b8b8b8; }
+
+  .slide {
+    width: 1280px;
+    min-height: 800px;
+    background: #ffffff;
+    border: 1px solid #404040;
+    padding: 26px 36px 22px;
+    box-sizing: border-box;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .slide-title { font-size: 22px; font-weight: 700; margin: 0; }
+  .slide-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+  /* ===== 2x2 category grid ===== */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 14px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .cat {
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .cat-head {
+    background: var(--bg-window);
+    border-bottom: 1px solid var(--border-dark);
+    padding: 8px 14px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .cat-head .label {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+  }
+  .cat-head .tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .cat-body {
+    padding: 10px 16px 12px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--text);
+    flex: 1;
+  }
+  .cat-body ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+  .cat-body li { margin-bottom: 3px; }
+  .cat-body li b { font-weight: 600; }
+
+  /* ===== Bottom stretch row ===== */
+  .stretch {
+    border: 1px solid var(--border);
+    background: var(--bg-window);
+    padding: 10px 16px;
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .stretch .lab {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #3a3a3a;
+    font-size: 11px;
+    margin-right: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+
+  <!-- Header -->
+  <div>
+    <h1 class="slide-title">Future Work &amp; Roadmap</h1>
+    <div class="slide-subtitle">Where the system could grow beyond the v1.0 final-project scope</div>
+  </div>
+
+  <!-- 2x2 categories -->
+  <div class="grid">
+
+    <!-- New Features -->
+    <div class="cat">
+      <div class="cat-head">
+        <span class="label">New Features</span>
+        <span class="tag">user-facing</span>
+      </div>
+      <div class="cat-body">
+        <ul>
+          <li><b>Barcode / QR scanner</b> — faster item lookup at Receiving and Audit</li>
+          <li><b>Mobile companion app</b> — read-only Stock On Hand and quick Movement entry for staff on the floor</li>
+          <li><b>Bilingual UI</b> — Bahasa Indonesia ↔ English toggle</li>
+          <li><b>Low-stock notifications</b> — push alerts when items hit critical threshold</li>
+          <li><b>Recipe-driven sales deduction</b> — selling a finished dish auto-deducts ingredients from raw stock</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Technical Improvements -->
+    <div class="cat">
+      <div class="cat-head">
+        <span class="label">Technical Improvements</span>
+        <span class="tag">platform</span>
+      </div>
+      <div class="cat-body">
+        <ul>
+          <li><b>REST API layer</b> — expose data to other systems and future clients</li>
+          <li><b>Change-log / audit trail table</b> — who edited what, and when</li>
+          <li><b>Automated database backups</b> + scripted restore workflow</li>
+          <li><b>Performance hardening</b> — composite indexes on transaction tables for multi-year history</li>
+          <li><b>Unit + integration test coverage</b> for the DAO layer</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Integrations -->
+    <div class="cat">
+      <div class="cat-head">
+        <span class="label">Integrations</span>
+        <span class="tag">external systems</span>
+      </div>
+      <div class="cat-body">
+        <ul>
+          <li><b>POS sync</b> — auto-import sales from the cashier system at end-of-day</li>
+          <li><b>Vendor portal</b> — vendors submit delivery slips and invoices directly</li>
+          <li><b>Accounting export</b> — CSV + direct connect for the company's bookkeeping software</li>
+          <li><b>BI hand-off</b> — read-only views consumable by Looker / Power BI / Tableau</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- UX & Polish -->
+    <div class="cat">
+      <div class="cat-head">
+        <span class="label">UX &amp; Polish</span>
+        <span class="tag">presentation</span>
+      </div>
+      <div class="cat-body">
+        <ul>
+          <li><b>Printable invoice / receipt slip</b> with QR code for quick lookup</li>
+          <li><b>Customizable dashboard widgets</b> per user role</li>
+          <li><b>Keyboard shortcuts</b> for the most-used actions (new sale, save, search)</li>
+          <li><b>Dark mode</b> and in-app theme switcher</li>
+          <li><b>Comprehensive in-app help</b> &amp; quick-search across all screens</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Stretch row -->
+  <div class="stretch">
+    <span class="lab">Stretch goals:</span>
+    Multi-currency support &middot; Multi-tenant architecture (other restaurant chains) &middot;
+    Forecasting models for reorder points &middot; Supplier price-history tracking &middot;
+    Cloud deployment with role-based replicas per outlet.
+  </div>
+
+</div>
+
+</body>
+</html>

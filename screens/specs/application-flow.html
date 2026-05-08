@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Application Flow &amp; Build Order — Inventory Management</title>
+<link rel="stylesheet" href="../app-shell.css" />
+<style>
+  body {
+    padding: 24px;
+    background: #b8b8b8;
+  }
+
+  .slide {
+    width: 1280px;
+    min-height: 800px;
+    background: #ffffff;
+    border: 1px solid #404040;
+    display: flex;
+    flex-direction: column;
+    padding: 22px 30px 18px;
+    box-sizing: border-box;
+    user-select: none;
+  }
+
+  .slide-header { margin-bottom: 12px; }
+  .slide-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #000;
+    letter-spacing: 0.2px;
+    margin: 0;
+  }
+  .slide-subtitle {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+
+  /* ===== Thumbnail grid 3×5 ===== */
+  .thumb-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 140px;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .thumb {
+    border: 1px solid var(--border);
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .thumb-head {
+    background: var(--bg-window);
+    border-bottom: 1px solid var(--border);
+    padding: 3px 7px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10.5px;
+    font-weight: 700;
+  }
+  .thumb-head .num {
+    background: #0066cc;
+    color: #fff;
+    width: 18px;
+    height: 14px;
+    display: inline-grid;
+    place-items: center;
+    font-size: 9.5px;
+    font-family: var(--font-mono);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .thumb-head .num.start { background: #27500a; }
+  .thumb-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 5px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  .thumb-foot {
+    border-top: 1px solid var(--border);
+    background: #fafafa;
+    padding: 2px 7px;
+    font-size: 9.5px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* mini wireframe primitives (same as before, just compact) */
+  .mw-line  { background: #b0b0b0; height: 3px; border-radius: 1px; }
+  .mw-box {
+    border: 1px solid #b0b0b0;
+    background: #fff;
+  }
+  .mw-box.yellow { background: #fff8d6; border-color: #d6c068; }
+
+  .mw-login { display:flex; align-items:center; justify-content:center; height:100%; }
+  .mw-login .dialog { width: 84px; border: 1px solid #404040; background: #f0f0f0; }
+  .mw-login .dialog .tb { height: 6px; background: linear-gradient(#0a4ea0, #0066cc); }
+  .mw-login .dialog .body { padding: 5px; display:flex; flex-direction:column; gap:3px; }
+  .mw-login .dialog .row { display:flex; align-items:center; gap:3px; }
+  .mw-login .dialog .lbl { width: 22px; height: 3px; background:#b0b0b0; }
+  .mw-login .dialog .fld { flex:1; height: 6px; background: #fff; border: 1px solid #b0b0b0; }
+  .mw-login .dialog .btn { width: 26px; height: 8px; background: #0066cc; align-self: center; margin-top: 1px; }
+
+  .mw-dash { display:flex; flex-direction:column; gap:3px; height:100%; }
+  .mw-dash .kpis { display:grid; grid-template-columns: repeat(4,1fr); gap:2px; }
+  .mw-dash .kpis .k { border:1px solid #b0b0b0; height:18px; background:#fff; display:flex; align-items:center; justify-content:center; }
+  .mw-dash .kpis .k .v { height:4px; width:60%; background:#000; border-radius:1px; }
+  .mw-dash .qa { display:flex; gap:2px; }
+  .mw-dash .qa .btn { flex:1; height:8px; border:1px solid #b0b0b0; background:#f0f0f0; }
+  .mw-dash .qa .btn.p { background:#0066cc; border-color:#003e80; }
+  .mw-dash .panels { display:grid; grid-template-columns:1fr 1fr; gap:3px; flex:1; min-height:0; }
+  .mw-dash .panels .p { border:1px solid #b0b0b0; background:#fff; padding:2px; display:flex; flex-direction:column; gap:2px; }
+  .mw-dash .panels .p .r { height:2px; background:#d8d8d8; border-radius:1px; }
+
+  .mw-screen { display:flex; flex-direction:column; gap:3px; height:100%; }
+  .mw-screen .tbar { display:flex; gap:2px; padding:2px; background:#f0f0f0; border:1px solid #b0b0b0; }
+  .mw-screen .tbar .b { width:14px; height:6px; background:#f0f0f0; border:1px solid #b0b0b0; }
+  .mw-screen .tbar .b.p { background:#0066cc; border-color:#003e80; }
+  .mw-screen .tbar .b.r { background:#cc0000; border-color:#800000; }
+  .mw-screen .tbar .s { flex:1; }
+  .mw-screen .tbar .search { width:26px; height:6px; background:#fff; border:1px solid #b0b0b0; }
+  .mw-screen .group { border:1px solid #808080; background:#fff; padding:3px; display:grid; grid-template-columns:1fr 1fr; column-gap:4px; row-gap:2px; }
+  .mw-screen .group.shaded { background:#f0f0f0; }
+  .mw-screen .group .frow { display:flex; align-items:center; gap:2px; }
+  .mw-screen .group .frow .lbl { width:18px; height:2.5px; background:#b0b0b0; flex-shrink:0; }
+  .mw-screen .group .frow .fld { flex:1; height:5px; background:#fff; border:1px solid #b0b0b0; }
+  .mw-screen .table { border:1px solid #808080; background:#fff; flex:1; min-height:0; display:flex; flex-direction:column; }
+  .mw-screen .table .th { background:#e8e8e8; border-bottom:1px solid #b0b0b0; height:6px; display:grid; grid-template-columns: repeat(4,1fr); column-gap:1px; }
+  .mw-screen .table .th .c { background:#e8e8e8; }
+  .mw-screen .table .tr { height:5px; display:grid; grid-template-columns: repeat(4,1fr); column-gap:1px; border-bottom:1px solid #e8e8e8; }
+  .mw-screen .table .tr:nth-child(odd) { background:#f8f8f8; }
+  .mw-screen .table .tr .c { background:rgba(0,0,0,0.05); }
+  .mw-screen .table .tr.audit .c.edit { background:#cce4f7; }
+
+  .mw-mov { display:flex; align-items:center; justify-content:center; padding-top:3px; height:100%; }
+  .mw-mov .group { width:110px; border:1px solid #808080; background:#fff; padding:3px; display:flex; flex-direction:column; gap:2px; }
+  .mw-mov .frow { display:flex; align-items:center; gap:2px; }
+  .mw-mov .lbl { width:24px; height:2.5px; background:#b0b0b0; }
+  .mw-mov .fld { flex:1; height:5px; background:#fff; border:1px solid #b0b0b0; }
+  .mw-mov .fld.yellow { background:#fff8d6; border-color:#d6c068; }
+  .mw-mov .fld.gray { background:#e8e8e8; }
+
+  .mw-reports { display:grid; grid-template-columns:70px 1fr; gap:4px; height:100%; }
+  .mw-reports .filter { border:1px solid #808080; background:#fff; padding:3px; display:flex; flex-direction:column; gap:2px; }
+  .mw-reports .filter .frow { display:flex; gap:2px; align-items:center; }
+  .mw-reports .filter .lbl { width:14px; height:2px; background:#b0b0b0; }
+  .mw-reports .filter .fld { flex:1; height:4px; background:#fff; border:1px solid #b0b0b0; }
+  .mw-reports .filter .btns { display:flex; gap:2px; margin-top:2px; }
+  .mw-reports .filter .btns .b { flex:1; height:6px; background:#f0f0f0; border:1px solid #b0b0b0; }
+  .mw-reports .filter .btns .b.p { background:#0066cc; border-color:#003e80; }
+  .mw-reports .preview { border:1px solid #808080; background:#fff; padding:3px; display:flex; flex-direction:column; gap:2px; }
+  .mw-reports .preview .ln { height:2px; background:#000; border-radius:1px; }
+  .mw-reports .preview .ln.short { width:50%; }
+  .mw-reports .preview .ln.medium { width:75%; }
+
+  .mw-charts { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:3px; height:100%; }
+  .mw-charts .panel { border:1px solid #808080; background:#fff; overflow:hidden; }
+  .mw-charts .panel svg { width:100%; height:100%; display:block; }
+
+  /* ===== Flow section ===== */
+  .flow-section {
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 18px;
+    align-items: start;
+  }
+  .flow-title {
+    font-size: 12px;
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
+
+  .flow-diagram {
+    border: 1px solid var(--border);
+    background: #fafafa;
+    padding: 8px;
+    height: 158px;
+    position: relative;
+  }
+  .flow-diagram svg { width: 100%; height: 100%; display: block; }
+
+  .legend-block {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    background: #fafafa;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .legend-block .row { display:flex; align-items:center; gap:8px; font-size: 11.5px; }
+  .legend-block .sw { width: 22px; height: 12px; border:1px solid #404040; flex-shrink: 0; }
+  .legend-block .sw.green { background:#27500a; }
+  .legend-block .sw.blue  { background:#0066cc; }
+  .legend-block .sw.gray  { background:#f0f0f0; }
+  .legend-block .sw.red   { background:#cc0000; }
+  .legend-block .sw.yellow{ background:#fff8d6; border-color:#d6c068; }
+  .legend-block .hr { height:1px; background: var(--border); margin: 3px 0; }
+  .legend-block .meta { font-size: 10.5px; color: var(--text-muted); line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<div class="slide">
+
+  <div class="slide-header">
+    <h1 class="slide-title">Application Flow &amp; Build Order</h1>
+    <div class="slide-subtitle">Inventory Management System &middot; 16 Screens &middot; 14 Database Tables</div>
+  </div>
+
+  <!-- 3 × 5 thumbnail grid -->
+  <div class="thumb-grid">
+
+    <!-- 01 Login -->
+    <div class="thumb">
+      <div class="thumb-head"><span class="num start">01</span><span>Login</span></div>
+      <div class="thumb-body">
+        <div class="mw-login">
+          <div class="dialog">
+            <div class="tb"></div>
+            <div class="body">
+              <div class="row"><div class="lbl"></div><div class="fld"></div></div>
+              <div class="row"><div class="lbl"></div><div class="fld"></div></div>
+              <div class="btn"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="thumb-foot">LoginFrame.java</div>
+    </div>
+
+    <!-- 02 Dashboard -->
+    <div class="thumb">
+      <div class="thumb-head"><span class="num">02</span><span>Dashboard</span></div>
+      <div class="thumb-body">
+        <div class="mw-dash">
+          <div class="kpis">
+            <div class="k"><div class="v"></div></div>
+            <div class="k"><div class="v"></div></div>
+            <div class="k"><div class="v"></div></div>
+            <div class="k"><div class="v"></div></div>
+          </div>
+          <div class="qa"><div class="btn p"></div><div class="btn"></div><div class="btn"></div><div class="btn"></div></div>
+          <div class="panels">
+            <div class="p"><div class="r"></div><div class="r"></div><div class="r"></div></div>
+            <div class="p"><div class="r"></div><div class="r"></div><div class="r"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="thumb-foot">DashboardPanel.java</div>
+    </div>
+
+    <!-- 03 Items -->
+    <div class="thumb">
+      <div class="thumb-head"><span class="num">03</span><span>Items</span></div>
+      <div class="thumb-body">
+        <div class="mw-screen">
+          <div class="tbar">
+            <div class="b p"></div><div class="b"></div><div class="b r"></div><div class="b"></div>
+            <div class="s"></div><div class="search"></div>
+          </div>
+          <div class="group">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="table">
+            <div class="th"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="thumb-foot">MasterItemPanel.java</div>
+    </div>
+
+    <!-- 04 Categories -->
+    <div class="thumb">
+      <div class="thumb-head"><span class="num">04</span><span>Categories</span></div>
+      <div class="thumb-body">
+        <div class="mw-screen">
+          <div class="tbar">
+            <div class="b p"></div><div class="b"></div><div class="b r"></div><div class="b"></div>
+            <div class="s"></div><div class="search"></div>
+          </div>
+          <div class="group">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="table">
+            <div class="th"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="thumb-foot">CategoriesPanel.java</div>
+    </div>
+
+    <!-- 05 Outlets -->
+    <div class="thumb">
+      <div class="thumb-head"><span class="num">05</span><span>Outlets</span></div>
+      <div class="thumb-body">
+        <div class="mw-screen">
+          <div class="tbar">
+            <div class="b p"></div><div class="b"></div><div class="b r"></div><div class="b"></div>
+            <div class="s"></div><div class="search"></div>
+          </div>
+          <div class="group">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="table">
+            <div class="th"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="thumb-foot">OutletsPanel.java</div>
+    </div>
+
+    <!-- 06 Vendors -->
+    <div class="thumb">
+      <div class="thumb-head"><span class="num">06</span><span>Vendors</span></div>
+      <div class="thumb-body">
+        <div class="mw-screen">
+          <div class="tbar">
+            <div class="b p"></div><div class="b"></div><div class="b r"></div><div class="b"></div>
+            <div class="s"></div><div class="search"></div>
+          </div>
+          <div class="group">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="table">
+            <div class="th"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="thumb-foot">VendorsPanel.java</div>
+    </div>
+
+    <!-- 07 Users -->
+    <div class="thumb">
+      <div class="thumb-head"><span class="num">07</span><span>Users</span></div>
+      <div class="thumb-body">
+        <div class="mw-screen">
+          <div class="tbar">
+            <div class="b p"></div><div class="b"></div><div class="b r"></div><div class="b"></div>
+            <div class="s"></div><div class="search"></div>
+          </div>
+          <div class="group">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="table">
+            <div class="th"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="thumb-foot">UsersPanel.java</div>
+    </div>
+
+    <!-- 08 Receiving -->
+    <div class="thumb">
+      <div class="thumb-head"><span class="num">08</span><span>Receiving</span></div>
+      <div class="thumb-body">
+        <div class="mw-screen">
+          <div class="group">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="group shaded">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="table">
+            <div class="th"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="thumb-foot">ReceivingPanel.java</div>
+    </div>
+
+    <!-- 09 Sales -->
+    <div class="thumb">
+      <div class="thumb-head"><span class="num">09</span><span>Sales</span></div>
+      <div class="thumb-body">
+        <div class="mw-screen">
+          <div class="group">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="group shaded">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="table">
+            <div class="th"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="thumb-foot">SalesPanel.java</div>
+    </div>
+
+    <!-- 10 Movement -->
+    <div class="thumb">
+      <div class="thumb-head"><span class="num">10</span><span>Movement</span></div>
+      <div class="thumb-body">
+        <div class="mw-mov">
+          <div class="group">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld yellow"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld gray"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld gray"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="thumb-foot">MovementPanel.java</div>
+    </div>
+
+    <!-- 11 Recipes -->
+    <div class="thumb">
+      <div class="thumb-head"><span class="num">11</span><span>Recipes</span></div>
+      <div class="thumb-body">
+        <div class="mw-screen">
+          <div class="group">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="group shaded">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="table">
+            <div class="th"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="thumb-foot">RecipesPanel.java</div>
+    </div>
+
+    <!-- 12 Stock On Hand -->
+    <div class="thumb">
+      <div class="thumb-head"><span class="num">12</span><span>Stock On Hand</span></div>
+      <div class="thumb-body">
+        <div class="mw-screen">
+          <div class="group">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="table">
+            <div class="th"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="thumb-foot">StockOnHandPanel.java</div>
+    </div>
+
+    <!-- 13 Audit -->
+    <div class="thumb">
+      <div class="thumb-head"><span class="num">13</span><span>Audit</span></div>
+      <div class="thumb-body">
+        <div class="mw-screen">
+          <div class="group">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="table">
+            <div class="th"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr audit"><div class="c"></div><div class="c"></div><div class="c edit"></div><div class="c"></div></div>
+            <div class="tr audit"><div class="c"></div><div class="c"></div><div class="c edit"></div><div class="c"></div></div>
+            <div class="tr audit"><div class="c"></div><div class="c"></div><div class="c edit"></div><div class="c"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="thumb-foot">AuditPanel.java</div>
+    </div>
+
+    <!-- 14 End Balance -->
+    <div class="thumb">
+      <div class="thumb-head"><span class="num">14</span><span>End Balance</span></div>
+      <div class="thumb-body">
+        <div class="mw-screen">
+          <div class="group">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="mw-box yellow" style="height:8px;"></div>
+          <div class="table">
+            <div class="th"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="thumb-foot">EndBalancePanel.java</div>
+    </div>
+
+    <!-- 15 Reports -->
+    <div class="thumb">
+      <div class="thumb-head"><span class="num">15</span><span>Reports</span></div>
+      <div class="thumb-body">
+        <div class="mw-reports">
+          <div class="filter">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="btns"><div class="b p"></div><div class="b"></div></div>
+          </div>
+          <div class="preview">
+            <div class="ln medium"></div>
+            <div class="ln short"></div>
+            <div class="ln"></div>
+            <div class="ln medium"></div>
+            <div class="ln"></div>
+            <div class="ln medium"></div>
+            <div class="ln short"></div>
+            <div class="ln"></div>
+          </div>
+        </div>
+      </div>
+      <div class="thumb-foot">ReportsPanel.java</div>
+    </div>
+
+    <!-- 16 Charts -->
+    <div class="thumb">
+      <div class="thumb-head"><span class="num">16</span><span>Charts</span></div>
+      <div class="thumb-body">
+        <div class="mw-charts">
+          <div class="panel">
+            <svg viewBox="0 0 80 50" preserveAspectRatio="none">
+              <line x1="6" y1="4" x2="6" y2="44" stroke="#000"/>
+              <line x1="6" y1="44" x2="76" y2="44" stroke="#000"/>
+              <rect x="6" y="8"  width="60" height="5" fill="#0066cc"/>
+              <rect x="6" y="16" width="48" height="5" fill="#0066cc"/>
+              <rect x="6" y="24" width="36" height="5" fill="#0066cc"/>
+              <rect x="6" y="32" width="22" height="5" fill="#0066cc"/>
+            </svg>
+          </div>
+          <div class="panel">
+            <svg viewBox="0 0 80 50" preserveAspectRatio="none">
+              <line x1="6" y1="4" x2="6" y2="44" stroke="#000"/>
+              <line x1="6" y1="44" x2="76" y2="44" stroke="#000"/>
+              <polyline fill="none" stroke="#0066cc" stroke-width="1.2"
+                points="6,34 16,30 26,32 36,24 46,22 56,16 66,18 76,10" />
+            </svg>
+          </div>
+          <div class="panel">
+            <svg viewBox="0 0 80 50" preserveAspectRatio="none">
+              <path d="M 28 25 L 28 7 A 18 18 0 0 1 33.6 42.1 Z" fill="#0a3d70" stroke="#fff" stroke-width="0.4"/>
+              <path d="M 28 25 L 33.6 42.1 A 18 18 0 0 1 10.9 31.6 Z" fill="#1d6fbf" stroke="#fff" stroke-width="0.4"/>
+              <path d="M 28 25 L 10.9 31.6 A 18 18 0 0 1 17.4 11.4 Z" fill="#5a9ad6" stroke="#fff" stroke-width="0.4"/>
+              <path d="M 28 25 L 17.4 11.4 A 18 18 0 0 1 28 7 Z" fill="#9ec6e8" stroke="#fff" stroke-width="0.4"/>
+              <rect x="52" y="12" width="5" height="4" fill="#0a3d70"/>
+              <rect x="52" y="20" width="5" height="4" fill="#1d6fbf"/>
+              <rect x="52" y="28" width="5" height="4" fill="#5a9ad6"/>
+              <rect x="52" y="36" width="5" height="4" fill="#9ec6e8"/>
+              <line x1="60" y1="14" x2="74" y2="14" stroke="#b0b0b0" stroke-width="1.5"/>
+              <line x1="60" y1="22" x2="74" y2="22" stroke="#b0b0b0" stroke-width="1.5"/>
+              <line x1="60" y1="30" x2="74" y2="30" stroke="#b0b0b0" stroke-width="1.5"/>
+              <line x1="60" y1="38" x2="74" y2="38" stroke="#b0b0b0" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="panel">
+            <svg viewBox="0 0 80 50" preserveAspectRatio="none">
+              <line x1="6" y1="4" x2="6" y2="44" stroke="#000"/>
+              <line x1="6" y1="44" x2="76" y2="44" stroke="#000"/>
+              <rect x="6" y="8"  width="55" height="5" fill="#cc0000"/>
+              <rect x="6" y="16" width="42" height="5" fill="#cc0000"/>
+              <rect x="6" y="24" width="30" height="5" fill="#cc0000"/>
+              <rect x="6" y="32" width="20" height="5" fill="#cc0000"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="thumb-foot">ChartsPanel.java</div>
+    </div>
+
+  </div>
+
+  <!-- Flow + Legend -->
+  <div class="flow-section">
+
+    <div>
+      <div class="flow-title">Navigation Flow</div>
+      <div class="flow-diagram">
+        <svg viewBox="0 0 700 140" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#000"/>
+            </marker>
+            <marker id="arr-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#cc0000"/>
+            </marker>
+          </defs>
+
+          <!-- Login -->
+          <rect x="18" y="55" width="80" height="30" fill="#27500a" stroke="#000"/>
+          <text x="58" y="74" text-anchor="middle" fill="#fff" font-weight="700" font-family="Segoe UI, Tahoma, sans-serif" font-size="12">01 Login</text>
+
+          <line x1="98" y1="70" x2="158" y2="70" stroke="#000" stroke-width="1.5" marker-end="url(#arr)"/>
+          <text x="128" y="62" text-anchor="middle" fill="#666" font-family="Segoe UI, Tahoma, sans-serif" font-size="10">auth ok</text>
+
+          <!-- Dashboard -->
+          <rect x="158" y="55" width="110" height="30" fill="#0066cc" stroke="#000"/>
+          <text x="213" y="74" text-anchor="middle" fill="#fff" font-weight="700" font-family="Segoe UI, Tahoma, sans-serif" font-size="12">02 Dashboard</text>
+
+          <text x="305" y="63" text-anchor="middle" fill="#666" font-family="Segoe UI, Tahoma, sans-serif" font-size="10">sidebar nav</text>
+
+          <!-- Four sidebar-group boxes -->
+          <g font-family="Segoe UI, Tahoma, sans-serif" font-size="10" fill="#000">
+            <!-- Master Data -->
+            <rect x="350" y="6" width="170" height="58" fill="#fff" stroke="#808080"/>
+            <text x="435" y="19" text-anchor="middle" font-weight="700">MASTER DATA</text>
+            <text x="435" y="33" text-anchor="middle">03 Items · 04 Categories</text>
+            <text x="435" y="46" text-anchor="middle">05 Outlets · 06 Vendors</text>
+            <text x="435" y="59" text-anchor="middle">07 Users</text>
+
+            <!-- Transactions -->
+            <rect x="530" y="6" width="160" height="58" fill="#fff" stroke="#808080"/>
+            <text x="610" y="19" text-anchor="middle" font-weight="700">TRANSACTIONS</text>
+            <text x="610" y="33" text-anchor="middle">08 Receiving · 09 Sales</text>
+            <text x="610" y="46" text-anchor="middle">10 Movement</text>
+            <text x="610" y="59" text-anchor="middle">11 Recipes</text>
+
+            <!-- Stock Ops -->
+            <rect x="350" y="76" width="170" height="58" fill="#fff" stroke="#808080"/>
+            <text x="435" y="89" text-anchor="middle" font-weight="700">STOCK OPS</text>
+            <text x="435" y="103" text-anchor="middle">12 Stock On Hand</text>
+            <text x="435" y="116" text-anchor="middle">13 Audit</text>
+            <text x="435" y="129" text-anchor="middle">14 End Balance</text>
+
+            <!-- Reports & Charts -->
+            <rect x="530" y="76" width="160" height="44" fill="#fff" stroke="#808080"/>
+            <text x="610" y="89" text-anchor="middle" font-weight="700">REPORTS &amp; CHARTS</text>
+            <text x="610" y="103" text-anchor="middle">15 Reports</text>
+            <text x="610" y="115" text-anchor="middle">16 Charts</text>
+          </g>
+
+          <!-- Arrows from Dashboard (right edge 268,70) to each group box -->
+          <g stroke="#000" stroke-width="1" fill="none">
+            <line x1="268" y1="70" x2="350" y2="30"  marker-end="url(#arr)"/>
+            <line x1="268" y1="70" x2="530" y2="30"  marker-end="url(#arr)"/>
+            <line x1="268" y1="70" x2="350" y2="100" marker-end="url(#arr)"/>
+            <line x1="268" y1="70" x2="530" y2="100" marker-end="url(#arr)"/>
+          </g>
+
+          <!-- Logout return arrow -->
+          <path d="M 690 135 Q 400 145 58 95" fill="none" stroke="#cc0000" stroke-width="1.5" stroke-dasharray="3 2" marker-end="url(#arr-r)"/>
+          <text x="400" y="138" text-anchor="middle" fill="#cc0000" font-family="Segoe UI, Tahoma, sans-serif" font-size="10">Logout (returns to Login)</text>
+        </svg>
+      </div>
+    </div>
+
+    <div>
+      <div class="flow-title">Legend &amp; Build Notes</div>
+      <div class="legend-block">
+        <div class="row"><div class="sw green"></div><span>Entry point (separate JFrame)</span></div>
+        <div class="row"><div class="sw blue"></div><span>Hub / primary action button</span></div>
+        <div class="row"><div class="sw gray"></div><span>JPanel inside main JFrame (CardLayout)</span></div>
+        <div class="row"><div class="sw red"></div><span>Destructive action / logout flow</span></div>
+        <div class="row"><div class="sw yellow"></div><span>Confirmation / warning strip</span></div>
+        <div class="hr"></div>
+        <div class="meta">
+          14 tables &middot; master_item, category, outlet, vendor, user,
+          sales_header, sales_detail, receiving_header, receiving_detail,
+          recipe_header, recipe_detail, movement, audit, end_balance.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

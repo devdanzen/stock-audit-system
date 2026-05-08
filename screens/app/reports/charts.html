@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Charts — Inventory Management</title>
+<link rel="stylesheet" href="../../app-shell.css" />
+<style>
+  .filter-strip {
+    margin: 12px 14px 14px;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .filter-strip .fb {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .filter-strip label { font-size: 12px; }
+  .filter-strip .field { width: 160px; }
+  .filter-strip .spacer { flex: 1; }
+
+  .charts-grid {
+    margin: 0 14px 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .chart-panel {
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    height: 290px;
+    overflow: hidden;
+  }
+  .chart-panel .head {
+    background: var(--bg-window);
+    border-bottom: 1px solid var(--border);
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .chart-panel .body {
+    flex: 1;
+    padding: 6px 8px;
+    overflow: hidden;
+  }
+  .chart-panel .body svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .chart-panel .foot {
+    border-top: 1px solid var(--border);
+    background: #fafafa;
+    padding: 3px 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* Common JFreeChart-style axis text */
+  .ax-text { font-family: var(--font); font-size: 10px; fill: #000; }
+  .ax-label { font-family: var(--font); font-size: 10px; fill: #000; }
+  .bar-label { font-family: var(--font); font-size: 10px; fill: #000; }
+  .legend-text { font-family: var(--font); font-size: 11px; fill: #000; }
+
+  .pie-slice { stroke: #fff; stroke-width: 1; }
+</style>
+</head>
+<body>
+
+<div class="jframe" data-screen-label="10 Charts">
+
+  <div class="titlebar">
+    <span class="title-text">Inventory Management System</span>
+    <div class="winbtns">
+      <button class="winbtn">&#x2014;</button>
+      <button class="winbtn">&#x25A1;</button>
+      <button class="winbtn close">&#x2715;</button>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <span class="app-name">Inventory Management</span>
+    <span class="spacer"></span>
+    <span class="right">User: admin</span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="nav">
+      <div class="nav-item">Dashboard</div>
+
+      <div class="nav-section">--- Master Data ---</div>
+      <div class="nav-item">Items</div>
+      <div class="nav-item">Categories</div>
+      <div class="nav-item">Outlets</div>
+      <div class="nav-item">Vendors</div>
+      <div class="nav-item">Users</div>
+
+      <div class="nav-section">--- Transactions ---</div>
+      <div class="nav-item">Receiving</div>
+      <div class="nav-item">Sales</div>
+      <div class="nav-item">Movement</div>
+      <div class="nav-item">Recipes</div>
+
+      <div class="nav-section">--- Stock Operations ---</div>
+      <div class="nav-item">Stock On Hand</div>
+      <div class="nav-item">Audit</div>
+      <div class="nav-item">End Balance</div>
+
+      <div class="nav-section">--- Reports &amp; Charts ---</div>
+      <div class="nav-item">Reports</div>
+      <div class="nav-item active">Charts</div>
+    </div>
+    <div class="nav-footer">
+      <div class="nav-item">Logout</div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="screen">
+
+      <div class="screen-header" style="padding:10px 14px;height:40px;box-sizing:border-box;">
+        <div class="screen-title">Charts Dashboard</div>
+      </div>
+
+      <!-- Filter strip -->
+      <div class="filter-strip">
+        <div class="fb"><label>Date Range:</label>
+          <select class="field"><option>Last 30 days</option></select>
+        </div>
+        <div class="fb"><label>Outlet:</label>
+          <select class="field"><option>SHLMP</option></select>
+        </div>
+        <div class="spacer"></div>
+        <button class="btn btn-primary">Refresh</button>
+      </div>
+
+      <!-- 2×2 chart grid -->
+      <div class="charts-grid">
+
+        <!-- TOP LEFT: Top 10 Best-Selling Items -->
+        <div class="chart-panel">
+          <div class="head">Top 10 Best-Selling Items</div>
+          <div class="body">
+            <svg viewBox="0 0 480 220" preserveAspectRatio="none">
+              <!-- plot area -->
+              <!-- Y labels (item names) and bars -->
+              <!-- bars: x0 = 115, plot width 340, max=300 -->
+              <!-- 8 rows, row height 22, starts y=8 -->
+
+              <!-- bars -->
+              <rect x="115" y="10"  width="281" height="14" fill="#0066cc"/>
+              <rect x="115" y="32"  width="240" height="14" fill="#0066cc"/>
+              <rect x="115" y="54"  width="194" height="14" fill="#0066cc"/>
+              <rect x="115" y="76"  width="148" height="14" fill="#0066cc"/>
+              <rect x="115" y="98"  width="122" height="14" fill="#0066cc"/>
+              <rect x="115" y="120" width="103" height="14" fill="#0066cc"/>
+              <rect x="115" y="142" width="87"  height="14" fill="#0066cc"/>
+              <rect x="115" y="164" width="73"  height="14" fill="#0066cc"/>
+
+              <!-- value labels (end of bar) -->
+              <text class="bar-label" x="400" y="21">248</text>
+              <text class="bar-label" x="359" y="43">212</text>
+              <text class="bar-label" x="313" y="65">171</text>
+              <text class="bar-label" x="267" y="87">131</text>
+              <text class="bar-label" x="241" y="109">108</text>
+              <text class="bar-label" x="222" y="131">91</text>
+              <text class="bar-label" x="206" y="153">77</text>
+              <text class="bar-label" x="192" y="175">64</text>
+
+              <!-- item labels (right-aligned at x=112) -->
+              <text class="ax-text" x="112" y="21" text-anchor="end">Edamame</text>
+              <text class="ax-text" x="112" y="43" text-anchor="end">Salmon Sushi</text>
+              <text class="ax-text" x="112" y="65" text-anchor="end">Tuna Akami</text>
+              <text class="ax-text" x="112" y="87" text-anchor="end">Unagi Roll</text>
+              <text class="ax-text" x="112" y="109" text-anchor="end">Sake Cocktail</text>
+              <text class="ax-text" x="112" y="131" text-anchor="end">Chicken Karaage</text>
+              <text class="ax-text" x="112" y="153" text-anchor="end">Ramen Miso</text>
+              <text class="ax-text" x="112" y="175" text-anchor="end">Gyoza</text>
+
+              <!-- axis line bottom -->
+              <line x1="115" y1="185" x2="455" y2="185" stroke="#000" stroke-width="1"/>
+              <!-- axis vertical -->
+              <line x1="115" y1="6" x2="115" y2="185" stroke="#000" stroke-width="1"/>
+              <!-- ticks 0,100,200,300 -->
+              <line x1="115" y1="185" x2="115" y2="190" stroke="#000"/>
+              <line x1="228" y1="185" x2="228" y2="190" stroke="#000"/>
+              <line x1="342" y1="185" x2="342" y2="190" stroke="#000"/>
+              <line x1="455" y1="185" x2="455" y2="190" stroke="#000"/>
+              <text class="ax-text" x="115" y="202" text-anchor="middle">0</text>
+              <text class="ax-text" x="228" y="202" text-anchor="middle">100</text>
+              <text class="ax-text" x="342" y="202" text-anchor="middle">200</text>
+              <text class="ax-text" x="455" y="202" text-anchor="middle">300</text>
+              <text class="ax-text" x="285" y="216" text-anchor="middle">Units Sold</text>
+            </svg>
+          </div>
+          <div class="foot">SQL: SELECT * FROM v_top_sellers LIMIT 10</div>
+        </div>
+
+        <!-- TOP RIGHT: Daily Sales — Last 30 Days -->
+        <div class="chart-panel">
+          <div class="head">Daily Sales — Last 30 Days</div>
+          <div class="body">
+            <svg viewBox="0 0 480 220" preserveAspectRatio="none">
+              <!-- Y-axis labels 0 to 10M -->
+              <text class="ax-text" x="48" y="13" text-anchor="end">10M</text>
+              <text class="ax-text" x="48" y="48" text-anchor="end">8M</text>
+              <text class="ax-text" x="48" y="83" text-anchor="end">6M</text>
+              <text class="ax-text" x="48" y="118" text-anchor="end">4M</text>
+              <text class="ax-text" x="48" y="153" text-anchor="end">2M</text>
+              <text class="ax-text" x="48" y="188" text-anchor="end">0</text>
+
+              <!-- Horizontal gridlines (light gray) -->
+              <line x1="52" y1="10"  x2="465" y2="10"  stroke="#ddd" stroke-width="1"/>
+              <line x1="52" y1="45"  x2="465" y2="45"  stroke="#ddd"/>
+              <line x1="52" y1="80"  x2="465" y2="80"  stroke="#ddd"/>
+              <line x1="52" y1="115" x2="465" y2="115" stroke="#ddd"/>
+              <line x1="52" y1="150" x2="465" y2="150" stroke="#ddd"/>
+
+              <!-- Axes -->
+              <line x1="52" y1="185" x2="465" y2="185" stroke="#000"/>
+              <line x1="52" y1="10"  x2="52"  y2="185" stroke="#000"/>
+
+              <!-- Polyline (30 points, plot x 52 to 465 → width 413, y 185-(v/10)*175) -->
+              <polyline fill="none" stroke="#0066cc" stroke-width="1.5"
+                points="
+52,129
+66,124
+81,143
+95,113
+109,120
+123,107
+137,113
+152,117
+166,101
+180,94
+194,104
+209,98
+223,89
+237,93
+251,84
+266,89
+280,77
+294,82
+308,71
+323,75
+337,66
+351,63
+365,71
+379,57
+394,54
+408,63
+422,49
+436,44
+450,54
+465,40
+"/>
+
+              <!-- X-axis tick labels -->
+              <text class="ax-text" x="52"  y="200" text-anchor="middle">1 Dec</text>
+              <text class="ax-text" x="155" y="200" text-anchor="middle">8 Dec</text>
+              <text class="ax-text" x="258" y="200" text-anchor="middle">15 Dec</text>
+              <text class="ax-text" x="361" y="200" text-anchor="middle">22 Dec</text>
+              <text class="ax-text" x="465" y="200" text-anchor="middle">31 Dec</text>
+              <text class="ax-text" x="258" y="216" text-anchor="middle">Date</text>
+
+              <!-- Y axis title -->
+              <text class="ax-text" x="14" y="100" transform="rotate(-90,14,100)" text-anchor="middle">Rp</text>
+            </svg>
+          </div>
+          <div class="foot">SQL: SELECT * FROM v_daily_sales WHERE sale_date &gt;= ...</div>
+        </div>
+
+        <!-- BOTTOM LEFT: Sales by Category (pie) -->
+        <div class="chart-panel">
+          <div class="head">Sales by Category</div>
+          <div class="body">
+            <svg viewBox="0 0 480 220" preserveAspectRatio="none">
+              <!-- Pie centered at (120, 110), radius 85 -->
+              <!-- slices clockwise starting at 12 o'clock (-90deg):
+                   Food 45% → 162°
+                   Sushi 25% → 90°
+                   Bar 20% → 72°
+                   Kitchen 10% → 36°
+                   total 360°
+              -->
+              <!-- Helper: convert angle to coord. cx=120,cy=110,r=85
+                   x = cx + r*cos(a), y = cy + r*sin(a); a=deg-90 in radians
+                   Pre-compute:
+                   start 0° (top): (120, 25)
+                   end Food 162°: a=162-90=72° → cos72=0.309 sin72=0.951 → (120+26.3,110+80.8)=(146.3,190.8)
+                   end Sushi 252°: a=252-90=162° → cos=-0.951 sin=0.309 → (120-80.8,110+26.3)=(39.2,136.3)
+                   end Bar 324°: a=324-90=234° → cos=-0.588 sin=-0.809 → (120-50,110-68.8)=(70,41.2)
+                   end Kitchen 360°: back to (120, 25)
+              -->
+              <!-- Food slice (162° > 180? no, it's 162° → large-arc-flag = 0) actually 162<180 so 0 -->
+              <path class="pie-slice" d="M 120 110 L 120 25 A 85 85 0 0 1 146.3 190.8 Z" fill="#0a3d70"/>
+              <!-- Sushi 90° → small arc -->
+              <path class="pie-slice" d="M 120 110 L 146.3 190.8 A 85 85 0 0 1 39.2 136.3 Z" fill="#1d6fbf"/>
+              <!-- Bar 72° → small arc -->
+              <path class="pie-slice" d="M 120 110 L 39.2 136.3 A 85 85 0 0 1 70 41.2 Z" fill="#5a9ad6"/>
+              <!-- Kitchen 36° → small arc -->
+              <path class="pie-slice" d="M 120 110 L 70 41.2 A 85 85 0 0 1 120 25 Z" fill="#9ec6e8"/>
+
+              <!-- Legend -->
+              <g transform="translate(245, 38)">
+                <rect x="0" y="0" width="14" height="12" fill="#0a3d70" stroke="#000" stroke-width="0.5"/>
+                <text class="legend-text" x="20" y="10">Food &mdash; 45% (Rp 8.4M)</text>
+
+                <rect x="0" y="22" width="14" height="12" fill="#1d6fbf" stroke="#000" stroke-width="0.5"/>
+                <text class="legend-text" x="20" y="32">Sushi &mdash; 25% (Rp 4.7M)</text>
+
+                <rect x="0" y="44" width="14" height="12" fill="#5a9ad6" stroke="#000" stroke-width="0.5"/>
+                <text class="legend-text" x="20" y="54">Bar &mdash; 20% (Rp 3.7M)</text>
+
+                <rect x="0" y="66" width="14" height="12" fill="#9ec6e8" stroke="#000" stroke-width="0.5"/>
+                <text class="legend-text" x="20" y="76">Kitchen &mdash; 10% (Rp 1.9M)</text>
+              </g>
+            </svg>
+          </div>
+          <div class="foot">SQL: GROUP BY category.category_name</div>
+        </div>
+
+        <!-- BOTTOM RIGHT: Top Waste Items (by Cost) -->
+        <div class="chart-panel">
+          <div class="head">Top Waste Items (by Cost)</div>
+          <div class="body">
+            <svg viewBox="0 0 480 220" preserveAspectRatio="none">
+              <!-- bars max=700k, scale: width 330, plot x 115..445 -->
+              <!-- 6 rows, row height 26, starting y=14 -->
+
+              <rect x="115" y="14"  width="318" height="16" fill="#cc0000"/>
+              <rect x="115" y="44"  width="233" height="16" fill="#cc0000"/>
+              <rect x="115" y="74"  width="160" height="16" fill="#cc0000"/>
+              <rect x="115" y="104" width="127" height="16" fill="#cc0000"/>
+              <rect x="115" y="134" width="94"  height="16" fill="#cc0000"/>
+              <rect x="115" y="164" width="71"  height="16" fill="#cc0000"/>
+
+              <!-- value labels -->
+              <text class="bar-label" x="437" y="26">Rp 675k</text>
+              <text class="bar-label" x="352" y="56">Rp 495k</text>
+              <text class="bar-label" x="279" y="86">Rp 340k</text>
+              <text class="bar-label" x="246" y="116">Rp 270k</text>
+              <text class="bar-label" x="213" y="146">Rp 200k</text>
+              <text class="bar-label" x="190" y="176">Rp 150k</text>
+
+              <!-- item labels -->
+              <text class="ax-text" x="112" y="26"  text-anchor="end">Edamame</text>
+              <text class="ax-text" x="112" y="56"  text-anchor="end">Salmon Trout</text>
+              <text class="ax-text" x="112" y="86"  text-anchor="end">Tiger Shrimp</text>
+              <text class="ax-text" x="112" y="116" text-anchor="end">Tuna Akami</text>
+              <text class="ax-text" x="112" y="146" text-anchor="end">Unagi</text>
+              <text class="ax-text" x="112" y="176" text-anchor="end">Sake</text>
+
+              <!-- axes -->
+              <line x1="115" y1="190" x2="445" y2="190" stroke="#000"/>
+              <line x1="115" y1="10"  x2="115" y2="190" stroke="#000"/>
+
+              <!-- ticks 0,250k,500k,700k -->
+              <line x1="115" y1="190" x2="115" y2="195" stroke="#000"/>
+              <line x1="233" y1="190" x2="233" y2="195" stroke="#000"/>
+              <line x1="351" y1="190" x2="351" y2="195" stroke="#000"/>
+              <line x1="445" y1="190" x2="445" y2="195" stroke="#000"/>
+              <text class="ax-text" x="115" y="206" text-anchor="middle">0</text>
+              <text class="ax-text" x="233" y="206" text-anchor="middle">250k</text>
+              <text class="ax-text" x="351" y="206" text-anchor="middle">500k</text>
+              <text class="ax-text" x="445" y="206" text-anchor="middle">700k</text>
+              <text class="ax-text" x="280" y="218" text-anchor="middle">Cost (Rp)</text>
+            </svg>
+          </div>
+          <div class="foot">SQL: SELECT * FROM v_top_waste LIMIT 10</div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <div class="statusbar">
+    <span>Connected to MySQL · inventory_db</span>
+    <span>admin · v1.0.0</span>
+  </div>
+
+</div>
+
+</body>
+</html>

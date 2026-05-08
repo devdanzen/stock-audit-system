@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Movement — Inventory Management</title>
+<link rel="stylesheet" href="../../app-shell.css" />
+<style>
+  .group {
+    position: relative;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    padding: 16px 16px 14px;
+    margin: 0 auto 12px;
+  }
+  .group > .legend {
+    position: absolute;
+    top: -8px;
+    left: 10px;
+    background: #fff;
+    padding: 0 5px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .center-wrap {
+    padding: 22px 14px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .form-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 28px;
+  }
+  .form-col {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 8px 8px;
+    align-items: center;
+  }
+  .form-col label { font-size: 12px; }
+  .form-col .field { width: 100%; }
+
+  /* Disabled-looking field (classic Swing) */
+  .field.disabled,
+  select.field.disabled {
+    background: var(--bg-window);
+    color: var(--text-disabled);
+    border-color: var(--border);
+  }
+
+  /* Movement-type combo highlight */
+  select.field.controller {
+    background: #fff7d6;
+  }
+
+  .hint {
+    grid-column: 2 / -1;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: -4px 0 0;
+  }
+
+  /* note textarea */
+  textarea.field {
+    height: 56px;
+    padding: 4px 6px;
+    resize: vertical;
+  }
+  .form-col.note-col { grid-template-columns: 150px 1fr; align-items: start; }
+  .form-col.note-col label { padding-top: 3px; }
+
+  .btn-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 14px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+
+  /* Reference panel */
+  .reference {
+    margin: 12px 14px 14px;
+    border: 1px solid var(--border);
+    background: #fff;
+  }
+  .reference .panel-head {
+    background: var(--bg-window);
+    border-bottom: 1px solid var(--border);
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .reference .ref-grid {
+    padding: 10px 14px;
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    column-gap: 14px;
+    row-gap: 6px;
+    font-size: 12px;
+  }
+  .reference .ref-type { font-weight: 700; font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+
+<div class="jframe" data-screen-label="05 Movement">
+
+  <!-- Title bar -->
+  <div class="titlebar">
+    <span class="title-text">Inventory Management System</span>
+    <div class="winbtns">
+      <button class="winbtn">&#x2014;</button>
+      <button class="winbtn">&#x25A1;</button>
+      <button class="winbtn close">&#x2715;</button>
+    </div>
+  </div>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <span class="app-name">Inventory Management</span>
+    <span class="spacer"></span>
+    <span class="right">User: admin</span>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="nav">
+      <div class="nav-item">Dashboard</div>
+
+      <div class="nav-section">--- Master Data ---</div>
+      <div class="nav-item">Items</div>
+      <div class="nav-item">Categories</div>
+      <div class="nav-item">Outlets</div>
+      <div class="nav-item">Vendors</div>
+      <div class="nav-item">Users</div>
+
+      <div class="nav-section">--- Transactions ---</div>
+      <div class="nav-item">Receiving</div>
+      <div class="nav-item">Sales</div>
+      <div class="nav-item active">Movement</div>
+      <div class="nav-item">Recipes</div>
+
+      <div class="nav-section">--- Stock Operations ---</div>
+      <div class="nav-item">Stock On Hand</div>
+      <div class="nav-item">Audit</div>
+      <div class="nav-item">End Balance</div>
+
+      <div class="nav-section">--- Reports &amp; Charts ---</div>
+      <div class="nav-item">Reports</div>
+      <div class="nav-item">Charts</div>
+    </div>
+    <div class="nav-footer">
+      <div class="nav-item">Logout</div>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <main class="content">
+    <div class="screen">
+
+      <!-- Header -->
+      <div class="screen-header" style="padding:10px 14px;height:40px;box-sizing:border-box;">
+        <div class="screen-title">Record Stock Movement</div>
+      </div>
+
+      <!-- Centered group box -->
+      <div class="center-wrap">
+        <div class="group" style="width:700px;">
+          <span class="legend">Movement Details</span>
+
+          <div class="form-2col">
+            <!-- LEFT -->
+            <div class="form-col">
+              <label>Movement Date:</label>
+              <input class="field" value="2025-12-15" />
+
+              <label>Item:</label>
+              <select class="field"><option>DRY-0497 — Edamame</option></select>
+
+              <label>Movement Type:</label>
+              <select class="field controller"><option>WASTE</option></select>
+
+              <label>Quantity:</label>
+              <input class="field num" value="2.500" style="text-align:right;" />
+
+              <label>Unit:</label>
+              <input class="field disabled" value="GRAM" readonly />
+
+              <label>Unit Cost:</label>
+              <input class="field disabled num" value="450" readonly style="text-align:right;" />
+
+              <label>Extended Cost:</label>
+              <input class="field disabled num" value="1,125" readonly style="text-align:right;" />
+            </div>
+
+            <!-- RIGHT -->
+            <div class="form-col">
+              <label>Destination Outlet:</label>
+              <select class="field disabled" disabled><option>—</option></select>
+              <div class="hint">Enabled only for OUT</div>
+
+              <label>Delivery Note Number:</label>
+              <input class="field disabled" readonly />
+              <div class="hint">Enabled only for OUT</div>
+            </div>
+
+            <!-- NOTE row spanning -->
+            <div class="form-col note-col" style="grid-column:1 / -1;">
+              <label>Reason / Note:</label>
+              <textarea class="field">over cook</textarea>
+            </div>
+          </div>
+
+          <div class="btn-bar">
+            <button class="btn btn-wide">Cancel</button>
+            <button class="btn btn-primary btn-wide">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Movement Type Reference -->
+      <div class="reference">
+        <div class="panel-head">Movement Type Reference</div>
+        <div class="ref-grid">
+          <div class="ref-type">IN</div>
+          <div>New stock arriving. Destination disabled.</div>
+
+          <div class="ref-type">OUT</div>
+          <div>Transfer to another outlet. Destination + Delivery Note required.</div>
+
+          <div class="ref-type">WASTE</div>
+          <div>Spoiled/damaged stock. Reason required.</div>
+
+          <div class="ref-type">CONSUMPTION</div>
+          <div>Internal use (not sold). Reason optional.</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Status bar -->
+  <div class="statusbar">
+    <span>Connected to MySQL · inventory_db</span>
+    <span>admin · v1.0.0</span>
+  </div>
+
+</div>
+
+</body>
+</html>

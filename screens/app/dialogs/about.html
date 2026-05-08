@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>About — Inventory Management</title>
+<style>
+  :root {
+    --bg-window:   #f0f0f0;
+    --bg-content:  #ffffff;
+    --bg-button:   #f0f0f0;
+    --bg-button-hover: #e6e6e6;
+    --border:      #c0c0c0;
+    --border-dark: #808080;
+    --border-darker: #404040;
+    --text:        #000000;
+    --text-muted:  #555555;
+    --primary:     #0066cc;
+    --primary-hover:#0a72d8;
+    --danger:      #cc0000;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #b8b8b8;
+    font-family: "Segoe UI", "Tahoma", "Liberation Sans", "DejaVu Sans", sans-serif;
+    font-size: 12px;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  body { display: flex; align-items: center; justify-content: center; }
+
+  /* JFrame 500×500 */
+  .jframe {
+    width: 500px;
+    height: 600px;
+    background: var(--bg-window);
+    border: 1px solid var(--border-darker);
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+  }
+
+  /* Title bar */
+  .titlebar {
+    height: 24px;
+    background: linear-gradient(#0a4ea0, #0066cc);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 2px 0 6px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .titlebar .title-text { flex: 1; }
+  .titlebar .winbtn {
+    width: 28px; height: 20px; margin: 2px 0 2px 2px;
+    background: var(--bg-button);
+    border: 1px solid var(--border-darker);
+    color: #000;
+    font-family: "Segoe UI Symbol", "Segoe UI", sans-serif;
+    font-size: 11px;
+    display: grid; place-items: center;
+    cursor: default;
+    line-height: 1;
+  }
+  .titlebar .winbtn:last-child { margin-right: 2px; }
+  .titlebar .winbtn:hover { background: var(--bg-button-hover); }
+  .titlebar .winbtn.close:hover { background: var(--danger); color: #fff; }
+
+  /* Content */
+  .content {
+    flex: 1;
+    padding: 22px 24px 14px;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-window);
+    overflow: hidden;
+  }
+
+  .app-title {
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 4px;
+  }
+  .app-version {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    margin: 0 0 14px;
+  }
+
+  .hr {
+    height: 1px;
+    background: var(--border);
+    margin: 10px 0 12px;
+  }
+
+  .section-head {
+    font-size: 12px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    color: var(--text);
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    row-gap: 4px;
+    column-gap: 8px;
+    font-size: 12px;
+  }
+  .info-grid .lbl { color: var(--text); }
+  .info-grid .val { color: var(--text); }
+  .info-grid .val.placeholder { color: var(--text-muted); font-style: italic; }
+
+  .team-list {
+    margin: 0;
+    padding: 0 0 0 22px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 18px;
+    row-gap: 3px;
+    font-size: 12px;
+  }
+  .team-list li { padding: 1px 0; }
+  .team-list li.placeholder { color: var(--text-muted); font-style: italic; }
+
+  /* Button bar */
+  .btn-bar {
+    margin-top: auto;
+    padding-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid var(--border);
+  }
+  .btn {
+    height: 24px;
+    min-width: 80px;
+    padding: 0 14px;
+    border: 1px solid var(--border-dark);
+    background: var(--bg-button);
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--text);
+    cursor: default;
+    border-radius: 2px;
+  }
+  .btn:hover { background: var(--bg-button-hover); }
+</style>
+</head>
+<body>
+
+<div class="jframe" role="dialog" aria-label="About Inventory Management System">
+
+  <!-- Title bar -->
+  <div class="titlebar">
+    <span class="title-text">About — Inventory Management System</span>
+    <button class="winbtn close" title="Close" tabindex="-1">&#x2715;</button>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <div class="app-title">Inventory Management System</div>
+    <div class="app-version">Version 1.0.0</div>
+
+    <div class="hr"></div>
+
+    <div class="section-head">Project Information</div>
+    <div class="info-grid">
+      <div class="lbl">Course:</div>        <div class="val">Visual Programming</div>
+      <div class="lbl">Supervisor:</div>    <div class="val placeholder">Gilang Ryan Fernandes</div>
+      <div class="lbl">University:</div>    <div class="val placeholder">Indraprasta PGRI</div>
+      <div class="lbl">Year:</div>          <div class="val">2026</div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="section-head">Team Members</div>
+    <ol class="team-list">
+      <li class="placeholder">Danish Rafie Al Rasyad</li>
+      <li class="placeholder">Vedayen Fatzla Al Fiansyach</li>
+      <li class="placeholder">Theresa Maria Magdalena</li>
+      <li class="placeholder">Chandra Wijaya Purba</li>
+      <li class="placeholder">Jehoshaphat Wisdom Marpaung</li>
+      <li class="placeholder">Mochamad Akbar Ramadhani</li>
+      <li class="placeholder">Muhammad Dewanto</li>
+      <li class="placeholder">Arif Suheryanto</li>
+    </ol>
+
+    <div class="hr"></div>
+
+    <div class="section-head">Technology Stack</div>
+    <div class="info-grid">
+      <div class="lbl">Frontend:</div> <div class="val">Java Swing</div>
+      <div class="lbl">Database:</div> <div class="val">MySQL 8.0</div>
+      <div class="lbl">Libraries:</div><div class="val">mysql-connector-j, jbcrypt, jfreechart</div>
+      <div class="lbl">IDE:</div>      <div class="val">NetBeans 17+</div>
+    </div>
+
+    <div class="hr"></div>
+
+    <!-- Button bar -->
+    <div class="btn-bar">
+      <button class="btn">Close</button>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

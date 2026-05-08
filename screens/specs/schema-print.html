@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Database Schema Reference — Inventory Management</title>
+<link rel="stylesheet" href="../app-shell.css" />
+<style>
+  body { padding: 24px; background: #b8b8b8; }
+
+  /* ===== Print rules ===== */
+  @page { size: A4 landscape; margin: 0.5cm; }
+  @media print {
+    html, body {
+      background: #fff !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .slide {
+      width: 100% !important;
+      min-height: 0 !important;
+      border: 0 !important;
+      padding: 8mm 10mm !important;
+      box-shadow: none !important;
+      break-inside: avoid;
+    }
+    .table-def { break-inside: avoid; }
+    .schema-grid { gap: 16px !important; }
+    .table-def pre { font-size: 9.5pt !important; }
+    .summary-strip { break-inside: avoid; }
+  }
+
+  .slide {
+    width: 1280px;
+    min-height: 800px;
+    background: #ffffff;
+    border: 1px solid #404040;
+    display: flex;
+    flex-direction: column;
+    padding: 26px 36px 22px;
+    box-sizing: border-box;
+    user-select: none;
+  }
+
+  .slide-header { margin-bottom: 14px; }
+  .slide-title { font-size: 22px; font-weight: 700; margin: 0; }
+  .slide-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  .schema-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    flex: 1;
+  }
+
+  .col-section-head {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 4px;
+    margin: 0 0 10px;
+    letter-spacing: 0.2px;
+  }
+
+  .table-def {
+    margin: 0 0 12px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: var(--text);
+  }
+  .table-def .name {
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .table-def pre {
+    margin: 0;
+    padding: 0 0 0 16px;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: var(--text);
+    white-space: pre;
+  }
+
+  .summary-strip {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: var(--bg-window);
+    border: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+  }
+</style>
+<script>
+  // Auto-print after fonts + DOM settle, with a small safety delay
+  window.addEventListener('load', function () {
+    var go = function () {
+      setTimeout(function () { window.print(); }, 500);
+    };
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(go).catch(go);
+    } else {
+      go();
+    }
+  });
+</script>
+</head>
+<body>
+
+<div class="slide">
+
+  <div class="slide-header">
+    <h1 class="slide-title">Database Schema Reference</h1>
+    <div class="slide-subtitle">inventory_db &middot; MySQL 8.0 &middot; 14 tables, 4 views</div>
+  </div>
+
+  <div class="schema-grid">
+
+    <!-- ===== LEFT COLUMN: Reference & Master tables ===== -->
+    <div>
+      <div class="col-section-head">REFERENCE &amp; MASTER TABLES</div>
+
+      <div class="table-def">
+        <div class="name">user</div>
+<pre>user_id            INT PK AUTO_INCREMENT
+username           VARCHAR(50)   UNIQUE NOT NULL
+password_hash      VARCHAR(255)  NOT NULL
+role               ENUM(Administrator, Manager, Staff)
+outlet_id          INT FK &rarr; outlet
+status             ENUM(Active, Inactive)</pre>
+      </div>
+
+      <div class="table-def">
+        <div class="name">category</div>
+<pre>category_id        INT PK
+category_code      CHAR(1)       UNIQUE
+category_name      VARCHAR(50)</pre>
+      </div>
+
+      <div class="table-def">
+        <div class="name">outlet</div>
+<pre>outlet_id          INT PK
+outlet_code        VARCHAR(10)   UNIQUE
+outlet_name        VARCHAR(100)
+status             ENUM(Active, Inactive)</pre>
+      </div>
+
+      <div class="table-def">
+        <div class="name">vendor</div>
+<pre>vendor_id          INT PK
+vendor_code        VARCHAR(20)   UNIQUE
+vendor_name        VARCHAR(150)
+contact_phone      VARCHAR(30)</pre>
+      </div>
+
+      <div class="table-def">
+        <div class="name">master_item</div>
+<pre>item_id            INT PK
+item_code          VARCHAR(50)   UNIQUE
+description        VARCHAR(255)
+category_id        INT FK &rarr; category
+outlet_id          INT FK &rarr; outlet
+base_unit          VARCHAR(20)
+current_cost       DECIMAL(18,4)
+selling_price      DECIMAL(18,4)</pre>
+      </div>
+    </div>
+
+    <!-- ===== RIGHT COLUMN: Transaction tables ===== -->
+    <div>
+      <div class="col-section-head">TRANSACTION TABLES</div>
+
+      <div class="table-def">
+        <div class="name">sales_header</div>
+<pre>sales_id           INT PK
+invoice_number     VARCHAR(50)   UNIQUE
+sale_date          DATE
+outlet_id          INT FK &rarr; outlet</pre>
+      </div>
+
+      <div class="table-def">
+        <div class="name">sales_detail</div>
+<pre>sales_detail_id    INT PK
+sales_id           INT FK &rarr; sales_header
+item_id            INT FK &rarr; master_item
+quantity           DECIMAL(18,4)
+unit_price         DECIMAL(18,4)</pre>
+      </div>
+
+      <div class="table-def">
+        <div class="name">receiving_header</div>
+<pre>receiving_id       INT PK
+receipt_number     VARCHAR(50)   UNIQUE
+receipt_date       DATE
+vendor_id          INT FK &rarr; vendor
+outlet_id          INT FK &rarr; outlet</pre>
+      </div>
+
+      <div class="table-def">
+        <div class="name">receiving_detail</div>
+<pre>receiving_detail_id   INT PK
+receiving_id          INT FK &rarr; receiving_header
+item_id               INT FK &rarr; master_item
+qty_received          DECIMAL(18,4)
+unit_cost             DECIMAL(18,4)</pre>
+      </div>
+
+      <div class="table-def">
+        <div class="name">recipe_header</div>
+<pre>recipe_id          INT PK
+recipe_code        VARCHAR(50)   UNIQUE
+item_id            INT UNIQUE FK &rarr; master_item</pre>
+      </div>
+
+      <div class="table-def">
+        <div class="name">recipe_detail</div>
+<pre>recipe_detail_id   INT PK
+recipe_id          INT FK &rarr; recipe_header
+item_id            INT FK &rarr; master_item
+initial_weight     DECIMAL(18,4)
+final_weight       DECIMAL(18,4)</pre>
+      </div>
+
+      <div class="table-def">
+        <div class="name">movement</div>
+<pre>movement_id            INT PK
+item_id                INT FK &rarr; master_item
+destination_outlet_id  INT FK &rarr; outlet (nullable)
+movement_date          DATE
+movement_type          ENUM(IN, OUT, WASTE, CONSUMPTION)
+quantity               DECIMAL(18,4)</pre>
+      </div>
+
+      <div class="table-def">
+        <div class="name">audit</div>
+<pre>audit_id           INT PK
+item_id            INT FK &rarr; master_item
+audit_date         DATE
+audit_quantity     DECIMAL(18,4)
+variance           DECIMAL(18,4)</pre>
+      </div>
+
+      <div class="table-def">
+        <div class="name">end_balance</div>
+<pre>end_balance_id     INT PK
+item_id            INT FK &rarr; master_item
+period_date        DATE
+end_balance        DECIMAL(18,4)</pre>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="summary-strip">
+    14 tables &middot; 4 views &middot; 19 foreign keys &middot; 24 CHECK constraints
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>End Balance — Inventory Management</title>
+<link rel="stylesheet" href="../../app-shell.css" />
+<style>
+  .group {
+    position: relative;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    padding: 14px 14px 12px;
+    margin: 16px 14px 14px;
+  }
+  .group > .legend {
+    position: absolute;
+    top: -8px;
+    left: 10px;
+    background: #fff;
+    padding: 0 5px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .period-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .period-row .field-block {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .period-row label { font-size: 12px; }
+  .period-row .field { width: 180px; }
+  .period-row .spacer { flex: 1; }
+  .period-row .btn { min-width: 150px; }
+
+  .warning-strip {
+    margin: 0 14px 12px;
+    background: #fff8d6;
+    border: 1px solid #d6c068;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--text);
+  }
+  .warning-strip strong { font-weight: 700; }
+
+  .table-wrap {
+    margin: 0 14px 8px;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+  }
+  .table-wrap .jtable { border: 0; }
+
+  /* readonly look on the preview rows: very faint stripes, no white selection */
+  .preview-title {
+    margin: 0 14px 4px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .summary-strip {
+    margin: 0 14px 10px;
+    height: 30px;
+    background: var(--bg-window);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+
+  .btn-bar {
+    margin: 0 14px 14px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="jframe" data-screen-label="08 End Balance">
+
+  <div class="titlebar">
+    <span class="title-text">Inventory Management System</span>
+    <div class="winbtns">
+      <button class="winbtn">&#x2014;</button>
+      <button class="winbtn">&#x25A1;</button>
+      <button class="winbtn close">&#x2715;</button>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <span class="app-name">Inventory Management</span>
+    <span class="spacer"></span>
+    <span class="right">User: admin</span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="nav">
+      <div class="nav-item">Dashboard</div>
+
+      <div class="nav-section">--- Master Data ---</div>
+      <div class="nav-item">Items</div>
+      <div class="nav-item">Categories</div>
+      <div class="nav-item">Outlets</div>
+      <div class="nav-item">Vendors</div>
+      <div class="nav-item">Users</div>
+
+      <div class="nav-section">--- Transactions ---</div>
+      <div class="nav-item">Receiving</div>
+      <div class="nav-item">Sales</div>
+      <div class="nav-item">Movement</div>
+      <div class="nav-item">Recipes</div>
+
+      <div class="nav-section">--- Stock Operations ---</div>
+      <div class="nav-item">Stock On Hand</div>
+      <div class="nav-item">Audit</div>
+      <div class="nav-item active">End Balance</div>
+
+      <div class="nav-section">--- Reports &amp; Charts ---</div>
+      <div class="nav-item">Reports</div>
+      <div class="nav-item">Charts</div>
+    </div>
+    <div class="nav-footer">
+      <div class="nav-item">Logout</div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="screen">
+
+      <div class="screen-header" style="padding:10px 14px;height:40px;box-sizing:border-box;">
+        <div class="screen-title">Period Close — End Balance Snapshot</div>
+      </div>
+
+      <!-- Period selection -->
+      <div class="group">
+        <span class="legend">Period Selection</span>
+        <div class="period-row">
+          <div class="field-block">
+            <label>Period (last day):</label>
+            <input class="field" value="2025-12-31" />
+          </div>
+          <div class="field-block">
+            <label>Outlet:</label>
+            <select class="field"><option>SHLMP</option></select>
+          </div>
+          <div class="spacer"></div>
+          <button class="btn">Generate Snapshot</button>
+          <button class="btn">Preview Before Save</button>
+        </div>
+      </div>
+
+      <!-- Warning -->
+      <div class="warning-strip">
+        <strong>Warning:</strong> This operation writes one end-balance row per item with current SOH. Run only at month-end after all transactions are posted.
+      </div>
+
+      <!-- Preview table -->
+      <div class="preview-title">Snapshot Preview (read-only)</div>
+      <div class="table-wrap">
+        <table class="jtable">
+          <thead>
+            <tr>
+              <th style="width:100px;">Item Code</th>
+              <th>Description</th>
+              <th style="width:100px;">Category</th>
+              <th class="num" style="width:110px;">End Balance</th>
+              <th class="num" style="width:110px;">Unit Cost</th>
+              <th class="num" style="width:130px;">Extended Cost</th>
+              <th style="width:80px;">Unit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">DRY-0497</td>
+              <td>Edamame</td>
+              <td>Kitchen</td>
+              <td class="num">43.5</td>
+              <td class="num">450</td>
+              <td class="num">19,575</td>
+              <td>GRAM</td>
+            </tr>
+            <tr>
+              <td class="mono">FISH-0042</td>
+              <td>Salmon Trout</td>
+              <td>Sushi</td>
+              <td class="num">12.5</td>
+              <td class="num">180,000</td>
+              <td class="num">2,250,000</td>
+              <td>GRAM</td>
+            </tr>
+            <tr>
+              <td class="mono">LIQ-0001</td>
+              <td>Absolut Blue Vodka</td>
+              <td>Bar</td>
+              <td class="num">9.0</td>
+              <td class="num">485,000</td>
+              <td class="num">4,365,000</td>
+              <td>BOTTLE</td>
+            </tr>
+            <tr>
+              <td class="mono">MENU-001</td>
+              <td>Edamame (finished)</td>
+              <td>Kitchen</td>
+              <td class="num">0.0</td>
+              <td class="num">0</td>
+              <td class="num">0</td>
+              <td>PORTION</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="summary-strip">
+        <span>Items to snapshot: 5,247 &middot; Total inventory value: Rp 124,580,500 &middot; Period: Dec 2025</span>
+      </div>
+
+      <div class="btn-bar">
+        <button class="btn btn-wide">Cancel</button>
+        <button class="btn btn-primary btn-wide">Commit Snapshot</button>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="statusbar">
+    <span>Connected to MySQL · inventory_db</span>
+    <span>admin · v1.0.0</span>
+  </div>
+
+</div>
+
+</body>
+</html>

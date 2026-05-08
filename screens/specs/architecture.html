@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Developer Architecture Overview — Inventory Management</title>
+<link rel="stylesheet" href="../app-shell.css" />
+<style>
+  body { padding: 24px; background: #b8b8b8; }
+
+  .slide {
+    width: 1280px;
+    height: 800px;
+    background: #ffffff;
+    border: 1px solid #404040;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 36px 24px;
+    box-sizing: border-box;
+    user-select: none;
+  }
+
+  .slide-header { margin-bottom: 18px; }
+  .slide-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+  }
+  .slide-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .body-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 22px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* ===== Layer boxes ===== */
+  .layer {
+    position: relative;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    padding: 18px 14px 12px;
+  }
+  .layer > .legend {
+    position: absolute;
+    top: -9px;
+    left: 12px;
+    background: #fff;
+    padding: 0 6px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .layer.shaded { background: #f5f5f5; }
+  .layer.shaded > .legend { background: #f5f5f5; }
+  .layer-tag {
+    position: absolute;
+    top: -9px;
+    right: 12px;
+    background: #fff;
+    padding: 0 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+  .layer.shaded .layer-tag { background: #f5f5f5; }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  /* ----- View layer internals ----- */
+  .view-row {
+    display: grid;
+    grid-template-columns: 130px 24px 1fr;
+    gap: 0;
+    align-items: center;
+  }
+  .class-box {
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    padding: 6px 10px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-align: center;
+    border-radius: 2px;
+  }
+  .class-box.green { background: #e8f0e0; border-color: #27500a; }
+  .class-box.blue  { background: #e2eef8; border-color: #003e80; }
+  .arrow-h {
+    height: 1px;
+    background: #000;
+    position: relative;
+  }
+  .arrow-h::after {
+    content: '';
+    position: absolute;
+    right: -1px; top: 50%;
+    transform: translateY(-50%);
+    border-left: 6px solid #000;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+  }
+  .mainframe-box {
+    border: 1px solid #003e80;
+    background: #e2eef8;
+    padding: 8px 12px;
+  }
+  .mainframe-box .mf-title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .panel-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+  }
+  .panel-grid .p {
+    border: 1px solid var(--border);
+    background: #fff;
+    padding: 3px 4px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .layer-note {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  /* ----- DAO layer ----- */
+  .dao-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+  }
+  .dao-grid .d {
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    padding: 4px 6px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    text-align: center;
+  }
+
+  /* ----- DB layer ----- */
+  .db-split {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 16px;
+  }
+  .db-block {
+    border: 1px solid var(--border);
+    background: #fff;
+    padding: 6px 8px;
+  }
+  .db-block .h {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #000;
+  }
+  .db-block .items {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    line-height: 1.55;
+    color: #000;
+  }
+  .db-block .items span { white-space: nowrap; }
+  .db-stats {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--text);
+    border-top: 1px dashed #c0c0c0;
+    padding-top: 6px;
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .db-stats b { font-weight: 700; }
+
+  /* ----- Inter-layer arrows ----- */
+  .between {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: -8px 0;
+  }
+  .arrow-v {
+    width: 2px;
+    height: 22px;
+    background: #000;
+    position: relative;
+  }
+  .arrow-v::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 50%;
+    transform: translateX(-50%);
+    border-top: 6px solid #000;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+  }
+  .between .label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 2px 0;
+  }
+
+  /* ===== Right column ===== */
+  .right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 0;
+  }
+  .side-panel {
+    position: relative;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    padding: 18px 14px 12px;
+  }
+  .side-panel > .legend {
+    position: absolute;
+    top: -9px;
+    left: 12px;
+    background: #fff;
+    padding: 0 6px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .patterns-list {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+    counter-reset: pat;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .patterns-list li {
+    counter-increment: pat;
+    padding-left: 24px;
+    position: relative;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  .patterns-list li::before {
+    content: counter(pat) ".";
+    position: absolute;
+    left: 0; top: 0;
+    width: 18px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: #000;
+  }
+  .patterns-list .name {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: #000;
+  }
+
+  .deps-list {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+  }
+  .deps-list li {
+    padding: 3px 6px;
+    background: #f5f5f5;
+    border: 1px solid var(--border);
+  }
+  .deps-list .role {
+    color: var(--text-muted);
+    font-family: var(--font);
+    font-size: 11px;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+
+  <div class="slide-header">
+    <h1 class="slide-title">Developer Architecture Overview</h1>
+    <div class="slide-subtitle">Inventory Management System &middot; Java Swing + MySQL</div>
+  </div>
+
+  <div class="body-grid">
+
+    <!-- LEFT: 3-layer architecture stack -->
+    <div class="stack">
+
+      <!-- LAYER 1: VIEW -->
+      <div class="layer">
+        <span class="legend">Layer 1 &mdash; View</span>
+        <span class="layer-tag">javax.swing</span>
+
+        <div class="view-row">
+          <div class="class-box green">LoginFrame</div>
+          <div class="arrow-h"></div>
+          <div class="mainframe-box">
+            <div class="mf-title">MainFrame (JFrame)</div>
+            <div class="panel-grid">
+              <div class="p">DashboardPanel</div>
+              <div class="p">MasterItemPanel</div>
+              <div class="p">CategoriesPanel</div>
+              <div class="p">OutletsPanel</div>
+              <div class="p">VendorsPanel</div>
+              <div class="p">UsersPanel</div>
+              <div class="p">ReceivingPanel</div>
+              <div class="p">SalesPanel</div>
+              <div class="p">MovementPanel</div>
+              <div class="p">RecipesPanel</div>
+              <div class="p">StockOnHandPanel</div>
+              <div class="p">AuditPanel</div>
+              <div class="p">EndBalancePanel</div>
+              <div class="p">ReportsPanel</div>
+              <div class="p">ChartsPanel</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="layer-note">Swapped via CardLayout in MainFrame's content area</div>
+      </div>
+
+      <!-- arrow View → DAO -->
+      <div class="between">
+        <span class="label">method calls</span>
+        <div class="arrow-v"></div>
+      </div>
+
+      <!-- LAYER 2: DAO -->
+      <div class="layer shaded">
+        <span class="legend">Layer 2 &mdash; DAO</span>
+        <span class="layer-tag">com.inventory.dao</span>
+
+        <div class="dao-grid">
+          <div class="d">UserDAO</div>
+          <div class="d">MasterItemDAO</div>
+          <div class="d">CategoryDAO</div>
+          <div class="d">OutletDAO</div>
+          <div class="d">VendorDAO</div>
+          <div class="d">SalesDAO</div>
+          <div class="d">ReceivingDAO</div>
+          <div class="d">MovementDAO</div>
+          <div class="d">RecipeDAO</div>
+          <div class="d">AuditDAO</div>
+          <div class="d">EndBalanceDAO</div>
+        </div>
+
+        <div class="layer-note">Each DAO uses JDBC PreparedStatement, returns Model POJOs</div>
+      </div>
+
+      <!-- arrow DAO → DB -->
+      <div class="between">
+        <span class="label">JDBC PreparedStatement</span>
+        <div class="arrow-v"></div>
+      </div>
+
+      <!-- LAYER 3: DATABASE -->
+      <div class="layer">
+        <span class="legend">Layer 3 &mdash; Database</span>
+        <span class="layer-tag">MySQL 8 &middot; inventory_db</span>
+
+        <div class="db-split">
+          <div class="db-block">
+            <div class="h">Tables (14)</div>
+            <div class="items">
+              <span>user</span>, <span>category</span>, <span>outlet</span>, <span>vendor</span>, <span>master_item</span>,
+              <span>sales_header</span>, <span>sales_detail</span>, <span>receiving_header</span>, <span>receiving_detail</span>,
+              <span>recipe_header</span>, <span>recipe_detail</span>, <span>movement</span>, <span>audit</span>, <span>end_balance</span>
+            </div>
+          </div>
+          <div class="db-block">
+            <div class="h">Views (4)</div>
+            <div class="items">
+              <span>v_stock_on_hand</span><br/>
+              <span>v_top_sellers</span><br/>
+              <span>v_daily_sales</span><br/>
+              <span>v_top_waste</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="db-stats">
+          <span><b>Foreign Keys:</b> 19</span>
+          <span><b>M-M relationships:</b> 3 (via junction tables)</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: Patterns + Dependencies -->
+    <div class="right-col">
+
+      <div class="side-panel" style="flex:1;">
+        <span class="legend">Key Patterns Used</span>
+        <ol class="patterns-list">
+          <li><span class="name">CardLayout</span> &mdash; swaps content panels without opening new windows</li>
+          <li><span class="name">Header / Detail</span> &mdash; Sales, Receiving, Recipes use this pattern</li>
+          <li><span class="name">Junction Tables</span> &mdash; sales_detail, receiving_detail, recipe_detail resolve M-M relationships</li>
+          <li><span class="name">SQL Views</span> &mdash; compute aggregates (SOH, top sellers) instead of storing them</li>
+          <li><span class="name">BCrypt</span> &mdash; password hashing for USER table</li>
+          <li><span class="name">Transactions</span> &mdash; header + detail INSERTs wrapped in <code style="font-family:var(--font-mono);">setAutoCommit(false)</code></li>
+        </ol>
+      </div>
+
+      <div class="side-panel">
+        <span class="legend">Dependencies</span>
+        <ul class="deps-list">
+          <li>mysql-connector-j <span class="role">&mdash; JDBC driver</span></li>
+          <li>jbcrypt <span class="role">&mdash; password hashing</span></li>
+          <li>jfreechart <span class="role">&mdash; charts</span></li>
+          <li>jasperreports <span class="role">&mdash; reports (optional)</span></li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

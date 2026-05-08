@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Quick Start Tutorial — Inventory Management</title>
+<link rel="stylesheet" href="../app-shell.css" />
+<style>
+  body { padding: 24px; background: #b8b8b8; }
+
+  .slide {
+    width: 1280px;
+    min-height: 800px;
+    background: #ffffff;
+    border: 1px solid #404040;
+    padding: 24px 30px 20px;
+    box-sizing: border-box;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .slide-title { font-size: 22px; font-weight: 700; margin: 0; }
+  .slide-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+  /* ===== Step grid 3×2 ===== */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr 1fr;
+    gap: 14px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .step {
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .step-head {
+    background: var(--bg-window);
+    border-bottom: 1px solid var(--border-dark);
+    padding: 7px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .step-head .num {
+    width: 24px;
+    height: 22px;
+    background: #0066cc;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 700;
+    border-radius: 2px;
+  }
+  .step-head .name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .step-head .screen {
+    margin-left: auto;
+    font-size: 10.5px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+  }
+
+  .step-thumb {
+    height: 130px;
+    border-bottom: 1px solid var(--border);
+    background: #fff;
+    padding: 8px;
+    overflow: hidden;
+  }
+  .step-body {
+    padding: 9px 14px 11px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text);
+    flex: 1;
+  }
+  .step-body b { font-weight: 700; }
+  .step-body .verb {
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  /* ===== Mini wireframe primitives ===== */
+  .mw-line { background: #b0b0b0; height: 3px; border-radius: 1px; }
+  .mw-box { border: 1px solid #b0b0b0; background: #fff; }
+
+  /* Login dialog mini */
+  .mw-login { display:flex; align-items:center; justify-content:center; height:100%; }
+  .mw-login .dialog { width: 100px; border: 1px solid #404040; background: #f0f0f0; }
+  .mw-login .dialog .tb { height: 8px; background: linear-gradient(#0a4ea0, #0066cc); }
+  .mw-login .dialog .body { padding: 6px; display: flex; flex-direction: column; gap: 4px; }
+  .mw-login .dialog .body .row { display: flex; gap: 3px; align-items: center; }
+  .mw-login .dialog .body .lbl { width: 22px; height: 3px; background: #b0b0b0; }
+  .mw-login .dialog .body .fld { flex: 1; height: 8px; background: #fff; border: 1px solid #b0b0b0; }
+  .mw-login .dialog .body .btn { width: 38px; height: 10px; background: #0066cc; align-self: center; margin-top: 3px; }
+
+  /* Dashboard mini */
+  .mw-dash { display:flex; flex-direction:column; gap:4px; height:100%; }
+  .mw-dash .kpis { display:grid; grid-template-columns: repeat(4,1fr); gap:3px; }
+  .mw-dash .kpis .k { border:1px solid #b0b0b0; height:24px; background:#fff; display:flex; align-items:center; justify-content:center; }
+  .mw-dash .kpis .k .v { height:5px; width:60%; background:#000; border-radius:1px; }
+  .mw-dash .qa { display:flex; gap:3px; }
+  .mw-dash .qa .btn { flex:1; height:10px; border:1px solid #b0b0b0; background:#f0f0f0; }
+  .mw-dash .qa .btn.p { background:#0066cc; border-color:#003e80; }
+  .mw-dash .panels { display:grid; grid-template-columns:1fr 1fr; gap:3px; flex:1; min-height:0; }
+  .mw-dash .panels .p { border:1px solid #b0b0b0; background:#fff; padding:2px; display:flex; flex-direction:column; gap:2px; }
+  .mw-dash .panels .p .r { height:2px; background:#d8d8d8; border-radius:1px; }
+
+  /* Generic screen mini (toolbar + form + table) */
+  .mw-screen { display:flex; flex-direction:column; gap:4px; height:100%; }
+  .mw-screen .group { border:1px solid #808080; background:#fff; padding:3px; display:grid; grid-template-columns:1fr 1fr; column-gap:4px; row-gap:2px; }
+  .mw-screen .group.shaded { background:#f0f0f0; }
+  .mw-screen .group .frow { display:flex; align-items:center; gap:3px; }
+  .mw-screen .group .frow .lbl { width:18px; height:2.5px; background:#b0b0b0; flex-shrink:0; }
+  .mw-screen .group .frow .fld { flex:1; height:6px; background:#fff; border:1px solid #b0b0b0; }
+  .mw-screen .table { border:1px solid #808080; background:#fff; flex:1; min-height:0; display:flex; flex-direction:column; }
+  .mw-screen .table .th { background:#e8e8e8; border-bottom:1px solid #b0b0b0; height:7px; display:grid; grid-template-columns: repeat(4,1fr); column-gap:1px; }
+  .mw-screen .table .th .c { background:#e8e8e8; }
+  .mw-screen .table .tr { height:6px; display:grid; grid-template-columns: repeat(4,1fr); column-gap:1px; border-bottom:1px solid #e8e8e8; }
+  .mw-screen .table .tr:nth-child(odd) { background:#f8f8f8; }
+  .mw-screen .table .tr .c { background:rgba(0,0,0,0.05); }
+  .mw-screen .table .tr.audit .c.edit { background:#cce4f7; }
+  .mw-screen .totals {
+    height: 9px; background: #f0f0f0; border: 1px solid #b0b0b0;
+    display:flex; justify-content:flex-end; align-items:center;
+    padding-right: 5px;
+  }
+  .mw-screen .totals .v { width: 30px; height: 3px; background: #000; border-radius: 1px; }
+
+  /* ===== Bottom tip strip ===== */
+  .tip-strip {
+    border: 1px solid var(--border);
+    background: var(--bg-window);
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .tip-strip .lab {
+    font-weight: 700;
+    color: var(--primary-press, #134d85);
+    margin-right: 8px;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+
+  <!-- Header -->
+  <div>
+    <h1 class="slide-title">Quick Start Tutorial</h1>
+    <div class="slide-subtitle">A typical day in the system, in 6 steps</div>
+  </div>
+
+  <!-- Step grid -->
+  <div class="steps">
+
+    <!-- Step 1: Login -->
+    <div class="step">
+      <div class="step-head">
+        <span class="num">01</span>
+        <span class="name">Sign in</span>
+        <span class="screen">LoginFrame</span>
+      </div>
+      <div class="step-thumb">
+        <div class="mw-login">
+          <div class="dialog">
+            <div class="tb"></div>
+            <div class="body">
+              <div class="row"><div class="lbl"></div><div class="fld"></div></div>
+              <div class="row"><div class="lbl"></div><div class="fld"></div></div>
+              <div class="btn"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step-body">
+        <span class="verb">Enter</span> your username and password, then click <b>Login</b>.
+        The main window opens to the Dashboard.
+      </div>
+    </div>
+
+    <!-- Step 2: Dashboard -->
+    <div class="step">
+      <div class="step-head">
+        <span class="num">02</span>
+        <span class="name">Check the Dashboard</span>
+        <span class="screen">DashboardPanel</span>
+      </div>
+      <div class="step-thumb">
+        <div class="mw-dash">
+          <div class="kpis">
+            <div class="k"><div class="v"></div></div>
+            <div class="k"><div class="v"></div></div>
+            <div class="k"><div class="v"></div></div>
+            <div class="k"><div class="v"></div></div>
+          </div>
+          <div class="qa"><div class="btn p"></div><div class="btn"></div><div class="btn"></div><div class="btn"></div></div>
+          <div class="panels">
+            <div class="p"><div class="r"></div><div class="r"></div><div class="r"></div></div>
+            <div class="p"><div class="r"></div><div class="r"></div><div class="r"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="step-body">
+        <span class="verb">Review</span> today's KPIs, low-stock alerts, and recent transactions.
+        Use Quick Actions to jump anywhere.
+      </div>
+    </div>
+
+    <!-- Step 3: Record a Sale -->
+    <div class="step">
+      <div class="step-head">
+        <span class="num">03</span>
+        <span class="name">Record a Sale</span>
+        <span class="screen">SalesPanel</span>
+      </div>
+      <div class="step-thumb">
+        <div class="mw-screen">
+          <div class="group">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="group shaded">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="table">
+            <div class="th"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+          </div>
+          <div class="totals"><div class="v"></div></div>
+        </div>
+      </div>
+      <div class="step-body">
+        <span class="verb">Add</span> items + quantities to the invoice, then click
+        <b>Save Transaction</b>. Stock goes down automatically.
+      </div>
+    </div>
+
+    <!-- Step 4: Record Receiving -->
+    <div class="step">
+      <div class="step-head">
+        <span class="num">04</span>
+        <span class="name">Record a Delivery</span>
+        <span class="screen">ReceivingPanel</span>
+      </div>
+      <div class="step-thumb">
+        <div class="mw-screen">
+          <div class="group">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="group shaded">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="table">
+            <div class="th"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="step-body">
+        <span class="verb">Pick</span> the vendor, list what arrived, click
+        <b>Save Receipt</b>. Stock goes up automatically.
+      </div>
+    </div>
+
+    <!-- Step 5: Stock On Hand -->
+    <div class="step">
+      <div class="step-head">
+        <span class="num">05</span>
+        <span class="name">Check Stock On Hand</span>
+        <span class="screen">StockOnHandPanel</span>
+      </div>
+      <div class="step-thumb">
+        <div class="mw-screen">
+          <div class="group">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="table">
+            <div class="th"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="step-body">
+        <span class="verb">View</span> live quantities for every item.
+        Critical and low items are highlighted in red / amber.
+      </div>
+    </div>
+
+    <!-- Step 6: Audit -->
+    <div class="step">
+      <div class="step-head">
+        <span class="num">06</span>
+        <span class="name">End-of-day Audit</span>
+        <span class="screen">AuditPanel</span>
+      </div>
+      <div class="step-thumb">
+        <div class="mw-screen">
+          <div class="group">
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+            <div class="frow"><div class="lbl"></div><div class="fld"></div></div>
+          </div>
+          <div class="table">
+            <div class="th"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+            <div class="tr audit"><div class="c"></div><div class="c"></div><div class="c edit"></div><div class="c"></div></div>
+            <div class="tr audit"><div class="c"></div><div class="c"></div><div class="c edit"></div><div class="c"></div></div>
+            <div class="tr audit"><div class="c"></div><div class="c"></div><div class="c edit"></div><div class="c"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="step-body">
+        <span class="verb">Walk</span> the storage, type the physical count in the blue cells.
+        The system flags any variance vs system stock.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Tip strip -->
+  <div class="tip-strip">
+    <span class="lab">TIP:</span>
+    Every action saves to a single MySQL database, so every panel always shows the latest data — no manual refresh, no syncing between screens.
+  </div>
+
+</div>
+
+</body>
+</html>

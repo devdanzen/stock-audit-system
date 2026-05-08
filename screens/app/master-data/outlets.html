@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Outlets — Inventory Management</title>
+<link rel="stylesheet" href="../../app-shell.css" />
+<style>
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--bg-window);
+    border-bottom: 1px solid var(--border);
+    height: 38px;
+  }
+  .toolbar .spacer { flex: 1; }
+  .toolbar .search-row { display: flex; align-items: center; gap: 6px; }
+  .toolbar .search-row input.field { width: 180px; }
+
+  .form-panel {
+    border: 1px solid var(--border);
+    background: #fff;
+    margin: 12px 14px;
+  }
+  .form-panel .panel-head {
+    background: var(--bg-window);
+    border-bottom: 1px solid var(--border);
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .form-panel .form-body {
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 24px;
+  }
+  .form-panel .form-col {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 6px 8px;
+    align-items: center;
+  }
+  .form-panel label { font-size: 12px; }
+  .form-panel .field { width: 100%; max-width: 320px; }
+
+  .table-wrap {
+    margin: 0 14px 12px;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    overflow: hidden;
+  }
+  .table-wrap .jtable { border: 0; }
+
+  .row-info {
+    margin: 0 14px 8px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="jframe" data-screen-label="Outlets">
+
+  <div class="titlebar">
+    <span class="title-text">Inventory Management System</span>
+    <div class="winbtns">
+      <button class="winbtn">&#x2014;</button>
+      <button class="winbtn">&#x25A1;</button>
+      <button class="winbtn close">&#x2715;</button>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <span class="app-name">Inventory Management</span>
+    <span class="spacer"></span>
+    <span class="right">User: admin</span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="nav">
+      <div class="nav-item">Dashboard</div>
+
+      <div class="nav-section">--- Master Data ---</div>
+      <div class="nav-item">Items</div>
+      <div class="nav-item">Categories</div>
+      <div class="nav-item active">Outlets</div>
+      <div class="nav-item">Vendors</div>
+      <div class="nav-item">Users</div>
+
+      <div class="nav-section">--- Transactions ---</div>
+      <div class="nav-item">Receiving</div>
+      <div class="nav-item">Sales</div>
+      <div class="nav-item">Movement</div>
+      <div class="nav-item">Recipes</div>
+
+      <div class="nav-section">--- Stock Operations ---</div>
+      <div class="nav-item">Stock On Hand</div>
+      <div class="nav-item">Audit</div>
+      <div class="nav-item">End Balance</div>
+
+      <div class="nav-section">--- Reports &amp; Charts ---</div>
+      <div class="nav-item">Reports</div>
+      <div class="nav-item">Charts</div>
+    </div>
+    <div class="nav-footer">
+      <div class="nav-item">Logout</div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="screen">
+
+      <div class="screen-header" style="padding:10px 14px;height:40px;box-sizing:border-box;">
+        <div class="screen-title">Outlets — Manage Outlet Locations</div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <button class="btn btn-primary">+ Add</button>
+        <button class="btn">Update</button>
+        <button class="btn btn-danger">Delete</button>
+        <button class="btn">Clear</button>
+        <button class="btn">Refresh</button>
+        <span class="spacer"></span>
+        <div class="search-row">
+          <label for="search">Search:</label>
+          <input id="search" class="field" type="text" />
+        </div>
+      </div>
+
+      <!-- Form panel -->
+      <div class="form-panel">
+        <div class="panel-head">Outlet Details</div>
+        <div class="form-body">
+          <div class="form-col">
+            <label>Outlet Code:</label>
+            <input class="field mono" value="SHLMP" />
+          </div>
+          <div class="form-col">
+            <label>Outlet Name:</label>
+            <input class="field" value="SH Lippo Mall Puri" />
+          </div>
+          <div class="form-col">
+            <label>Status:</label>
+            <select class="field"><option>Active</option><option>Inactive</option></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Outlets table -->
+      <div class="table-wrap">
+        <table class="jtable">
+          <thead>
+            <tr>
+              <th style="width:140px;">Outlet Code</th>
+              <th>Outlet Name</th>
+              <th class="num" style="width:140px;">Item Count</th>
+              <th style="width:90px;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="selected">
+              <td class="mono">SHLMP</td>
+              <td>SH Lippo Mall Puri</td>
+              <td class="num">904</td>
+              <td>Active</td>
+            </tr>
+            <tr>
+              <td class="mono">SHSCI</td>
+              <td>SH SCBD</td>
+              <td class="num">711</td>
+              <td>Active</td>
+            </tr>
+            <tr>
+              <td class="mono">SHMTA</td>
+              <td>SH Mall Taman Anggrek</td>
+              <td class="num">800</td>
+              <td>Active</td>
+            </tr>
+            <tr>
+              <td class="mono">SHNEO</td>
+              <td>SH Neo Soho</td>
+              <td class="num">618</td>
+              <td>Active</td>
+            </tr>
+            <tr>
+              <td class="mono">SHALS</td>
+              <td>SH Alam Sutera</td>
+              <td class="num">443</td>
+              <td>Active</td>
+            </tr>
+            <tr>
+              <td class="mono">SHPLU</td>
+              <td>SH Pluit</td>
+              <td class="num">523</td>
+              <td>Active</td>
+            </tr>
+            <tr>
+              <td class="mono">SHBIN</td>
+              <td>SH Bintaro</td>
+              <td class="num">420</td>
+              <td>Active</td>
+            </tr>
+            <tr>
+              <td class="mono">SHISL</td>
+              <td>SH Senayan</td>
+              <td class="num">737</td>
+              <td>Active</td>
+            </tr>
+            <tr>
+              <td class="mono">SHBEX</td>
+              <td>SH Bekasi</td>
+              <td class="num">91</td>
+              <td>Inactive</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="row-info">Showing 9 of 9 outlets</div>
+
+    </div>
+  </main>
+
+  <div class="statusbar">
+    <span>Connected to MySQL · inventory_db</span>
+    <span>admin · v1.0.0</span>
+  </div>
+
+</div>
+
+</body>
+</html>

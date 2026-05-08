@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>LoginFrame — Inventory Management</title>
+<style>
+  :root {
+    --bg-window:   #f0f0f0;
+    --bg-content:  #ffffff;
+    --bg-button:   #f0f0f0;
+    --bg-button-hover: #e6e6e6;
+    --border:      #c0c0c0;
+    --border-dark: #808080;
+    --border-darker: #404040;
+    --text:        #000000;
+    --primary:     #0066cc;
+    --primary-hover:#0a72d8;
+    --danger:      #cc0000;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #b8b8b8;
+    font-family: "Segoe UI", "Tahoma", "Liberation Sans", "DejaVu Sans", sans-serif;
+    font-size: 12px;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  body { display: flex; align-items: center; justify-content: center; }
+
+  /* JFrame (400×280) */
+  .jframe {
+    width: 400px;
+    height: 280px;
+    background: var(--bg-window);
+    border: 1px solid var(--border-darker);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Title bar */
+  .titlebar {
+    height: 24px;
+    background: linear-gradient(#0a4ea0, #0066cc);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 2px 0 6px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .titlebar .title-text { flex: 1; }
+  .titlebar .winbtn {
+    width: 28px; height: 20px; margin: 2px 0 2px 2px;
+    background: var(--bg-button);
+    border: 1px solid var(--border-darker);
+    color: #000;
+    font-family: "Segoe UI Symbol", "Segoe UI", sans-serif;
+    font-size: 11px;
+    display: grid; place-items: center;
+    cursor: default;
+    line-height: 1;
+  }
+  .titlebar .winbtn:last-child { margin-right: 2px; }
+  .titlebar .winbtn:hover { background: var(--bg-button-hover); }
+  .titlebar .winbtn.close:hover { background: var(--danger); color: #fff; }
+
+  /* Form content - GridBagLayout-style */
+  .content {
+    flex: 1;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    column-gap: 8px;
+    row-gap: 12px;
+    align-content: center;
+    align-items: center;
+  }
+  .heading {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 14px 0;
+  }
+  .lbl { text-align: right; font-size: 12px; }
+  .field {
+    width: 220px;
+    height: 22px;
+    background: #fff;
+    border: 1px solid var(--border-dark);
+    padding: 0 5px;
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--text);
+    outline: none;
+  }
+  .field:focus { border-color: var(--primary); }
+  .field.password { letter-spacing: 2px; }
+
+  .actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  .btn {
+    height: 24px;
+    min-width: 80px;
+    padding: 0 12px;
+    border: 1px solid var(--border-dark);
+    background: var(--bg-button);
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--text);
+    cursor: default;
+    border-radius: 2px;
+  }
+  .btn:hover { background: var(--bg-button-hover); }
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+    border-color: #003e80;
+  }
+  .btn-primary:hover { background: var(--primary-hover); }
+
+  /* dotted Swing default-button focus */
+  .btn-primary.focused {
+    outline: 1px dotted #fff;
+    outline-offset: -4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="jframe" role="dialog" aria-label="Inventory Management Login">
+  <div class="titlebar">
+    <span class="title-text">Inventory Management — Login</span>
+    <button class="winbtn" title="Minimize" tabindex="-1">&#x2014;</button>
+    <button class="winbtn" title="Maximize" tabindex="-1">&#x25A1;</button>
+    <button class="winbtn close" title="Close" tabindex="-1">&#x2715;</button>
+  </div>
+
+  <div class="content">
+    <div class="heading">Inventory Login</div>
+
+    <label class="lbl" for="username">Username:</label>
+    <input id="username" class="field" type="text" value="admin" />
+
+    <label class="lbl" for="password">Password:</label>
+    <input id="password" class="field password" type="text" value="••••••••" />
+
+    <div class="actions">
+      <button class="btn btn-primary focused" type="button">Login</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

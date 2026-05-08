@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Recipes — Inventory Management</title>
+<link rel="stylesheet" href="../../app-shell.css" />
+<style>
+  .group {
+    position: relative;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    padding: 16px 14px 12px;
+    margin: 0 14px 14px;
+  }
+  .group.shaded { background: var(--bg-window); }
+  .group > .legend {
+    position: absolute;
+    top: -8px;
+    left: 10px;
+    background: #fff;
+    padding: 0 5px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .group.shaded > .legend { background: var(--bg-window); }
+
+  .header-row {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1fr;
+    gap: 8px 18px;
+  }
+  .field-row { display: flex; align-items: center; gap: 8px; }
+  .field-row label { font-size: 12px; min-width: 110px; }
+  .field-row .field { flex: 1; }
+
+  .sub-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 14px;
+    min-height: 14px;
+  }
+
+  .note-1to1 {
+    margin-top: 10px;
+    font-size: 11px;
+    font-style: italic;
+    color: var(--text-muted);
+  }
+
+  /* Add ingredient layout */
+  .ing-row {
+    display: grid;
+    grid-template-columns: 1fr 130px 130px auto;
+    gap: 8px;
+    align-items: end;
+  }
+  .ing-row .field-block { display: flex; flex-direction: column; gap: 3px; }
+  .ing-row label { font-size: 11px; }
+
+  .table-wrap {
+    margin: 0 14px 6px;
+    border: 1px solid var(--border-dark);
+    background: #fff;
+  }
+  .table-wrap .jtable { border: 0; }
+
+  .ing-title {
+    margin: 0 14px 4px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .footer-text {
+    margin: 0 14px 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .btn-x {
+    background: transparent;
+    border: 0;
+    color: var(--danger);
+    font-weight: 700;
+    font-size: 12px;
+    cursor: default;
+    padding: 0 6px;
+    text-decoration: underline;
+  }
+
+  .btn-bar {
+    margin: 0 14px 14px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="jframe" data-screen-label="06 Recipes">
+
+  <div class="titlebar">
+    <span class="title-text">Inventory Management System</span>
+    <div class="winbtns">
+      <button class="winbtn">&#x2014;</button>
+      <button class="winbtn">&#x25A1;</button>
+      <button class="winbtn close">&#x2715;</button>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <span class="app-name">Inventory Management</span>
+    <span class="spacer"></span>
+    <span class="right">User: admin</span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="nav">
+      <div class="nav-item">Dashboard</div>
+
+      <div class="nav-section">--- Master Data ---</div>
+      <div class="nav-item">Items</div>
+      <div class="nav-item">Categories</div>
+      <div class="nav-item">Outlets</div>
+      <div class="nav-item">Vendors</div>
+      <div class="nav-item">Users</div>
+
+      <div class="nav-section">--- Transactions ---</div>
+      <div class="nav-item">Receiving</div>
+      <div class="nav-item">Sales</div>
+      <div class="nav-item">Movement</div>
+      <div class="nav-item active">Recipes</div>
+
+      <div class="nav-section">--- Stock Operations ---</div>
+      <div class="nav-item">Stock On Hand</div>
+      <div class="nav-item">Audit</div>
+      <div class="nav-item">End Balance</div>
+
+      <div class="nav-section">--- Reports &amp; Charts ---</div>
+      <div class="nav-item">Reports</div>
+      <div class="nav-item">Charts</div>
+    </div>
+    <div class="nav-footer">
+      <div class="nav-item">Logout</div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="screen">
+
+      <div class="screen-header" style="padding:10px 14px;height:40px;box-sizing:border-box;">
+        <div class="screen-title">Recipe Entry — Manage Recipes</div>
+      </div>
+
+      <!-- Recipe Header -->
+      <div class="group" style="margin-top:18px;">
+        <span class="legend">Recipe Header</span>
+        <div class="header-row">
+          <div class="field-row">
+            <label>Recipe Code:</label>
+            <input class="field mono" value="MENU-001" style="flex:0 1 auto;width:140px;" />
+            <span class="sub-hint">(auto-generated)</span>
+          </div>
+          <div class="field-row">
+            <label>Finished Item:</label>
+            <select class="field"><option>MENU-001 — Edamame (Kitchen)</option></select>
+          </div>
+          <div class="field-row">
+            <label>Item Class:</label>
+            <select class="field"><option>Food</option></select>
+          </div>
+        </div>
+        <div class="note-1to1">
+          Recipe Code and Finished Item are unique 1:1 — one item can have at most one recipe
+        </div>
+      </div>
+
+      <!-- Add Ingredient -->
+      <div class="group shaded">
+        <span class="legend">Add Ingredient</span>
+        <div class="ing-row">
+          <div class="field-block">
+            <label>Ingredient:</label>
+            <select class="field"><option>DRY-0497 — Edamame (raw)</option></select>
+          </div>
+          <div class="field-block">
+            <label>Initial Weight:</label>
+            <input class="field num" value="150.0" style="text-align:right;" />
+          </div>
+          <div class="field-block">
+            <label>Final Weight:</label>
+            <input class="field num" value="150.0" style="text-align:right;" />
+          </div>
+          <div class="field-block">
+            <label>&nbsp;</label>
+            <button class="btn">+ Add Ingredient</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ingredients table -->
+      <div class="ing-title">Ingredients</div>
+      <div class="table-wrap">
+        <table class="jtable">
+          <thead>
+            <tr>
+              <th style="width:30px;">#</th>
+              <th style="width:120px;">Ingredient Code</th>
+              <th>Description</th>
+              <th class="num" style="width:100px;">Initial Wt</th>
+              <th class="num" style="width:100px;">Final Wt</th>
+              <th class="num" style="width:80px;">Waste %</th>
+              <th style="width:70px;">Unit</th>
+              <th style="width:70px;">Remove</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td class="mono">DRY-0497</td>
+              <td>Edamame (raw)</td>
+              <td class="num">150.0</td>
+              <td class="num">150.0</td>
+              <td class="num">0%</td>
+              <td>GRAM</td>
+              <td><button class="btn-x">[X]</button></td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td class="mono">DRY-0103</td>
+              <td>Salt</td>
+              <td class="num">5.0</td>
+              <td class="num">5.0</td>
+              <td class="num">0%</td>
+              <td>GRAM</td>
+              <td><button class="btn-x">[X]</button></td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td class="mono">DRY-0210</td>
+              <td>Soy Sauce</td>
+              <td class="num">10.0</td>
+              <td class="num">10.0</td>
+              <td class="num">0%</td>
+              <td>ML</td>
+              <td><button class="btn-x">[X]</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footer-text">3 ingredients · Waste % = (initial − final) / initial × 100</div>
+
+      <div class="btn-bar">
+        <button class="btn btn-wide">Cancel</button>
+        <button class="btn btn-primary btn-wide">Save Recipe</button>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="statusbar">
+    <span>Connected to MySQL · inventory_db</span>
+    <span>admin · v1.0.0</span>
+  </div>
+
+</div>
+
+</body>
+</html>

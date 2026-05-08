@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Build Phases — Inventory Management</title>
+<link rel="stylesheet" href="../app-shell.css" />
+<style>
+  body { padding: 24px; background: #b8b8b8; }
+
+  .slide {
+    width: 1280px;
+    min-height: 800px;
+    background: #ffffff;
+    border: 1px solid #404040;
+    padding: 24px 30px 22px;
+    box-sizing: border-box;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .slide-title { font-size: 22px; font-weight: 700; margin: 0; }
+  .slide-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+  /* ===== Phase timeline ===== */
+  .phases {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 4px 0 4px 50px;
+  }
+  /* vertical spine */
+  .phases::before {
+    content: '';
+    position: absolute;
+    left: 22px;
+    top: 12px;
+    bottom: 12px;
+    width: 1px;
+    background: var(--border-dark);
+  }
+
+  .phase {
+    position: relative;
+    display: grid;
+    grid-template-columns: 200px 1fr 240px;
+    gap: 14px;
+    align-items: stretch;
+    border: 1px solid var(--border);
+    background: #fff;
+    padding: 8px 14px;
+  }
+
+  /* number badge sitting on the spine */
+  .phase .num-badge {
+    position: absolute;
+    left: -42px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    background: #fff;
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+    z-index: 1;
+  }
+  .phase.done .num-badge {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .phase .name {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+  }
+  .phase .name .title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.2px;
+  }
+  .phase .name .goal {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  .phase .work {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text);
+    border-left: 1px dashed var(--border);
+    padding-left: 14px;
+  }
+  .phase .work b { font-weight: 600; }
+
+  .phase .deliverables {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    line-height: 1.55;
+    color: var(--text-muted);
+    border-left: 1px dashed var(--border);
+    padding-left: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .phase .deliverables .lab {
+    font-family: var(--font);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #3a3a3a;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+
+  /* Footer rule of thumb */
+  .footer-strip {
+    border: 1px solid var(--border);
+    background: var(--bg-window);
+    padding: 9px 14px;
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .footer-strip .lab {
+    font-weight: 700;
+    color: var(--primary-press, #134d85);
+    margin-right: 8px;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+
+  <!-- Header -->
+  <div>
+    <h1 class="slide-title">Build Phases — From Start to End</h1>
+    <div class="slide-subtitle">Project build order &middot; priority sequence, not calendar time</div>
+  </div>
+
+  <!-- Phases -->
+  <div class="phases">
+
+    <!-- Phase 1 -->
+    <div class="phase done">
+      <div class="num-badge">01</div>
+      <div class="name">
+        <div class="title">Database &amp; Schema</div>
+        <div class="goal">Foundation must come first.</div>
+      </div>
+      <div class="work">
+        Design <b>14 tables</b> with FK relationships and 24 CHECK constraints, plus
+        <b>4 SQL views</b> (v_stock_on_hand, v_top_sellers, v_daily_sales, v_top_waste).
+        Set up XAMPP + phpMyAdmin and import the schema.
+      </div>
+      <div class="deliverables">
+        <div class="lab">Deliverables</div>
+        inventory_schema_final.sql<br/>
+        Seed data (categories,<br/>
+        outlets, vendors, admin user)
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="phase done">
+      <div class="num-badge">02</div>
+      <div class="name">
+        <div class="title">Project Foundation</div>
+        <div class="goal">Set up the Java/Swing scaffolding.</div>
+      </div>
+      <div class="work">
+        Create the NetBeans project with the package layout
+        (<b>view / dao / model / util</b>). Build shared utilities:
+        <b>DbConnection</b> factory and <b>PasswordUtil</b> (BCrypt wrapper).
+        Write Model POJOs for all 14 tables.
+      </div>
+      <div class="deliverables">
+        <div class="lab">Deliverables</div>
+        DbConnection.java<br/>
+        PasswordUtil.java<br/>
+        14 model POJOs
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="phase done">
+      <div class="num-badge">03</div>
+      <div class="name">
+        <div class="title">Authentication &amp; Shell</div>
+        <div class="goal">Open the app, log in, see the empty home.</div>
+      </div>
+      <div class="work">
+        Build <b>UserDAO</b>, the <b>LoginFrame</b>, and the <b>MainFrame</b> with
+        sidebar navigation + CardLayout content area. Wire role-based access
+        so Staff / Manager / Administrator each see the right menu items.
+      </div>
+      <div class="deliverables">
+        <div class="lab">Deliverables</div>
+        LoginFrame.java<br/>
+        MainFrame.java<br/>
+        UserDAO.java
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="phase done">
+      <div class="num-badge">04</div>
+      <div class="name">
+        <div class="title">Master Data CRUDs</div>
+        <div class="goal">Populate the reference tables.</div>
+      </div>
+      <div class="work">
+        Build the five reusable CRUD panels: <b>Items</b>, <b>Categories</b>,
+        <b>Outlets</b>, <b>Vendors</b>, <b>Users</b>. Each follows the same
+        toolbar + form + JTable template — Items is built first as the
+        reference, the rest copy its pattern.
+      </div>
+      <div class="deliverables">
+        <div class="lab">Deliverables</div>
+        5 panels &middot; 4 DAOs<br/>
+        Shared CRUD template
+        <div class="note" style="font-size:11px; color:var(--text-muted); margin-top:4px;">(UserDAO already built in Phase 3)</div>
+      </div>
+    </div>
+
+    <!-- Phase 5 -->
+    <div class="phase done">
+      <div class="num-badge">05</div>
+      <div class="name">
+        <div class="title">Transactions</div>
+        <div class="goal">Stock starts moving.</div>
+      </div>
+      <div class="work">
+        Build the four transactional panels: <b>Receiving</b>, <b>Sales</b>,
+        <b>Movement</b>, <b>Recipes</b>. Header + detail INSERTs wrapped in a
+        single JDBC transaction (setAutoCommit(false), commit / rollback).
+        Stock side-effects flow automatically through SQL views.
+      </div>
+      <div class="deliverables">
+        <div class="lab">Deliverables</div>
+        4 panels &middot; 4 DAOs<br/>
+        Transaction wrapper pattern
+      </div>
+    </div>
+
+    <!-- Phase 6 -->
+    <div class="phase done">
+      <div class="num-badge">06</div>
+      <div class="name">
+        <div class="title">Stock Operations</div>
+        <div class="goal">Inventory accountability.</div>
+      </div>
+      <div class="work">
+        Build <b>Stock On Hand</b> (reads v_stock_on_hand), <b>Audit</b>
+        (editable JTable + live variance calculation), and <b>End Balance</b>
+        (period snapshot with confirmation warning).
+      </div>
+      <div class="deliverables">
+        <div class="lab">Deliverables</div>
+        3 panels &middot; 2 DAOs<br/>
+        Custom variance renderer
+        <div class="note" style="font-size:11px; color:var(--text-muted); margin-top:4px;">(Stock On Hand reads v_stock_on_hand view &mdash; no DAO)</div>
+      </div>
+    </div>
+
+    <!-- Phase 7 -->
+    <div class="phase done">
+      <div class="num-badge">07</div>
+      <div class="name">
+        <div class="title">Dashboard &amp; Insights</div>
+        <div class="goal">Now that data flows, show it back.</div>
+      </div>
+      <div class="work">
+        Build the <b>Dashboard</b> (KPIs, recent transactions, low-stock alerts),
+        <b>Reports</b> (filter + monospace preview, paginated), and <b>Charts</b>
+        (4 JFreeCharts: top sellers, daily sales, sales by category, top waste).
+      </div>
+      <div class="deliverables">
+        <div class="lab">Deliverables</div>
+        Dashboard / Reports / Charts<br/>
+        JFreeChart integration
+      </div>
+    </div>
+
+    <!-- Phase 8 -->
+    <div class="phase done">
+      <div class="num-badge">08</div>
+      <div class="name">
+        <div class="title">Polish &amp; Defense</div>
+        <div class="goal">Make it presentable and shippable.</div>
+      </div>
+      <div class="work">
+        Add the <b>About dialog</b>, JOptionPane confirms for destructive actions,
+        validation messages, look-and-feel tuning. Generate documentation,
+        prepare the defense deck, run end-to-end testing across all 16 screens.
+      </div>
+      <div class="deliverables">
+        <div class="lab">Deliverables</div>
+        About dialog &middot; CLAUDE.md<br/>
+        Defense slides &middot; QA pass
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-strip">
+    <span class="lab">Build principle:</span>
+    Each phase produces something runnable. By the end of Phase 3 you can log in. By Phase 5 the app already books real sales. Each later phase adds capability on top of a working system — never a half-broken intermediate state.
+  </div>
+
+</div>
+
+</body>
+</html>

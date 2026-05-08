@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Dashboard — Inventory Management</title>
+<link rel="stylesheet" href="../app-shell.css" />
+<style>
+  /* ===== Dashboard-specific (kept minimal) ===== */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .kpi {
+    background: #fff;
+    border: 1px solid var(--border);
+    height: 70px;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .kpi .label { font-size: 12px; color: var(--text); }
+  .kpi .value { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  .qa-heading {
+    font-size: 12px;
+    font-weight: 700;
+    margin: 4px 0 8px 0;
+  }
+  .qa-row { display: flex; gap: 6px; margin-bottom: 14px; }
+
+  .dual {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  /* Plain panel header (no extra styling, just a label strip) */
+  .panel-plain { border: 1px solid var(--border); background: #fff; }
+  .panel-plain .panel-head {
+    background: var(--bg-window);
+    border-bottom: 1px solid var(--border);
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .panel-plain .panel-body { padding: 0; }
+
+  /* Bring tables flush to panel edges */
+  .panel-plain .jtable { border: 0; }
+  .panel-plain .jtable thead th { border-top: 0; }
+  .panel-plain .jtable thead th:first-child,
+  .panel-plain .jtable tbody td:first-child { padding-left: 10px; }
+
+  .stock-critical { color: var(--danger); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="jframe" data-screen-label="02 Dashboard">
+
+  <!-- ===== Title bar ===== -->
+  <div class="titlebar">
+    <span class="title-text">Inventory Management System</span>
+    <div class="winbtns">
+      <button class="winbtn">&#x2014;</button>
+      <button class="winbtn">&#x25A1;</button>
+      <button class="winbtn close">&#x2715;</button>
+    </div>
+  </div>
+
+  <!-- ===== Top bar ===== -->
+  <div class="topbar">
+    <span class="app-name">Inventory Management</span>
+    <span class="spacer"></span>
+    <span class="right">User: admin</span>
+  </div>
+
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar">
+    <div class="nav">
+      <div class="nav-item active">Dashboard</div>
+
+      <div class="nav-section">--- Master Data ---</div>
+      <div class="nav-item">Items</div>
+      <div class="nav-item">Categories</div>
+      <div class="nav-item">Outlets</div>
+      <div class="nav-item">Vendors</div>
+      <div class="nav-item">Users</div>
+
+      <div class="nav-section">--- Transactions ---</div>
+      <div class="nav-item">Receiving</div>
+      <div class="nav-item">Sales</div>
+      <div class="nav-item">Movement</div>
+      <div class="nav-item">Recipes</div>
+
+      <div class="nav-section">--- Stock Operations ---</div>
+      <div class="nav-item">Stock On Hand</div>
+      <div class="nav-item">Audit</div>
+      <div class="nav-item">End Balance</div>
+
+      <div class="nav-section">--- Reports &amp; Charts ---</div>
+      <div class="nav-item">Reports</div>
+      <div class="nav-item">Charts</div>
+    </div>
+    <div class="nav-footer">
+      <div class="nav-item">Logout</div>
+    </div>
+  </aside>
+
+  <!-- ===== Content ===== -->
+  <main class="content">
+    <div class="screen">
+
+      <div class="screen-header">
+        <div>
+          <div class="screen-title">Dashboard</div>
+          <div class="screen-subtitle">Monday, 15 December 2025</div>
+        </div>
+      </div>
+
+      <div class="screen-body">
+
+        <!-- KPIs -->
+        <div class="kpi-row">
+          <div class="kpi">
+            <div class="label">Today's sales</div>
+            <div class="value">Rp 4,200,000</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Low stock items</div>
+            <div class="value">7</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Pending audits</div>
+            <div class="value">3</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Total items</div>
+            <div class="value">5,247</div>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="qa-heading">Quick Actions</div>
+        <div class="qa-row">
+          <button class="btn btn-primary btn-wide">New Sale</button>
+          <button class="btn btn-wide">New Receiving</button>
+          <button class="btn btn-wide">Run Audit</button>
+          <button class="btn btn-wide">View Reports</button>
+        </div>
+
+        <!-- Two panels -->
+        <div class="dual">
+
+          <div class="panel-plain">
+            <div class="panel-head">Recent Transactions</div>
+            <div class="panel-body">
+              <table class="jtable">
+                <thead>
+                  <tr>
+                    <th style="width:60px;">Time</th>
+                    <th style="width:90px;">Type</th>
+                    <th>Reference</th>
+                    <th class="num">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>14:32</td>
+                    <td>Sale</td>
+                    <td class="mono">INV-250039434</td>
+                    <td class="num">Rp 1,105,000</td>
+                  </tr>
+                  <tr>
+                    <td>14:18</td>
+                    <td>Receiving</td>
+                    <td class="mono">PO-2050</td>
+                    <td class="num">Rp 4,500,000</td>
+                  </tr>
+                  <tr>
+                    <td>13:45</td>
+                    <td>Movement</td>
+                    <td class="mono">WASTE Edamame</td>
+                    <td class="num">-2.5 GRAM</td>
+                  </tr>
+                  <tr>
+                    <td>13:20</td>
+                    <td>Sale</td>
+                    <td class="mono">INV-250039433</td>
+                    <td class="num">Rp 685,000</td>
+                  </tr>
+                  <tr>
+                    <td>12:55</td>
+                    <td>Sale</td>
+                    <td class="mono">INV-250039432</td>
+                    <td class="num">Rp 245,000</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel-plain">
+            <div class="panel-head">Low Stock Alerts</div>
+            <div class="panel-body">
+              <table class="jtable">
+                <thead>
+                  <tr>
+                    <th style="width:130px;">Item Number</th>
+                    <th>Description</th>
+                    <th class="num" style="width:120px;">Current Stock</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="mono">FISH-0042</td>
+                    <td>Salmon Trout</td>
+                    <td class="num stock-critical">12.5 GRAM</td>
+                  </tr>
+                  <tr>
+                    <td class="mono">DRY-0210</td>
+                    <td>Soy Sauce</td>
+                    <td class="num stock-critical">8.0 ML</td>
+                  </tr>
+                  <tr>
+                    <td class="mono">LIQ-0001</td>
+                    <td>Absolut Blue Vodka</td>
+                    <td class="num">9.0 BOTTLE</td>
+                  </tr>
+                  <tr>
+                    <td class="mono">FISH-0098</td>
+                    <td>Tuna Akami</td>
+                    <td class="num">22.0 GRAM</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Status bar -->
+  <div class="statusbar">
+    <span>Connected to MySQL · inventory_db · Last refresh: 14:32:05</span>
+    <span>admin · v1.0.0</span>
+  </div>
+
+</div>
+
+</body>
+</html>

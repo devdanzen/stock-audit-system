@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Technical Requirements — Inventory Management</title>
+<link rel="stylesheet" href="../app-shell.css" />
+<style>
+  body { padding: 24px; background: #b8b8b8; }
+
+  .slide {
+    width: 1280px;
+    min-height: 800px;
+    background: #ffffff;
+    border: 1px solid #404040;
+    padding: 26px 36px 22px;
+    box-sizing: border-box;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .slide-title { font-size: 22px; font-weight: 700; margin: 0; }
+  .slide-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+  /* ===== 2x2 quadrants ===== */
+  .quad-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 14px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .quad {
+    border: 1px solid var(--border-dark);
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .quad-head {
+    background: var(--bg-window);
+    border-bottom: 1px solid var(--border-dark);
+    padding: 8px 14px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .quad-head .label {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+  }
+  .quad-head .tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .quad-body {
+    padding: 10px 16px 12px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text);
+    flex: 1;
+  }
+  .quad-body ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+  .quad-body li { margin-bottom: 3px; }
+  .quad-body .sub {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-style: italic;
+    padding-left: 0;
+    margin-top: -1px;
+  }
+  .mono { font-family: var(--font-mono); font-size: 12px; }
+
+  /* ===== Bottom setup strip ===== */
+  .setup-strip {
+    border: 1px solid var(--border);
+    background: var(--bg-window);
+    padding: 10px 14px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .setup-strip .lab {
+    font-weight: 700;
+    color: var(--primary-press, #134d85);
+    margin-right: 6px;
+  }
+  .setup-strip .step-num {
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+
+  <!-- Header -->
+  <div>
+    <h1 class="slide-title">Technical Requirements</h1>
+    <div class="slide-subtitle">Software, libraries, and environment for running the system</div>
+  </div>
+
+  <!-- 2x2 grid -->
+  <div class="quad-grid">
+
+    <!-- Q1: Development Environment -->
+    <div class="quad">
+      <div class="quad-head">
+        <span class="label">Development Environment</span>
+        <span class="tag">build &amp; code</span>
+      </div>
+      <div class="quad-body">
+        <ul>
+          <li>Java JDK 8 or higher <span class="sub">(JDK 17 recommended)</span></li>
+          <li>NetBeans IDE 8.2 or later</li>
+          <li>XAMPP 7.4+ <span class="sub">(includes Apache + MySQL / MariaDB)</span></li>
+          <li>phpMyAdmin <span class="sub">(bundled with XAMPP)</span></li>
+          <li>Git for version control</li>
+          <li>Operating System: Windows 10+ / macOS / Linux</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Q2: Runtime Requirements -->
+    <div class="quad">
+      <div class="quad-head">
+        <span class="label">Runtime Requirements</span>
+        <span class="tag">execution</span>
+      </div>
+      <div class="quad-body">
+        <ul>
+          <li>Java Runtime Environment (JRE) 8 or higher</li>
+          <li>MySQL 5.7+ or MariaDB 10.4+</li>
+          <li>Minimum 4 GB RAM</li>
+          <li>200 MB disk space <span class="sub">(application + database)</span></li>
+          <li>Display resolution: 1280×720 or higher</li>
+          <li>Network: localhost only <span class="sub">(no internet required)</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Q3: Libraries & Dependencies -->
+    <div class="quad">
+      <div class="quad-head">
+        <span class="label">Libraries &amp; Dependencies</span>
+        <span class="tag">third-party JARs</span>
+      </div>
+      <div class="quad-body">
+        <ul>
+          <li><span class="mono">mysql-connector-java-5.1.23-bin.jar</span>
+            <div class="sub">MySQL JDBC Driver (provided in NetBeans)</div>
+          </li>
+          <li><span class="mono">jbcrypt-0.4.jar</span>
+            <div class="sub">Password hashing (BCrypt)</div>
+          </li>
+          <li><span class="mono">jfreechart-1.5.x.jar</span> + <span class="mono">jcommon-1.0.24.jar</span>
+            <div class="sub">Charting library for Reports &amp; Charts panel</div>
+          </li>
+          <li><span class="mono">Optional: jasperreports-6.x.x.jar</span>
+            <div class="sub">PDF report generation (future feature)</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Q4: Database Configuration -->
+    <div class="quad">
+      <div class="quad-head">
+        <span class="label">Database Configuration</span>
+        <span class="tag">connection</span>
+      </div>
+      <div class="quad-body">
+        <ul>
+          <li>Database name: <span class="mono">inventory_db</span></li>
+          <li>Host: <span class="mono">localhost</span> <span class="sub">(port 3306, default)</span></li>
+          <li>Default credentials: <span class="mono">root</span> / <span class="sub">(empty password)</span></li>
+          <li>Character set: <span class="mono">utf8mb4_unicode_ci</span></li>
+          <li>JDBC URL:<br/><span class="mono">jdbc:mysql://localhost:3306/inventory_db</span></li>
+          <li>Schema: 14 tables &middot; 4 views</li>
+          <li>Constraints: 19 foreign keys &middot; 24 CHECK constraints</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Setup strip -->
+  <div class="setup-strip">
+    <span class="lab">SETUP STEPS:</span>
+    <span class="step-num">(1)</span> Install XAMPP and start Apache + MySQL services &middot;
+    <span class="step-num">(2)</span> Open phpMyAdmin &rarr; create database <span class="mono">inventory_db</span> &rarr; Import <span class="mono">inventory_schema_final.sql</span> &middot;
+    <span class="step-num">(3)</span> Open NetBeans project &rarr; Libraries &rarr; Add MySQL JDBC Driver, jbcrypt, jfreechart &middot;
+    <span class="step-num">(4)</span> Run project &rarr; Login with <span class="mono">admin</span> / <span class="mono">admin123</span>
+  </div>
+
+</div>
+
+</body>
+</html>
