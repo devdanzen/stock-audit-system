@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class Koneksi {
 
-    private static final String URL  = "jdbc:mysql://localhost:3306/db_shlmp?useSSL=false&serverTimezone=Asia/Jakarta";
+    private static final String URL  = "jdbc:mysql://localhost:3306/stock_audit_db?useSSL=false&serverTimezone=Asia/Jakarta";
     private static final String USER = "root";
     private static final String PASS = "";
 
@@ -15,7 +15,7 @@ public class Koneksi {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection(URL, USER, PASS);
-            System.out.println("Koneksi DB sukses: db_shlmp");
+            System.out.println("Koneksi DB sukses: stock_audit_db");
         } catch (ClassNotFoundException e) {
             System.out.println("Driver MySQL tidak ditemukan: " + e.getMessage());
         } catch (SQLException e) {
