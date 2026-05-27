@@ -1,6 +1,6 @@
 /build/
 /dist/
 /nbproject/private/
-*.log
+# *.log
 .DS_Store
 Thumbs.db
