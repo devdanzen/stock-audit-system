@@ -379,7 +379,7 @@ INSERT INTO vendor (vendor_code, vendor_name, contact_phone, status) VALUES
 -- Default admin user — username=admin, password=admin123 (BCrypt hash)
 -- Generate new hashes in Java via BCrypt.hashpw("password", BCrypt.gensalt())
 INSERT INTO `user` (username, password_hash, role, status) VALUES
-    ('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Administrator', 'Active');
+    ('admin', '$2a$12$Sbq3UwQzp77awtyw6TWHy.sB.D/hJGXrjY5qf.aBhNGfAeI9D58gC', 'Administrator', 'Active');
 
 -- Sample master items (for testing the connection works)
 INSERT INTO master_item (item_code, description, item_class, category_id, outlet_id, base_unit, qty_per_purchase_unit, current_cost, selling_price) VALUES

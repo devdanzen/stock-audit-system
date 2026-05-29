@@ -1,0 +1,381 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
+ */
+package view;
+
+import dao.MasterItemDAO;
+import dao.OutletDAO;
+import dao.SalesDAO;
+import model.MasterItem;
+import model.Outlet;
+import model.SalesDetail;
+import model.SalesHeader;
+import util.Fmt;
+import util.SessionManager;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author Theresa
+ */
+public class SalesPanel extends javax.swing.JPanel {
+
+    // --- wiring (added; not part of generated form) ---
+    // ASSUMPTION (generic names mapped by labels/position):
+    //   txtOutletID = Invoice Number (auto-generated, read-only),
+    //   jComboBox1 = Outlet, jComboBox2 = Item, jTextField1 = Quantity,
+    //   jTextField2 = Unit Price, jTextField3 = Total (read-only),
+    //   jTable1 = invoice lines, jButton1 = Add line, jButton3 = Save, jButton2 = Cancel.
+    //   There is no Sale Date field, so sale_date defaults to today.
+    private List<MasterItem> itemList = new ArrayList<>();
+    private List<Outlet> outletList = new ArrayList<>();
+    private final List<SalesDetail> lines = new ArrayList<>();
+    private DefaultTableModel lineModel;
+
+    /**
+     * Creates new form SalesHeader_Form
+     */
+    public SalesPanel() {
+        initComponents();
+        initSales();
+    }
+
+    private void initSales() {
+        lineModel = new DefaultTableModel(
+                new Object[]{"Item Code", "Description", "Qty", "Unit Price", "Subtotal"}, 0);
+        jTable1.setModel(lineModel);
+
+        txtOutletID.setText(new SalesDAO().getNextInvoiceNumber());
+        txtOutletID.setEditable(false);
+        jTextField3.setEditable(false);
+
+        outletList = new OutletDAO().findActive();
+        jComboBox1.removeAllItems();
+        for (Outlet o : outletList) jComboBox1.addItem(o.getOutletCode() + " - " + o.getOutletName());
+        Integer myOutlet = SessionManager.get().getOutletId();
+        if (myOutlet != null) {
+            for (int i = 0; i < outletList.size(); i++)
+                if (outletList.get(i).getOutletId() == myOutlet) { jComboBox1.setSelectedIndex(i); break; }
+        }
+
+        itemList = new MasterItemDAO().findActive();
+        jComboBox2.removeAllItems();
+        for (MasterItem it : itemList) jComboBox2.addItem(it.getItemCode() + " - " + it.getDescription());
+        jComboBox2.addActionListener(e -> {
+            MasterItem it = lineItem();
+            if (it != null && it.getSellingPrice() != null)
+                jTextField2.setText(it.getSellingPrice().toPlainString());
+        });
+
+        jButton3.addActionListener(e -> saveSale());
+        jButton2.addActionListener(e -> resetForm());
+    }
+
+    private MasterItem lineItem() {
+        int i = jComboBox2.getSelectedIndex();
+        return (i >= 0 && i < itemList.size()) ? itemList.get(i) : null;
+    }
+
+    private Integer selectedOutletId() {
+        int i = jComboBox1.getSelectedIndex();
+        return (i >= 0 && i < outletList.size()) ? outletList.get(i).getOutletId() : null;
+    }
+
+    private void addLine() {
+        MasterItem it = lineItem();
+        if (it == null) { JOptionPane.showMessageDialog(this, "Pilih item dulu."); return; }
+        BigDecimal qty = parse(jTextField1.getText());
+        BigDecimal price = parse(jTextField2.getText());
+        if (qty.compareTo(BigDecimal.ZERO) <= 0) { JOptionPane.showMessageDialog(this, "Quantity harus > 0."); return; }
+        BigDecimal subtotal = qty.multiply(price);
+
+        SalesDetail d = new SalesDetail();
+        d.setItemId(it.getItemId());
+        d.setItemCode(it.getItemCode());
+        d.setDescription(it.getDescription());
+        d.setQuantity(qty);
+        d.setUnitPrice(price);
+        d.setExtendedPrice(subtotal);
+        lines.add(d);
+
+        lineModel.addRow(new Object[]{ it.getItemCode(), it.getDescription(),
+                qty.toPlainString(), Fmt.number(price), Fmt.number(subtotal) });
+        recomputeTotal();
+        jTextField1.setText("");
+    }
+
+    private void recomputeTotal() {
+        BigDecimal total = BigDecimal.ZERO;
+        for (SalesDetail d : lines) total = total.add(d.getExtendedPrice());
+        jTextField3.setText(Fmt.rupiah(total));
+    }
+
+    private void saveSale() {
+        if (lines.isEmpty()) { JOptionPane.showMessageDialog(this, "Tambahkan minimal 1 line item."); return; }
+        BigDecimal total = BigDecimal.ZERO;
+        for (SalesDetail d : lines) total = total.add(d.getExtendedPrice());
+
+        SalesHeader h = new SalesHeader();
+        h.setInvoiceNumber(txtOutletID.getText());
+        h.setSaleDate(LocalDate.now());
+        h.setOutletId(selectedOutletId());
+        h.setTotalAmount(total);
+
+        try {
+            new SalesDAO().insertWithDetails(h, lines);
+            JOptionPane.showMessageDialog(this, "Sale tersimpan: " + h.getInvoiceNumber());
+            resetForm();
+        } catch (RuntimeException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void resetForm() {
+        lines.clear();
+        lineModel.setRowCount(0);
+        jTextField1.setText("");
+        jTextField2.setText("");
+        jTextField3.setText("");
+        txtOutletID.setText(new SalesDAO().getNextInvoiceNumber());
+    }
+
+    private BigDecimal parse(String s) {
+        try { return new BigDecimal(s.trim().replace(",", "")); }
+        catch (Exception e) { return BigDecimal.ZERO; }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jScrollBar1 = new javax.swing.JScrollBar();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jComboBox2 = new javax.swing.JComboBox<>();
+        jTextField3 = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
+        jTextField1 = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        txtOutletID = new javax.swing.JTextField();
+        jButton3 = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        jTextField2 = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jTable1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jScrollPane1.setViewportView(jTable1);
+
+        jLabel2.setText("Invoice Number :");
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel6.setText("Add Line Item");
+
+        jLabel5.setText("Sale Date :");
+
+        jLabel7.setText("Item :");
+
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jTextField3.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+
+        jLabel8.setText("Quantity :");
+
+        jButton2.setText("Cancel");
+
+        jTextField1.addActionListener(this::jTextField1ActionPerformed);
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("New Sale - Invoice Entry");
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setText("Invoice Header");
+
+        txtOutletID.addActionListener(this::txtOutletIDActionPerformed);
+
+        jButton3.setBackground(new java.awt.Color(51, 102, 255));
+        jButton3.setForeground(new java.awt.Color(255, 255, 255));
+        jButton3.setText("Save Transaction");
+
+        jLabel9.setText("Unit Price :");
+
+        jButton1.setText("+ Add to Invoice");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
+
+        jLabel4.setText("Outlet :");
+
+        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel10.setText("Invoice Lines");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 881, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(15, 15, 15))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel6)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(jLabel7))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jLabel9)
+                                                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jLabel2)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(txtOutletID, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(53, 53, 53)
+                                                .addComponent(jLabel5)
+                                                .addGap(204, 204, 204)
+                                                .addComponent(jLabel4)))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jButton1)
+                                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGap(23, 23, 23)))
+                        .addComponent(jLabel10)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 853, Short.MAX_VALUE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jScrollBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel1))
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 623, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtOutletID, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2)
+                        .addComponent(jLabel5)
+                        .addComponent(jLabel4)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(18, 18, 18)
+                    .addComponent(jLabel6)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel7)
+                        .addComponent(jLabel8)
+                        .addComponent(jLabel9))
+                    .addGap(4, 4, 4)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton1))
+                    .addGap(38, 38, 38)
+                    .addComponent(jLabel10)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jScrollBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addGap(40, 40, 40)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(18, 18, 18)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton2)
+                        .addComponent(jButton3))
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void txtOutletIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtOutletIDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtOutletIDActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        addLine();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboBox2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JScrollBar jScrollBar1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField txtOutletID;
+    // End of variables declaration//GEN-END:variables
+}

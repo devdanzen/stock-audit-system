@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="stock_report" pageWidth="595" pageHeight="842" columnWidth="555"
+              leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+
+    <queryString>
+        <![CDATA[SELECT v.item_code, v.description, c.category_name, mi.base_unit,
+                        v.soh_computed, mi.current_cost,
+                        (v.soh_computed * mi.current_cost) AS stock_value
+                 FROM v_stock_on_hand v
+                 JOIN master_item mi ON mi.item_id = v.item_id
+                 LEFT JOIN category c ON c.category_id = mi.category_id
+                 WHERE mi.status = 'Active'
+                 ORDER BY v.item_code]]>
+    </queryString>
+
+    <field name="item_code"     class="java.lang.String"/>
+    <field name="description"   class="java.lang.String"/>
+    <field name="category_name" class="java.lang.String"/>
+    <field name="base_unit"     class="java.lang.String"/>
+    <field name="soh_computed"  class="java.math.BigDecimal"/>
+    <field name="current_cost"  class="java.math.BigDecimal"/>
+    <field name="stock_value"   class="java.math.BigDecimal"/>
+
+    <variable name="totalValue" class="java.math.BigDecimal" calculation="Sum">
+        <variableExpression><![CDATA[$F{stock_value}]]></variableExpression>
+    </variable>
+
+    <title>
+        <band height="44">
+            <staticText>
+                <reportElement x="0" y="0" width="555" height="26"/>
+                <textElement><font size="18" isBold="true"/></textElement>
+                <text><![CDATA[Stock On Hand Report]]></text>
+            </staticText>
+            <textField pattern="EEE, d MMM yyyy">
+                <reportElement x="0" y="28" width="555" height="14"/>
+                <textElement><font size="9"/></textElement>
+                <textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="20">
+            <staticText><reportElement x="0"   y="0" width="80"  height="20"/><textElement><font isBold="true"/></textElement><text><![CDATA[Item Code]]></text></staticText>
+            <staticText><reportElement x="80"  y="0" width="180" height="20"/><textElement><font isBold="true"/></textElement><text><![CDATA[Description]]></text></staticText>
+            <staticText><reportElement x="260" y="0" width="80"  height="20"/><textElement><font isBold="true"/></textElement><text><![CDATA[Category]]></text></staticText>
+            <staticText><reportElement x="340" y="0" width="60"  height="20"/><textElement textAlignment="Right"><font isBold="true"/></textElement><text><![CDATA[On-Hand]]></text></staticText>
+            <staticText><reportElement x="400" y="0" width="70"  height="20"/><textElement textAlignment="Right"><font isBold="true"/></textElement><text><![CDATA[Unit Cost]]></text></staticText>
+            <staticText><reportElement x="470" y="0" width="85"  height="20"/><textElement textAlignment="Right"><font isBold="true"/></textElement><text><![CDATA[Stock Value]]></text></staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="18">
+            <textField><reportElement x="0"   y="0" width="80"  height="18"/><textFieldExpression><![CDATA[$F{item_code}]]></textFieldExpression></textField>
+            <textField><reportElement x="80"  y="0" width="180" height="18"/><textFieldExpression><![CDATA[$F{description}]]></textFieldExpression></textField>
+            <textField><reportElement x="260" y="0" width="80"  height="18"/><textFieldExpression><![CDATA[$F{category_name}]]></textFieldExpression></textField>
+            <textField pattern="#,##0.##"><reportElement x="340" y="0" width="60" height="18"/><textElement textAlignment="Right"/><textFieldExpression><![CDATA[$F{soh_computed}]]></textFieldExpression></textField>
+            <textField pattern="#,##0"><reportElement x="400" y="0" width="70" height="18"/><textElement textAlignment="Right"/><textFieldExpression><![CDATA[$F{current_cost}]]></textFieldExpression></textField>
+            <textField pattern="#,##0"><reportElement x="470" y="0" width="85" height="18"/><textElement textAlignment="Right"/><textFieldExpression><![CDATA[$F{stock_value}]]></textFieldExpression></textField>
+        </band>
+    </detail>
+
+    <summary>
+        <band height="30">
+            <line><reportElement x="0" y="2" width="555" height="1"/></line>
+            <staticText><reportElement x="340" y="6" width="120" height="20"/><textElement textAlignment="Right"><font isBold="true"/></textElement><text><![CDATA[TOTAL VALUE:]]></text></staticText>
+            <textField pattern="#,##0"><reportElement x="470" y="6" width="85" height="20"/><textElement textAlignment="Right"><font isBold="true"/></textElement><textFieldExpression><![CDATA[$V{totalValue}]]></textFieldExpression></textField>
+        </band>
+    </summary>
+</jasperReport>
