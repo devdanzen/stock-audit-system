@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 public class MovementPanel extends javax.swing.JPanel {
 
     private java.util.List<MasterItem> itemList = new java.util.ArrayList<>();
+    private java.util.List<Outlet> outletList = new java.util.ArrayList<>();
 
     /**
      * Creates new form Movement_Panel
@@ -38,9 +39,25 @@ public class MovementPanel extends javax.swing.JPanel {
             jComboBox1.addItem(it.getItemCode() + " - " + it.getDescription());
         }
         jComboBox1.addActionListener(e -> fillFromItem());
+
+        outletList = new OutletDAO().findActive();
+        jTextField6.removeAllItems();
+        for (Outlet o : outletList) jTextField6.addItem(o.getOutletCode() + " - " + o.getOutletName());
+
+        jDateChooser1.setDate(new java.util.Date());
         jTextField5.setEditable(false);
+        jTextField1.addActionListener(e -> updateOutFields());
+        updateOutFields();
+
         jButton1.addActionListener(e -> saveMovement());
         if (!itemList.isEmpty()) fillFromItem();
+    }
+
+    private void updateOutFields() {
+        boolean isOut = "OUT".equalsIgnoreCase(String.valueOf(jTextField1.getSelectedItem()));
+        jTextField6.setEnabled(isOut);
+        jTextField7.setEnabled(isOut);
+        if (!isOut) jTextField7.setText("");
     }
 
     private MasterItem selectedItem() {
@@ -59,7 +76,7 @@ public class MovementPanel extends javax.swing.JPanel {
         MasterItem it = selectedItem();
         if (it == null) { JOptionPane.showMessageDialog(this, "Pilih item dulu."); return; }
 
-        String type = jTextField1.getText().trim().toUpperCase();
+        String type = String.valueOf(jTextField1.getSelectedItem()).trim().toUpperCase();
         if (!type.equals("IN") && !type.equals("OUT") && !type.equals("WASTE") && !type.equals("CONSUMPTION")) {
             JOptionPane.showMessageDialog(this, "Movement Type harus salah satu: IN, OUT, WASTE, CONSUMPTION.");
             return;
@@ -75,7 +92,8 @@ public class MovementPanel extends javax.swing.JPanel {
 
         Movement m = new Movement();
         m.setItemId(it.getItemId());
-        m.setMovementDate(LocalDate.now());
+        java.util.Date d = jDateChooser1.getDate();
+        m.setMovementDate(d == null ? LocalDate.now() : new java.sql.Date(d.getTime()).toLocalDate());
         m.setMovementType(type);
         m.setQuantity(qty);
         m.setUnit(jTextField3.getText().trim());
@@ -84,18 +102,13 @@ public class MovementPanel extends javax.swing.JPanel {
         m.setNote(jTextArea1.getText().trim());
 
         if (type.equals("OUT")) {
-            String destCode = jTextField6.getText().trim();
+            int idx = jTextField6.getSelectedIndex();
             String dn = jTextField7.getText().trim();
-            if (destCode.isEmpty() || dn.isEmpty()) {
+            if (idx < 0 || idx >= outletList.size() || dn.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "OUT membutuhkan Destination Outlet dan Delivery Note.");
                 return;
             }
-            Integer destId = findOutletIdByCode(destCode);
-            if (destId == null) {
-                JOptionPane.showMessageDialog(this, "Outlet code '" + destCode + "' tidak ditemukan.");
-                return;
-            }
-            m.setDestinationOutletId(destId);
+            m.setDestinationOutletId(outletList.get(idx).getOutletId());
             m.setDeliveryNoteNumber(dn);
         }
 
@@ -108,19 +121,14 @@ public class MovementPanel extends javax.swing.JPanel {
         }
     }
 
-    private Integer findOutletIdByCode(String code) {
-        for (Outlet o : new OutletDAO().findAll()) {
-            if (o.getOutletCode().equalsIgnoreCase(code)) return o.getOutletId();
-        }
-        return null;
-    }
-
     private void clearMovement() {
-        jTextField1.setText("");
+        jTextField1.setSelectedIndex(0);
         jTextField2.setText("");
-        jTextField6.setText("");
+        if (jTextField6.getItemCount() > 0) jTextField6.setSelectedIndex(0);
         jTextField7.setText("");
         jTextArea1.setText("");
+        jDateChooser1.setDate(new java.util.Date());
+        updateOutFields();
         if (!itemList.isEmpty()) { jComboBox1.setSelectedIndex(0); fillFromItem(); }
     }
 
@@ -145,8 +153,9 @@ public class MovementPanel extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jLabel3 = new javax.swing.JLabel();
+        jDateChooser1 = new com.toedter.calendar.JDateChooser();
         jLabel11 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
+        jTextField6 = new javax.swing.JComboBox<>();
         jLabel12 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
@@ -154,7 +163,8 @@ public class MovementPanel extends javax.swing.JPanel {
         jTextField7 = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        jTextField1 = new javax.swing.JComboBox<>();
+        jTextField1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{ "IN", "OUT", "WASTE", "CONSUMPTION" }));
         jButton2 = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
@@ -239,7 +249,10 @@ public class MovementPanel extends javax.swing.JPanel {
                             .addComponent(jLabel2)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel3)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addGap(31, 31, 31)
+                                        .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel5)
                                         .addGap(31, 31, 31)
@@ -300,11 +313,11 @@ public class MovementPanel extends javax.swing.JPanel {
                 .addGap(28, 28, 28)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel11)))
+                    .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
@@ -385,12 +398,13 @@ public class MovementPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JComboBox<String> jTextField1;
+    private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
+    private javax.swing.JComboBox<String> jTextField6;
     private javax.swing.JTextField jTextField7;
     private javax.swing.JTextField jTextField8;
     // End of variables declaration//GEN-END:variables

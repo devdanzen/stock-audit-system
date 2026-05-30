@@ -8,6 +8,9 @@ Format tiap langkah: **Klik** (yang dilakukan) + **Script** (yang diucapkan ke p
 > - Aplikasi sudah di-**Clean and Build** dan bisa Run tanpa error.
 > - Tutup jendela lain, perbesar aplikasi (sudah otomatis 1280×800).
 > - Hafalkan login: **admin / admin123** (dan **staff / admin123** untuk demo hak akses).
+> - Sudah **Run** aplikasi sekali sebelum mulai — jangan menunggu startup di depan penguji.
+> - **Logout lalu login ulang sebagai admin** supaya **Dashboard** memuat data terbaru.
+> - Tutup semua jendela **JasperViewer** sebelumnya — popup baru bisa muncul di belakang jendela utama.
 
 ---
 
@@ -132,9 +135,10 @@ Cukup tunjukkan sekilas, jangan lama-lama. Klik berurutan di grup **Master Data*
 
 ## 11. Reports — Laporan
 
-- **Klik:** menu **Reports** → pilih jenis laporan + rentang tanggal → **Generate**.
-- **Script:** "Laporan bisa ditampilkan dan **dicetak**." (Klik **Print** untuk tunjukkan dialog cetak.)
-- Jika library Jasper terpasang: **Script:** "Laporan juga bisa diekspor ke PDF/Excel lewat penampil laporan."
+- **Klik:** menu **Reports** → pilih jenis laporan (Stock / Sales / Receiving / Audit variance) → **Generate**.
+- **Script:** "Setiap laporan terbuka di **JasperViewer** — penampil laporan profesional dengan tombol **Print**, **Save As PDF/Excel** langsung di toolbar atas."
+- **Klik:** ikon **disket** di toolbar JasperViewer → pilih **PDF** → simpan → buka PDF-nya untuk membuktikan.
+- **Script:** "PDF siap dibagikan ke manajemen — formatnya rapi, paginasi otomatis, nomor pakai pemisah ribuan."
 
 ---
 
@@ -154,6 +158,7 @@ Cukup tunjukkan sekilas, jangan lama-lama. Klik berurutan di grup **Master Data*
 - **Script:** "Sebagai Staff, menu **Users** dan **End Balance** otomatis hilang. Hak akses
   dibedakan per peran demi keamanan data."
 - Tunjuk sidebar yang lebih sedikit.
+- **Script:** "Perhatikan sidebar — menu yang sedang dibuka **disorot biru muda**, sehingga jelas posisi pengguna saat ini."
 
 ---
 
@@ -172,8 +177,16 @@ Cukup tunjukkan sekilas, jangan lama-lama. Klik berurutan di grup **Master Data*
   setelah transaksi, **logout lalu login lagi** sebelum membuka Dashboard/Charts.
 - **Stock on Hand / Audit / End Balance** punya tombol **Refresh/Load** → selalu data terbaru.
 - Kalau transaksi gagal save, cek MySQL menyala & database ter-import.
-- **JANGAN** buka SalesPanel di tab **Design** NetBeans saat demo — bisa menghapus date picker.
+- **JANGAN** buka panel-panel ini di tab **Design** NetBeans: **SalesPanel** (date picker), **MovementPanel** (type dropdown), **StockOnHandPanel**, **OutletsPanel**, **UsersPanel**, **VendorsPanel**, **FormLoginFrame**. Layout/komponen yang dirapikan ada di blok generated — Design tab akan menimpa kembali ke versi lama.
 - Urutan aman kalau perlu re-seed: import `db/schema.sql` dulu, baru `db/seed_real.sql`.
+
+## Catatan data demo
+
+Beberapa item menunjukkan **On-Hand negatif** (mis. HOTATE -1.617, KIBUN -36.582).
+Itu **bukan bug** — seed memang menyertakan kasus penjualan/waste yang melampaui
+penerimaan untuk menunjukkan bahwa sistem **mendeteksi inkonsistensi data**, bukan
+menyembunyikannya. Jika ditanya: "Berarti perlu Receiving atau Audit untuk koreksi" —
+tunjukkan caranya.
 
 ## Jawaban cepat untuk pertanyaan penguji
 
