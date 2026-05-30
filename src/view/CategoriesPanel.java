@@ -256,8 +256,15 @@ public class CategoriesPanel extends javax.swing.JPanel {
 
         } catch (SQLException e) {
 
-            JOptionPane.showMessageDialog(this,
-                    "Gagal hapus data: " + e.getMessage());
+            String msg = e.getMessage() == null ? "" : e.getMessage();
+            if (msg.toLowerCase().contains("foreign key")) {
+                JOptionPane.showMessageDialog(this,
+                        "Kategori ini masih dipakai oleh item lain, tidak bisa dihapus.",
+                        "Tidak bisa dihapus", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Gagal hapus data: " + e.getMessage());
+            }
         }
     }
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

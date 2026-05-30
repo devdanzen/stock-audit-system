@@ -70,12 +70,26 @@ public class ReportPanel extends javax.swing.JPanel {
     private boolean tryJasper() {
         String type = String.valueOf(jComboBox1.getSelectedItem());
         String jrxml;
-        if      ("Stock".equalsIgnoreCase(type))          jrxml = "/reports/stock_report.jrxml";
-        else if ("Sales".equalsIgnoreCase(type))          jrxml = "/reports/sales_report.jrxml";
-        else if ("Receiving".equalsIgnoreCase(type))      jrxml = "/reports/receiving_report.jrxml";
-        else if ("Audit variance".equalsIgnoreCase(type)) jrxml = "/reports/audit_variance_report.jrxml";
+        boolean usesDates;
+        if      ("Stock".equalsIgnoreCase(type))          { jrxml = "/reports/stock_report.jrxml";          usesDates = false; }
+        else if ("Sales".equalsIgnoreCase(type))          { jrxml = "/reports/sales_report.jrxml";          usesDates = true;  }
+        else if ("Receiving".equalsIgnoreCase(type))      { jrxml = "/reports/receiving_report.jrxml";      usesDates = true;  }
+        else if ("Audit variance".equalsIgnoreCase(type)) { jrxml = "/reports/audit_variance_report.jrxml"; usesDates = true;  }
         else return false;
-        return JasperReportUtil.viewReport(jrxml, new HashMap<>());
+
+        HashMap<String, Object> params = new HashMap<>();
+        if (usesDates) {
+            LocalDate today = LocalDate.now();
+            java.util.Date from = jDateChooser1.getDate();
+            java.util.Date to   = jDateChooser2.getDate();
+            params.put("dateFrom", from != null
+                    ? new java.sql.Date(from.getTime())
+                    : java.sql.Date.valueOf(today.minusDays(30)));
+            params.put("dateTo",   to   != null
+                    ? new java.sql.Date(to.getTime())
+                    : java.sql.Date.valueOf(today));
+        }
+        return JasperReportUtil.viewReport(jrxml, params);
     }
 
     private void previewReport() {
@@ -94,7 +108,7 @@ public class ReportPanel extends javax.swing.JPanel {
         String type = String.valueOf(jComboBox1.getSelectedItem());
         StringBuilder sb = new StringBuilder();
         sb.append("================================================================================\n");
-        sb.append("  STOCK AUDIT SYSTEM — ").append(type.toUpperCase()).append(" REPORT\n");
+        sb.append("  STOCK AUDIT SYSTEM - ").append(type.toUpperCase()).append(" REPORT\n");
         sb.append("  Generated: ").append(Fmt.date(LocalDate.now())).append("\n");
         sb.append("================================================================================\n\n");
 
@@ -143,7 +157,7 @@ public class ReportPanel extends javax.swing.JPanel {
 
     private String trunc(String s, int n) {
         if (s == null) return "";
-        return s.length() <= n ? s : s.substring(0, n - 1) + "…";
+        return s.length() <= n ? s : s.substring(0, n - 1) + "...";
     }
 
     private JTextArea buildTextArea() {

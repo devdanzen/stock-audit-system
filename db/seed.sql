@@ -1,5 +1,5 @@
 -- =============================================================================
--- Stock Audit System — REAL DATA SEED (adapted from the source audit sheets)
+-- Stock Audit System - REAL DATA SEED (adapted from the source audit sheets)
 -- Source: AUDIT.csv / ENDBALL_11_NOV.csv / Movement.csv / RESEP.csv / RCV.
 -- Run AFTER schema.sql. (Use this OR seed_demo.sql, not both.)
 --
@@ -82,7 +82,7 @@ FROM (
   SELECT 'DRYGOODS-0150',8881
 ) v JOIN master_item mi ON mi.item_code = v.code;
 
--- ---- RECEIVING (Receiving column) — one receipt, all items ----
+-- ---- RECEIVING (Receiving column) - one receipt, all items ----
 INSERT INTO receiving_header (receipt_number, receipt_type, receipt_date, po_number,
                               vendor_id, outlet_id, posting_status, posted_user_id)
 VALUES ('RCV-2026-00001','Standard PO', CURDATE() - INTERVAL 5 DAY, 'PO-AUDIT-1',
@@ -106,7 +106,7 @@ FROM (
   SELECT 'DRYGOODS-0150',87500
 ) v JOIN master_item mi ON mi.item_code = v.code;
 
--- ---- SALES (Sales column) — 3 invoices on 3 recent days ----
+-- ---- SALES (Sales column) - 3 invoices on 3 recent days ----
 -- INV1 today: Bar items
 INSERT INTO sales_header (invoice_number, sale_date, outlet_id, total_amount)
 VALUES ('INV-2026-00001', CURDATE(), (SELECT outlet_id FROM outlet WHERE outlet_code='SHLMP'), 0);

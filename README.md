@@ -1,88 +1,90 @@
-# management-stock-audit
+# Stock Audit System
 
-SHLMP Inventory Management System — Java Swing + MySQL.
+Java Swing + MySQL inventory & audit system for an F&B chain.
+Login + role-based access, master data CRUD, transactions (Receiving / Sales / Movement / Recipes),
+real-time Stock on Hand, Audit (stock opname), End Balance snapshot, Reports (JasperReports),
+and Charts (XChart). Designed for offline/desktop use.
 
 ## Prasyarat
 
-- **XAMPP** (Apache + MySQL) — https://www.apachefriends.org/
-- **NetBeans 21+** dengan **JDK 25** — https://netbeans.apache.org/
-- **Git** (untuk clone repo)
+- **XAMPP** (Apache + MySQL): https://www.apachefriends.org/
+- **NetBeans 21+** dengan **JDK 25**: https://netbeans.apache.org/
+- **Git**
 
-MySQL Connector (`lib/mysql-connector-j-9.7.0.jar`) sudah ikut di repo, tidak perlu download lagi.
+Semua library (MySQL Connector, JasperReports, XChart, JCalendar, BCrypt, dll) sudah ada di folder `lib/`.
 
 ## Setup
 
-### 1. Clone repo
+### 1. Clone
 
 ```bash
-git clone https://github.com/devdanzen/management-stock-audit.git
-cd management-stock-audit
+git clone https://github.com/danish-deepskill/stock-audit-system.git
+cd stock-audit-system
 ```
 
-### 2. Setup database
+### 2. Import database
 
-1. Start XAMPP → tekan **Start** untuk **Apache** dan **MySQL**
+1. Start **MySQL** di XAMPP.
 2. Buka http://localhost/phpmyadmin
-3. Klik tab **Import** di atas
-4. Pilih file `db/schema.sql` dari folder repo
-5. Klik **Go**
-6. Verifikasi: di sidebar kiri muncul database **`db_shlmp`** dengan 2 tabel (`category`, `item`)
+3. Tab **Import**, pilih `db/schema.sql`, klik **Go**. Ini membuat database `stock_audit_db` (14 tabel + 4 views).
+4. Tab **Import** lagi, pilih `db/seed_real.sql`, klik **Go**. Ini mengisi data demo (19 item, 1 receiving, 3 sales, beberapa movement, dll).
 
-Konfigurasi default yang diasumsikan:
-- Host: `localhost`
-- Port: `3306`
-- User: `root`
-- Password: *(kosong)*
+Konfigurasi MySQL yang diasumsikan:
+- Host: `localhost`, Port: `3306`, User: `root`, Password: *(kosong)*
 
-Kalau setting MySQL kamu beda, edit `src/koneksi/Koneksi.java` (baris URL/USER/PASS).
+Kalau setting beda, edit `src/db/DBConnection.java`.
 
 ### 3. Buka project di NetBeans
 
-1. **File → Open Project** → pilih folder `management-stock-audit`
-2. Tunggu NetBeans selesai resolve dependency (status bar bawah)
-3. Di panel **Projects**, expand **Libraries** → harus muncul `mysql-connector-j-9.7.0.jar`
+1. **File > Open Project** > pilih folder repo.
+2. Tunggu NetBeans selesai resolve dependency.
+3. Cek **Libraries** di Projects panel: harus muncul semua jar di `lib/`.
 
-### 4. Test koneksi
+### 4. Run
 
-1. Buka `src/koneksi/Koneksi.java`
-2. Tekan **Shift+F6** (Run File)
-3. Output panel harus print:
-   ```
-   Koneksi DB sukses: db_shlmp
-   ```
+1. Klik **Clean and Build** (palu + sapu).
+2. Klik **Run** (▶).
+3. Login dengan salah satu kredensial berikut:
 
-### 5. Jalankan aplikasi
-
-1. Buka `src/tampilan/MasterItemForm.java`
-2. Tekan **Shift+F6** (Run File)
-3. Form Master Item muncul dengan 6 sample item ter-load di tabel
+| Username | Password | Role |
+|---|---|---|
+| `admin` | `admin123` | Administrator (akses penuh) |
+| `manager` | `admin123` | Manager (tanpa Users) |
+| `staff` | `admin123` | Staff (tanpa Users & End Balance) |
 
 ## Fitur
 
-### Form Master Item
-- **Add Item** — simpan item baru ke database
-- **Update Item** — ubah item terpilih (klik baris di tabel dulu)
-- **Delete Item** — hapus item terpilih (dengan dialog konfirmasi)
-- **Reset** — kosongkan semua field
-- Klik baris di tabel → semua field terisi otomatis
-- Combo **Category** auto-load dari tabel `category` di database
+| Modul | Isi |
+|---|---|
+| **Dashboard** | KPI hari ini, recent transactions, low-stock alerts |
+| **Master Data** | Items, Categories, Outlets, Vendors, Users (CRUD + soft-delete via Inactive) |
+| **Receiving** | Catat barang masuk dari vendor (header + detail, atomic save) |
+| **Sales** | Catat invoice penjualan dengan auto-number |
+| **Movement** | IN / OUT / WASTE / CONSUMPTION, OUT membutuhkan destination outlet |
+| **Recipes** | Resep menu dengan persentase waste per bahan |
+| **Stock on Hand** | Stok real-time dihitung otomatis lewat `v_stock_on_hand` |
+| **Audit** | Stock opname: bandingkan fisik vs sistem, hitung variance + nilai rupiah |
+| **End Balance** | Snapshot saldo akhir periode |
+| **Reports** | Stock / Sales / Receiving / Audit Variance lewat JasperViewer (Print + Export PDF/Excel) |
+| **Charts** | Top sellers, daily sales, sales by category, top waste (XChart) |
 
-## Struktur Project
+## Struktur
 
 ```
-management-stock-audit/
+stock-audit-system/
 ├── db/
-│   └── schema.sql              # Database schema + sample data
-├── lib/
-│   └── mysql-connector-j-9.7.0.jar
+│   ├── schema.sql          # Schema (14 tabel + 4 views + admin seed)
+│   └── seed_real.sql       # Data demo (19 item + transaksi)
+├── lib/                    # Semua dependency (mysql, jasper, xchart, jcalendar, bcrypt, dll)
+├── nbproject/              # NetBeans project files
 ├── src/
-│   ├── koneksi/
-│   │   └── Koneksi.java        # MySQL connection helper
-│   ├── management/stock/audit/
-│   │   └── ManagementStockAudit.java  # Main class
-│   └── tampilan/
-│       ├── MasterItemForm.java # Form Master Item (UI + logic)
-│       └── MasterItemForm.form
+│   ├── app/                # Main.java (entry point)
+│   ├── db/                 # DBConnection
+│   ├── model/              # POJO untuk 14 tabel + view DTOs
+│   ├── dao/                # 12 DAO (UserDAO, SalesDAO, ReportDAO, dll)
+│   ├── util/               # Theme, Fmt, SessionManager, JasperReportUtil
+│   ├── view/               # 17 panel/frame (FormLoginFrame, MainFrame, + 15 panel)
+│   └── reports/            # 4 template JasperReports (.jrxml)
 └── README.md
 ```
 
@@ -90,7 +92,9 @@ management-stock-audit/
 
 | Error | Penyebab | Solusi |
 |---|---|---|
-| `Driver MySQL tidak ditemukan` | Jar tidak ke-load NetBeans | Klik kanan project → Properties → Libraries → cek `mysql-connector-j-9.7.0.jar` ada |
-| `Unknown database 'db_shlmp'` | Schema belum di-import | Ulangi step "Setup database" |
-| `Access denied for user 'root'` | Password MySQL bukan kosong | Edit `Koneksi.java` → set `PASS` ke password MySQL kamu |
-| `Communications link failure` | XAMPP MySQL belum Start | Buka XAMPP Control Panel → Start MySQL |
+| `Unknown database 'stock_audit_db'` | Schema belum di-import | Ulangi step 2 (import schema.sql) |
+| `Communications link failure` | MySQL belum start | Start MySQL di XAMPP |
+| `Access denied for user 'root'` | Password MySQL bukan kosong | Edit `src/db/DBConnection.java`, set password |
+| Login gagal | seed_real.sql belum di-import / data user terhapus | Ulangi import seed_real.sql |
+| Report buka di text dialog, bukan JasperViewer | Library Jasper tidak ke-load | Cek **Libraries** di NetBeans, semua jar di `lib/` harus terdaftar |
+| Charts kosong | Belum ada transaksi di seed | Pastikan `seed_real.sql` sudah di-import |

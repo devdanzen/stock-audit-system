@@ -265,11 +265,41 @@ private int selectedVendorId = -1;
 
         } catch (SQLException e) {
 
-            JOptionPane.showMessageDialog(this,
-                    "Gagal hapus vendor: " + e.getMessage());
+            String msg = e.getMessage() == null ? "" : e.getMessage();
+            if (msg.toLowerCase().contains("foreign key")) {
+                String currentStatus = txtStatus.getSelectedItem() == null
+                        ? "" : txtStatus.getSelectedItem().toString();
+                if ("Inactive".equalsIgnoreCase(currentStatus)) {
+                    JOptionPane.showMessageDialog(this,
+                            "Vendor ini masih dipakai di receiving lain, tidak bisa dihapus.\n"
+                          + "Tapi statusnya sudah Inactive, jadi tidak muncul lagi di form receiving.",
+                            "Tidak bisa dihapus", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+                int change = JOptionPane.showConfirmDialog(this,
+                        "Vendor ini masih dipakai di receiving lain, tidak bisa dihapus.\n"
+                      + "Set Status ke Inactive saja?",
+                        "Tidak bisa dihapus", JOptionPane.YES_NO_OPTION);
+                if (change == JOptionPane.YES_OPTION) {
+                    try (Connection c2 = DBConnection.connect();
+                         PreparedStatement p2 = c2.prepareStatement(
+                                 "UPDATE vendor SET status='Inactive' WHERE vendor_id=?")) {
+                        p2.setInt(1, selectedVendorId);
+                        p2.executeUpdate();
+                        JOptionPane.showMessageDialog(this, "Status diubah ke Inactive.");
+                        loadData();
+                        clearForm();
+                    } catch (SQLException ex2) {
+                        JOptionPane.showMessageDialog(this, "Gagal: " + ex2.getMessage());
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Gagal hapus vendor: " + e.getMessage());
+            }
         }
     }
-    
+
     private void searchData() {
 
         model.setRowCount(0);
@@ -378,7 +408,7 @@ private int selectedVendorId = -1;
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Vendors — Manage Suppliers");
+        jLabel1.setText("Vendors - Manage Suppliers");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

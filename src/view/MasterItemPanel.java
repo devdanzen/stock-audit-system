@@ -79,7 +79,7 @@ public class MasterItemPanel extends javax.swing.JPanel {
     private void updateItem(){
         try {
 
-            if (selectedItemId == 0) {
+            if (selectedItemId <= 0) {
 
                 JOptionPane.showMessageDialog(null, "Pilih data terlebih dahulu");
                 return;
@@ -139,7 +139,7 @@ public class MasterItemPanel extends javax.swing.JPanel {
     private void deleteItem(){
         try {
 
-            if (selectedItemId == 0) {
+            if (selectedItemId <= 0) {
 
                 JOptionPane.showMessageDialog(null, "Pilih data terlebih dahulu");
                 return;
@@ -172,10 +172,40 @@ public class MasterItemPanel extends javax.swing.JPanel {
 
         } catch (Exception e) {
 
-            JOptionPane.showMessageDialog(null, e.getMessage());
+            String msg = e.getMessage() == null ? "" : e.getMessage();
+            if (msg.toLowerCase().contains("foreign key")) {
+                String currentStatus = txtStatus.getSelectedItem() == null
+                        ? "" : txtStatus.getSelectedItem().toString();
+                if ("Inactive".equalsIgnoreCase(currentStatus)) {
+                    JOptionPane.showMessageDialog(null,
+                            "Item ini masih dipakai di transaksi lain, tidak bisa dihapus.\n"
+                          + "Tapi statusnya sudah Inactive, jadi tidak muncul lagi di form transaksi.",
+                            "Tidak bisa dihapus", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+                int change = JOptionPane.showConfirmDialog(null,
+                        "Item ini masih dipakai di transaksi lain, tidak bisa dihapus.\n"
+                      + "Set Status ke Inactive saja?",
+                        "Tidak bisa dihapus", JOptionPane.YES_NO_OPTION);
+                if (change == JOptionPane.YES_OPTION) {
+                    try (Connection c2 = DBConnection.connect();
+                         PreparedStatement p2 = c2.prepareStatement(
+                                 "UPDATE master_item SET status='Inactive' WHERE item_id=?")) {
+                        p2.setInt(1, selectedItemId);
+                        p2.executeUpdate();
+                        JOptionPane.showMessageDialog(null, "Status diubah ke Inactive.");
+                        loadTable();
+                        clearForm();
+                    } catch (Exception ex2) {
+                        JOptionPane.showMessageDialog(null, "Gagal: " + ex2.getMessage());
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
         }
     }
-    
+
     private void addItem(){
         try {
 
@@ -255,6 +285,7 @@ public class MasterItemPanel extends javax.swing.JPanel {
         model.addColumn("Category");
         model.addColumn("Outlet");
         model.addColumn("Base Unit");
+        model.addColumn("Purchase Unit");
         model.addColumn("Cost");
         model.addColumn("Price");
         model.addColumn("Status");
@@ -272,6 +303,7 @@ public class MasterItemPanel extends javax.swing.JPanel {
                 "c.category_name, " +
                 "o.outlet_code, " +
                 "mi.base_unit, " +
+                "mi.purchase_unit, " +
                 "mi.current_cost, " +
                 "mi.selling_price, " +
                 "mi.status " +
@@ -299,6 +331,7 @@ public class MasterItemPanel extends javax.swing.JPanel {
                     rs.getString("category_name"),
                     rs.getString("outlet_code"),
                     rs.getString("base_unit"),
+                    rs.getString("purchase_unit"),
                     rs.getDouble("current_cost"),
                     rs.getDouble("selling_price"),
                     rs.getString("status")
@@ -384,6 +417,7 @@ public class MasterItemPanel extends javax.swing.JPanel {
         model.addColumn("Category");
         model.addColumn("Outlet");
         model.addColumn("Base Unit");
+        model.addColumn("Purchase Unit");
         model.addColumn("Cost");
         model.addColumn("Price");
         model.addColumn("Status");
@@ -401,6 +435,7 @@ public class MasterItemPanel extends javax.swing.JPanel {
                 "c.category_name, " +
                 "o.outlet_code, " +
                 "mi.base_unit, " +
+                "mi.purchase_unit, " +
                 "mi.current_cost, " +
                 "mi.selling_price, " +
                 "mi.status " +
@@ -423,6 +458,7 @@ public class MasterItemPanel extends javax.swing.JPanel {
                     rs.getString("category_name"),
                     rs.getString("outlet_code"),
                     rs.getString("base_unit"),
+                    rs.getString("purchase_unit"),
                     rs.getDouble("current_cost"),
                     rs.getDouble("selling_price"),
                     rs.getString("status")
@@ -476,7 +512,7 @@ public class MasterItemPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Items — Manage Items");
+        jLabel1.setText("Items - Manage Items");
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
@@ -526,11 +562,11 @@ public class MasterItemPanel extends javax.swing.JPanel {
         txtBaseUnit.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ml", "Botol", "Gram", "Kaleng", "Unit", "Pcs", "Lot", "Set", "Meter", "Pak", "Roll", "Buku", "Dus", "Rim", "Box", "Lembar", "Jrigen", "Can", "Slice", "Ekor", "Pail", "Butir", "Kg", "Jar", "Galon", "Pot", "Pasang", "Potong", "Liter", "Sisir", "Tabung" }));
         txtBaseUnit.addActionListener(this::txtBaseUnitActionPerformed);
 
-        jLabel9.setText("purchase Unit:");
+        jLabel9.setText("Purchase Unit:");
 
         txtPurchUnit.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Botol", "Barel", "Kaleng", "Can", "Pak", "Unit", "Pcs", "Lot", "Set", "Meter", "Roll", "Buku", "Dus", "Box", "Rim", "Lembar", "Jrigen", "Kg", "Gram", "Ml", "Slice", "Ekor", "Pail", "Carton", "Galon", "Toples", "Bal", "Butir", "Jar", "Ctn", "Karton", "Jerigen", "Jrg", "Pak 2 Kg", "Pot", "Pasang", "Potong", "Liter", "Sisir", "Tabung" }));
 
-        jLabel10.setText("Curennt Cost: ");
+        jLabel10.setText("Current Cost:");
 
         jLabel11.setText("Selling Price :");
 

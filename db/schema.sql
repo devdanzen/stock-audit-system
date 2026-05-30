@@ -1,12 +1,12 @@
 -- =============================================================================
--- Stock Audit System — Database Schema
+-- Stock Audit System - Database Schema
 -- Final Version: Full English Naming + CHECK Constraints for Data Integrity
 -- Dialect: MySQL 8.0+ / MariaDB 10.5+
 -- Target: XAMPP + phpMyAdmin + NetBeans Java Swing
 --
 -- HOW TO IMPORT (phpMyAdmin):
 --   1. Open phpMyAdmin (http://localhost/phpmyadmin)
---   2. Click "Import" tab (no need to create/select a DB first —
+--   2. Click "Import" tab (no need to create/select a DB first -
 --      this script creates and uses stock_audit_db automatically)
 --   3. Choose this file → click "Import" button
 --   4. Verify: 14 tables, 4 views, seed data should appear
@@ -227,7 +227,7 @@ CREATE TABLE sales_detail (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =============================================================================
--- M-M #3: RECIPE (header + detail) — 1:0..1 from master_item via UNIQUE
+-- M-M #3: RECIPE (header + detail) - 1:0..1 from master_item via UNIQUE
 -- =============================================================================
 CREATE TABLE recipe_header (
     recipe_id       INT AUTO_INCREMENT PRIMARY KEY,
@@ -266,7 +266,7 @@ CREATE TABLE recipe_detail (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =============================================================================
--- MOVEMENT — IN / OUT / WASTE / CONSUMPTION
+-- MOVEMENT - IN / OUT / WASTE / CONSUMPTION
 -- destination_outlet_id is only populated when movement_type = 'OUT'
 -- =============================================================================
 CREATE TABLE movement (
@@ -301,7 +301,7 @@ CREATE TABLE movement (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =============================================================================
--- AUDIT — physical stock count vs system SOH
+-- AUDIT - physical stock count vs system SOH
 -- =============================================================================
 CREATE TABLE audit (
     audit_id        INT AUTO_INCREMENT PRIMARY KEY,
@@ -326,7 +326,7 @@ CREATE TABLE audit (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =============================================================================
--- END_BALANCE — period-end inventory snapshot
+-- END_BALANCE - period-end inventory snapshot
 -- =============================================================================
 CREATE TABLE end_balance (
     end_balance_id  INT AUTO_INCREMENT PRIMARY KEY,
@@ -348,7 +348,7 @@ CREATE TABLE end_balance (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =============================================================================
--- SEED DATA — reference tables
+-- SEED DATA - reference tables
 -- =============================================================================
 
 INSERT INTO category (category_code, category_name) VALUES
@@ -376,7 +376,7 @@ INSERT INTO vendor (vendor_code, vendor_name, contact_phone, status) VALUES
     ('M340', 'Distributor Minuman Asia',   '+62 21 5550-5678', 'Active'),
     ('M421', 'Sayur Mayur Pak Budi',       '+62 21 5550-6789', 'Inactive');
 
--- Default admin user — username=admin, password=admin123 (BCrypt hash)
+-- Default admin user - username=admin, password=admin123 (BCrypt hash)
 -- Generate new hashes in Java via BCrypt.hashpw("password", BCrypt.gensalt())
 INSERT INTO `user` (username, password_hash, role, status) VALUES
     ('admin', '$2a$12$Sbq3UwQzp77awtyw6TWHy.sB.D/hJGXrjY5qf.aBhNGfAeI9D58gC', 'Administrator', 'Active');
@@ -389,7 +389,7 @@ INSERT INTO master_item (item_code, description, item_class, category_id, outlet
     ('MENU-001',  'Edamame (finished)',  'Menu',  3, 1, 'PORTION', 1, 0,     35000);
 
 -- =============================================================================
--- VIEWS — replicate audit sheet's SUMIFS calculations
+-- VIEWS - replicate audit sheet's SUMIFS calculations
 -- =============================================================================
 
 CREATE OR REPLACE VIEW v_stock_on_hand AS

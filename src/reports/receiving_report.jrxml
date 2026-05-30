@@ -7,6 +7,9 @@
 
     <property name="net.sf.jasperreports.report.locale" value="en-US"/>
 
+    <parameter name="dateFrom" class="java.sql.Date" isForPrompting="false"/>
+    <parameter name="dateTo"   class="java.sql.Date" isForPrompting="false"/>
+
     <queryString>
         <![CDATA[SELECT rh.receipt_number,
                         rh.receipt_date,
@@ -18,6 +21,7 @@
                  FROM receiving_header rh
                  LEFT JOIN vendor v ON v.vendor_id = rh.vendor_id
                  LEFT JOIN outlet o ON o.outlet_id = rh.outlet_id
+                 WHERE rh.receipt_date BETWEEN $P{dateFrom} AND $P{dateTo}
                  ORDER BY rh.receipt_date DESC, rh.receiving_id DESC]]>
     </queryString>
 

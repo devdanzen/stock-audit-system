@@ -7,11 +7,14 @@
 
     <property name="net.sf.jasperreports.report.locale" value="en-US"/>
 
+    <parameter name="dateFrom" class="java.sql.Date" isForPrompting="false"/>
+    <parameter name="dateTo"   class="java.sql.Date" isForPrompting="false"/>
+
     <queryString>
         <![CDATA[SELECT DATE_FORMAT(sale_date, '%d %b %Y') AS sale_date_label,
                         daily_revenue
                  FROM v_daily_sales
-                 WHERE sale_date >= (CURDATE() - INTERVAL 30 DAY)
+                 WHERE sale_date BETWEEN $P{dateFrom} AND $P{dateTo}
                  ORDER BY sale_date]]>
     </queryString>
 

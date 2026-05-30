@@ -59,6 +59,7 @@ public class RecipesPanel extends javax.swing.JPanel {
         for (MasterItem it : ingredientList) jComboBox3.addItem(it.getItemCode() + " - " + it.getDescription());
 
         jButton1.addActionListener(e -> addIngredient());
+        jButton2.addActionListener(e -> resetRecipe());
     }
 
     private MasterItem finishedItem() {
@@ -181,7 +182,7 @@ public class RecipesPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI Black", 1, 18)); // NOI18N
-        jLabel2.setText("Recipes — Manage Recipes");
+        jLabel2.setText("Recipes - Manage Recipes");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

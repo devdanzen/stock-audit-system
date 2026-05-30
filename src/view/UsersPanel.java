@@ -429,8 +429,38 @@ public class UsersPanel extends javax.swing.JPanel {
 
         } catch (SQLException e) {
 
-            JOptionPane.showMessageDialog(this,
-                    "Delete gagal : " + e.getMessage());
+            String msg = e.getMessage() == null ? "" : e.getMessage();
+            if (msg.toLowerCase().contains("foreign key")) {
+                String currentStatus = txtStatus.getSelectedItem() == null
+                        ? "" : txtStatus.getSelectedItem().toString();
+                if ("Inactive".equalsIgnoreCase(currentStatus)) {
+                    JOptionPane.showMessageDialog(this,
+                            "User ini masih punya riwayat aktivitas, tidak bisa dihapus.\n"
+                          + "Tapi statusnya sudah Inactive, jadi tidak bisa login lagi.",
+                            "Tidak bisa dihapus", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+                int change = JOptionPane.showConfirmDialog(this,
+                        "User ini masih punya riwayat aktivitas, tidak bisa dihapus.\n"
+                      + "Set Status ke Inactive saja?",
+                        "Tidak bisa dihapus", JOptionPane.YES_NO_OPTION);
+                if (change == JOptionPane.YES_OPTION) {
+                    try (Connection c2 = DBConnection.connect();
+                         PreparedStatement p2 = c2.prepareStatement(
+                                 "UPDATE user SET status='Inactive' WHERE user_id=?")) {
+                        p2.setInt(1, selectedUserId);
+                        p2.executeUpdate();
+                        JOptionPane.showMessageDialog(this, "Status diubah ke Inactive.");
+                        clearForm();
+                        loadData();
+                    } catch (SQLException ex2) {
+                        JOptionPane.showMessageDialog(this, "Gagal: " + ex2.getMessage());
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Delete gagal : " + e.getMessage());
+            }
         }
     }
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -465,7 +495,7 @@ public class UsersPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Users — Manage Application Users");
+        jLabel1.setText("Users - Manage Application Users");
 
         btnAdd.setBackground(new java.awt.Color(0, 102, 204));
         btnAdd.setForeground(new java.awt.Color(255, 255, 255));

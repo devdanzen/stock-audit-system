@@ -49,6 +49,12 @@ public class MovementPanel extends javax.swing.JPanel {
         jTextField1.addActionListener(e -> updateOutFields());
         updateOutFields();
 
+        jTextField8.setEditable(false);
+        jTextField8.setBackground(new java.awt.Color(240, 240, 240));
+        jTextField8.setFont(jTextField8.getFont().deriveFont(java.awt.Font.BOLD));
+        jTextField8.setBorder(javax.swing.BorderFactory.createMatteBorder(
+                0, 0, 1, 0, new java.awt.Color(192, 192, 192)));
+
         jButton1.addActionListener(e -> saveMovement());
         if (!itemList.isEmpty()) fillFromItem();
     }

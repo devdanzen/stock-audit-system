@@ -7,6 +7,9 @@
 
     <property name="net.sf.jasperreports.report.locale" value="en-US"/>
 
+    <parameter name="dateFrom" class="java.sql.Date" isForPrompting="false"/>
+    <parameter name="dateTo"   class="java.sql.Date" isForPrompting="false"/>
+
     <queryString>
         <![CDATA[SELECT a.audit_date,
                         mi.item_code,
@@ -18,6 +21,7 @@
                         (a.variance * mi.current_cost) AS variance_value
                  FROM audit a
                  JOIN master_item mi ON mi.item_id = a.item_id
+                 WHERE a.audit_date BETWEEN $P{dateFrom} AND $P{dateTo}
                  ORDER BY a.audit_date DESC, ABS(a.variance) DESC]]>
     </queryString>
 

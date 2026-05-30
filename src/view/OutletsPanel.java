@@ -326,11 +326,41 @@ model = (DefaultTableModel) OutletTable.getModel();
 
         } catch (SQLException e) {
 
-            JOptionPane.showMessageDialog(this,
-                    "Gagal hapus: " + e.getMessage());
+            String msg = e.getMessage() == null ? "" : e.getMessage();
+            if (msg.toLowerCase().contains("foreign key")) {
+                String currentStatus = txtStatus.getSelectedItem() == null
+                        ? "" : txtStatus.getSelectedItem().toString();
+                if ("Inactive".equalsIgnoreCase(currentStatus)) {
+                    JOptionPane.showMessageDialog(this,
+                            "Outlet ini masih dipakai di transaksi lain, tidak bisa dihapus.\n"
+                          + "Tapi statusnya sudah Inactive, jadi tidak muncul lagi di form transaksi.",
+                            "Tidak bisa dihapus", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+                int change = JOptionPane.showConfirmDialog(this,
+                        "Outlet ini masih dipakai di transaksi lain, tidak bisa dihapus.\n"
+                      + "Set Status ke Inactive saja?",
+                        "Tidak bisa dihapus", JOptionPane.YES_NO_OPTION);
+                if (change == JOptionPane.YES_OPTION) {
+                    try (Connection c2 = DBConnection.connect();
+                         PreparedStatement p2 = c2.prepareStatement(
+                                 "UPDATE outlet SET status='Inactive' WHERE outlet_id=?")) {
+                        p2.setInt(1, selectedOutletId);
+                        p2.executeUpdate();
+                        JOptionPane.showMessageDialog(this, "Status diubah ke Inactive.");
+                        loadData();
+                        clearForm();
+                    } catch (SQLException ex2) {
+                        JOptionPane.showMessageDialog(this, "Gagal: " + ex2.getMessage());
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Gagal hapus: " + e.getMessage());
+            }
         }
     }
-    
+
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

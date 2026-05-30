@@ -49,7 +49,7 @@ public class ReceivingPanel extends javax.swing.JPanel {
 
         jTextField2.setText(new ReceivingDAO().getNextReceiptNumber());
         jTextField2.setEditable(false);
-        jTextField1.setText(Fmt.date(LocalDate.now()));
+        jTextField1.setDate(new java.util.Date());
 
         outletList = new OutletDAO().findActive();
         jComboBox3.removeAllItems();
@@ -119,7 +119,8 @@ public class ReceivingPanel extends javax.swing.JPanel {
         ReceivingHeader h = new ReceivingHeader();
         h.setReceiptNumber(jTextField2.getText());
         h.setReceiptType(jComboBox1.getSelectedItem() == null ? null : jComboBox1.getSelectedItem().toString());
-        h.setReceiptDate(parseDate(jTextField1.getText()));
+        java.util.Date rd = jTextField1.getDate();
+        h.setReceiptDate(rd == null ? LocalDate.now() : new java.sql.Date(rd.getTime()).toLocalDate());
         h.setPoNumber(jTextField3.getText().trim());
         h.setVendorId(selectedId(vendorList, jComboBox4, true));
         h.setOutletId(selectedId(outletList, jComboBox3, false));
@@ -143,7 +144,7 @@ public class ReceivingPanel extends javax.swing.JPanel {
         jTextField4.setText("");
         jTextField5.setText("");
         jTextField2.setText(new ReceivingDAO().getNextReceiptNumber());
-        jTextField1.setText(Fmt.date(LocalDate.now()));
+        jTextField1.setDate(new java.util.Date());
     }
 
     private LocalDate parseDate(String s) {
@@ -175,7 +176,7 @@ public class ReceivingPanel extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabel6 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        jTextField1 = new com.toedter.calendar.JDateChooser();
         jLabel7 = new javax.swing.JLabel();
         jComboBox3 = new javax.swing.JComboBox<>();
         jLabel9 = new javax.swing.JLabel();
@@ -201,7 +202,7 @@ public class ReceivingPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Receiving — Goods Receipt Entry");
+        jLabel1.setText("Receiving - Goods Receipt Entry");
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Receipt Header", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 12))); // NOI18N
@@ -220,11 +221,9 @@ public class ReceivingPanel extends javax.swing.JPanel {
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Standar PO" }));
         jComboBox1.addActionListener(this::jComboBox1ActionPerformed);
 
-        jLabel6.setText("Receipt Date:");
+        jLabel6.setText("Destination Outlet:");
 
-        jTextField1.addActionListener(this::jTextField1ActionPerformed);
-
-        jLabel7.setText("Destination Outlet:");
+        jLabel7.setText("Receipt Date:");
 
         jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "SHLMP--SH Lippo Mall Puri", "SHLMP--SH BXchange" }));
         jComboBox3.addActionListener(this::jComboBox3ActionPerformed);
@@ -512,7 +511,7 @@ public class ReceivingPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
+    private com.toedter.calendar.JDateChooser jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;

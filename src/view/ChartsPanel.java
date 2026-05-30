@@ -231,7 +231,11 @@ public class ChartsPanel extends javax.swing.JPanel {
 
     private List<String> labels(List<NameValue> in) {
         List<String> l = new ArrayList<>();
-        for (NameValue nv : in) l.add(nv.getLabel());
+        for (NameValue nv : in) {
+            String s = nv.getLabel() == null ? "" : nv.getLabel();
+            if (s.length() > 14) s = s.substring(0, 13) + "...";
+            l.add(s);
+        }
         return l;
     }
 
@@ -246,6 +250,9 @@ public class ChartsPanel extends javax.swing.JPanel {
         c.getStyler().setPlotBackgroundColor(new Color(245, 245, 245));
         c.getStyler().setSeriesColors(new Color[]{ series });
         c.getStyler().setLegendVisible(false);
+        c.getStyler().setLocale(java.util.Locale.US);
+        c.getStyler().setYAxisDecimalPattern("#,##0");
+        c.getStyler().setXAxisLabelRotation(45);
     }
 
     private void replace(javax.swing.JPanel host, java.awt.Component chart) {

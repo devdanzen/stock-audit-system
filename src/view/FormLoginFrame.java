@@ -19,7 +19,7 @@ public class FormLoginFrame extends javax.swing.JFrame {
      */
     public FormLoginFrame() {
         initComponents();
-        setTitle("Stock Audit — Login");
+        setTitle("Stock Audit - Login");
         setAlwaysOnTop(false);
         jPanel1.setVisible(false);
         pack();

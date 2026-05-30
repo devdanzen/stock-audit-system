@@ -86,12 +86,16 @@ public class EndBalancePanel extends javax.swing.JPanel {
         LocalDate period = chosenDate();
         List<EndBalance> rows = new ArrayList<>();
         for (StockOnHandRow r : loadedRows) {
+            BigDecimal qty = r.getOnHand();
+            if (qty == null || qty.signum() < 0) qty = BigDecimal.ZERO;
+            BigDecimal cost = r.getUnitCost() == null ? BigDecimal.ZERO : r.getUnitCost();
+
             EndBalance eb = new EndBalance();
             eb.setItemId(r.getItemId());
             eb.setPeriodDate(period);
-            eb.setEndBalance(r.getOnHand());
-            eb.setUnitCost(r.getUnitCost());
-            eb.setExtendedCost(r.getStockValue());
+            eb.setEndBalance(qty);
+            eb.setUnitCost(cost);
+            eb.setExtendedCost(qty.multiply(cost));
             rows.add(eb);
         }
         try {
