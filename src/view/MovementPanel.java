@@ -21,14 +21,6 @@ import javax.swing.JOptionPane;
  */
 public class MovementPanel extends javax.swing.JPanel {
 
-    // --- wiring (added; not part of generated form) ---
-    // ASSUMPTION (generic component names mapped by their labels):
-    //   jComboBox1 = Item, jTextField1 = Movement Type, jTextField2 = Quantity,
-    //   jTextField3 = Unit, jTextField4 = Unit Cost, jTextField5 = Extended Cost,
-    //   jTextField6 = Destination Outlet code (OUT only), jTextField7 = Delivery Note (OUT only),
-    //   jTextArea1 = Reason/Note, jButton1 = Save, jButton2 = Cancel.
-    //   There is no date field on the form, so movement_date defaults to today.
-    //   Movement Type is a text field (not a dropdown) -> validated against the 4 enum values.
     private java.util.List<MasterItem> itemList = new java.util.ArrayList<>();
 
     /**
@@ -40,15 +32,13 @@ public class MovementPanel extends javax.swing.JPanel {
     }
 
     private void initMovement() {
-        // populate item combo from DB; index lines up with itemList
         itemList = new MasterItemDAO().findActive();
         jComboBox1.removeAllItems();
         for (MasterItem it : itemList) {
             jComboBox1.addItem(it.getItemCode() + " - " + it.getDescription());
         }
-        // auto-fill unit + unit cost when an item is chosen
         jComboBox1.addActionListener(e -> fillFromItem());
-        jTextField5.setEditable(false); // Extended Cost is computed
+        jTextField5.setEditable(false);
         jButton1.addActionListener(e -> saveMovement());
         if (!itemList.isEmpty()) fillFromItem();
     }
@@ -62,7 +52,7 @@ public class MovementPanel extends javax.swing.JPanel {
         MasterItem it = selectedItem();
         if (it == null) return;
         jTextField3.setText(it.getBaseUnit() == null ? "" : it.getBaseUnit());
-        jTextField4.setText(it.getCurrentCost() == null ? "0" : it.getCurrentCost().toPlainString());
+        jTextField4.setText(util.Fmt.number(it.getCurrentCost()));
     }
 
     private void saveMovement() {
@@ -81,7 +71,7 @@ public class MovementPanel extends javax.swing.JPanel {
         }
         BigDecimal unitCost = parse(jTextField4.getText());
         BigDecimal extended = qty.multiply(unitCost);
-        jTextField5.setText(extended.toPlainString());
+        jTextField5.setText(util.Fmt.number(extended));
 
         Movement m = new Movement();
         m.setItemId(it.getItemId());
@@ -186,7 +176,7 @@ public class MovementPanel extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setText("Record Stock Movement");
 
-        jLabel18.setText("jLabel18");
+        jLabel18.setText("");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setText("Movement Details");
@@ -210,7 +200,7 @@ public class MovementPanel extends javax.swing.JPanel {
 
         jLabel5.setText("Movement Type :");
 
-        jButton1.setBackground(new java.awt.Color(0, 51, 153));
+        jButton1.setBackground(new java.awt.Color(0, 102, 204));
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Save");
 

@@ -10,7 +10,6 @@ public class SalesDetail {
     private BigDecimal unitPrice;
     private BigDecimal extendedPrice;
 
-    // transient (for line table display)
     private String itemCode;
     private String description;
 

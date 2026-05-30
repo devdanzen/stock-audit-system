@@ -11,10 +11,6 @@ import java.util.List;
 
 public class EndBalanceDAO {
 
-    /**
-     * Commits a period-end snapshot (one row per item). UNIQUE(item_id, period_date)
-     * means re-running the same period overwrites it (ON DUPLICATE KEY UPDATE).
-     */
     public int commitSnapshot(List<EndBalance> rows) {
         String sql = "INSERT INTO end_balance(item_id, period_date, end_balance, unit_cost, extended_cost) "
                    + "VALUES (?,?,?,?,?) "

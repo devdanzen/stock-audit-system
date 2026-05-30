@@ -42,15 +42,12 @@ public class MasterItemPanel extends javax.swing.JPanel {
             int row = MasterItemTable.getSelectedRow();
 
             if (row != -1 && model.getValueAt(row, 0) != null) {
-                // 1. Ambil ID Item yang dipilih
                 selectedItemId = Integer.parseInt(model.getValueAt(row, 0).toString());
 
-                // 2. Set nilai ke TextField / Input biasa
                 txtItemCode.setText(model.getValueAt(row, 1).toString());
                 txtDesc.setText(model.getValueAt(row, 2).toString());
                 txtItemClass.setSelectedItem(model.getValueAt(row, 3).toString());
 
-                // 3. Set nilai untuk ComboBox Category (Menggunakan ComboItem)
                 String categoryLabel = model.getValueAt(row, 4).toString();
                 for (int i = 0; i < txtCategory.getItemCount(); i++) {
                     ComboItem item = (ComboItem) txtCategory.getItemAt(i);
@@ -60,7 +57,6 @@ public class MasterItemPanel extends javax.swing.JPanel {
                     }
                 }
 
-                // 4. Set nilai untuk ComboBox Outlet (Menggunakan ComboItem)
                 String outletLabel = model.getValueAt(row, 5).toString();
                 for (int i = 0; i < txtOutlet.getItemCount(); i++) {
                     ComboItem item = (ComboItem) txtOutlet.getItemAt(i);
@@ -70,7 +66,6 @@ public class MasterItemPanel extends javax.swing.JPanel {
                     }
                 }
 
-                // 5. Set nilai ke ComboBox sisa (Unit, Cost, Price, Status)
                 txtBaseUnit.setSelectedItem(model.getValueAt(row, 6).toString());
                 txtPurchUnit.setSelectedItem(model.getValueAt(row, 7).toString());
                 txtCurrCost.setText(model.getValueAt(row, 8).toString());
@@ -481,7 +476,7 @@ public class MasterItemPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Master Item----Manage Item");
+        jLabel1.setText("Items — Manage Items");
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
@@ -633,15 +628,15 @@ public class MasterItemPanel extends javax.swing.JPanel {
                 .addContainerGap(18, Short.MAX_VALUE))
         );
 
-        btnAdd.setBackground(new java.awt.Color(2, 148, 185));
+        btnAdd.setBackground(new java.awt.Color(0, 102, 204));
         btnAdd.setForeground(new java.awt.Color(255, 255, 255));
-        btnAdd.setText("+Add");
+        btnAdd.setText("+ Add");
         btnAdd.addActionListener(this::btnAddActionPerformed);
 
         btnUpdate.setText("Update");
         btnUpdate.addActionListener(this::btnUpdateActionPerformed);
 
-        btnDelete.setBackground(new java.awt.Color(220, 13, 54));
+        btnDelete.setBackground(new java.awt.Color(204, 0, 0));
         btnDelete.setForeground(new java.awt.Color(255, 255, 255));
         btnDelete.setText("Delete");
         btnDelete.addActionListener(this::btnDeleteActionPerformed);

@@ -2,10 +2,6 @@ package util;
 
 import model.User;
 
-/**
- * Singleton holding the currently logged-in user, so any panel can ask
- * "who is logged in?" and "what is their role/outlet?".
- */
 public final class SessionManager {
 
     private static final SessionManager INSTANCE = new SessionManager();

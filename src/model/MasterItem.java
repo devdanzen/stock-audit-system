@@ -14,9 +14,8 @@ public class MasterItem {
     private BigDecimal qtyPerPurchaseUnit;
     private BigDecimal currentCost;
     private BigDecimal sellingPrice;
-    private String status; // Active | Inactive
+    private String status;
 
-    // transient (for table display)
     private String categoryName;
     private String outletName;
 

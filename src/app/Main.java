@@ -14,7 +14,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        util.Theme.setup();
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new FormLoginFrame().setVisible(true);

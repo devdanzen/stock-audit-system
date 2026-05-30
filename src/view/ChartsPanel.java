@@ -168,8 +168,6 @@ public class ChartsPanel extends javax.swing.JPanel {
                 .addContainerGap(108, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-    // Charts now pull live data from the 4 SQL views via ReportDAO.
-    // Guarded so a DB hiccup can't crash app startup (charts just show "(no data)").
     private void initXCharts() {
         sellItemCharts.setLayout(new BorderLayout());
         dailySalesCharts.setLayout(new BorderLayout());
@@ -178,7 +176,6 @@ public class ChartsPanel extends javax.swing.JPanel {
 
         ReportDAO dao = new ReportDAO();
 
-        // CHART 1: Top sellers (blue bar)
         List<NameValue> sellers = safe(fetch(() -> dao.topSellers(10)));
         CategoryChart barChart = new CategoryChartBuilder().width(519).height(290)
                 .title("Top 10 Best-Selling Items").xAxisTitle("Item").yAxisTitle("Qty Sold").build();
@@ -186,7 +183,6 @@ public class ChartsPanel extends javax.swing.JPanel {
         styleCat(barChart, new Color(0, 102, 204));
         replace(sellItemCharts, new XChartPanel<>(barChart));
 
-        // CHART 2: Daily sales (blue line)
         List<NameValue> daily = safe(fetch(() -> dao.dailySales(30)));
         CategoryChart lineChart = new CategoryChartBuilder().width(519).height(290)
                 .title("Daily Sales - Last 30 Days").xAxisTitle("Date").yAxisTitle("Revenue").build();
@@ -195,7 +191,6 @@ public class ChartsPanel extends javax.swing.JPanel {
         styleCat(lineChart, new Color(0, 102, 204));
         replace(dailySalesCharts, new XChartPanel<>(lineChart));
 
-        // CHART 3: Sales by category (pie)
         List<NameValue> cats = fetch(() -> dao.salesByCategory());
         PieChart pieChart = new PieChartBuilder().width(519).height(290)
                 .title("Sales by Category").build();
@@ -208,7 +203,6 @@ public class ChartsPanel extends javax.swing.JPanel {
         pieChart.getStyler().setCircular(true);
         replace(salesByCategoryCharts, new XChartPanel<>(pieChart));
 
-        // CHART 4: Top waste (red bar)
         List<NameValue> waste = safe(fetch(() -> dao.topWaste(10)));
         CategoryChart wasteChart = new CategoryChartBuilder().width(519).height(290)
                 .title("Top Waste Items (by Cost)").xAxisTitle("Item").yAxisTitle("Waste Cost").build();

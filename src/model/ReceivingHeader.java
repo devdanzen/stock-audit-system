@@ -10,7 +10,7 @@ public class ReceivingHeader {
     private String poNumber;
     private Integer vendorId;
     private Integer outletId;
-    private String postingStatus; // Pending | Approved | Posted
+    private String postingStatus;
     private Integer postedUserId;
 
     public ReceivingHeader() {}

@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package view;
-//import java.awt.Color;
 import java.awt.Cursor;
 /**
  *
@@ -55,6 +54,32 @@ public class MainFrame extends javax.swing.JFrame {
         ((java.awt.CardLayout) contentPanel.getLayout()).show(contentPanel, "DASHBOARD");
         setSize(1280, 800);
         setLocationRelativeTo(null);
+        util.Theme.unify(this);
+
+        wireActiveNav();
+        setActiveNav(navDashboard);
+    }
+
+    private static final java.awt.Color NAV_ACTIVE = new java.awt.Color(204, 228, 247);
+
+    private javax.swing.JButton[] navButtons() {
+        return new javax.swing.JButton[]{ navDashboard, navItems, navCategories, navOutlets, navVendor,
+            navUsers, navReceiving, navSales, navMovement, navRecipes, navStockOnHand, navAudit,
+            navEndBal, navReports, navCharts };
+    }
+
+    private void wireActiveNav() {
+        for (javax.swing.JButton b : navButtons()) b.addActionListener(e -> setActiveNav(b));
+    }
+
+    private void setActiveNav(javax.swing.JButton active) {
+        for (javax.swing.JButton b : navButtons()) {
+            boolean on = (b == active);
+            b.setContentAreaFilled(on);
+            b.setOpaque(on);
+            if (on) b.setBackground(NAV_ACTIVE);
+            b.repaint();
+        }
     }
 
     private void addLogoutButton() {
@@ -73,14 +98,12 @@ public class MainFrame extends javax.swing.JFrame {
         sidebarPanel.add(logout);
     }
 
-    /** Show the logged-in user in the header and hide nav items the role can't use. */
     private void applyUserAndRole() {
         util.SessionManager sm = util.SessionManager.get();
         if (sm.getCurrentUser() != null) {
             jLabel5.setText("User : " + sm.getCurrentUser().getUsername()
                     + " (" + sm.getRole() + ")");
         }
-        // Staff: no Users, no End Balance. Manager: no Users. Administrator: all.
         if (sm.isStaff()) {
             navUsers.setVisible(false);
             navEndBal.setVisible(false);
@@ -89,7 +112,6 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }
 
-    /** Public hook so panels (e.g. Dashboard quick actions) can switch screens. */
     public void showScreen(String friendly) {
         String card;
         switch (friendly) {

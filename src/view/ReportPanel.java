@@ -33,12 +33,6 @@ import javax.swing.JTextArea;
  */
 public class ReportPanel extends javax.swing.JPanel {
 
-    // --- wiring (added; not part of generated form) ---
-    // ASSUMPTION: jComboBox1=Report Type, jComboBox2=Item, jComboBox3=Outlet, jComboBox4=Category,
-    //   jDateChooser1=Date From, jDateChooser2=Date To, jButton7=Preview, jButton6=Print,
-    //   jButton5=Export PDF, jButton3=Refresh. The form has no preview text area, so the report
-    //   renders in a scrollable monospace dialog. Print uses JTextArea.print() (no extra library).
-    //   Export PDF needs the JasperReports library (drop-in upgrade) -> shows a hint for now.
     private List<MasterItem> itemList = new ArrayList<>();
     private List<Outlet> outletList = new ArrayList<>();
     private List<Category> categoryList = new ArrayList<>();
@@ -67,31 +61,33 @@ public class ReportPanel extends javax.swing.JPanel {
         jComboBox4.addItem("All Categories");
         for (Category c : categoryList) jComboBox4.addItem(c.getCategoryCode() + " - " + c.getCategoryName());
 
-        jButton7.addActionListener(e -> previewReport());   // Preview
-        jButton6.addActionListener(e -> printReport());     // Print (text)
-        jButton5.addActionListener(e -> exportReport());    // Export PDF
-        jButton3.addActionListener(e -> previewReport());   // Refresh
+        jButton7.addActionListener(e -> previewReport());
+        jButton6.addActionListener(e -> printReport());
+        jButton5.addActionListener(e -> exportReport());
+        jButton3.addActionListener(e -> previewReport());
     }
 
-    /** Stock report uses JasperReports/JasperViewer when the jars are present;
-     *  otherwise (and for other report types) falls back to the text dialog. */
-    private boolean tryJasperStock() {
+    private boolean tryJasper() {
         String type = String.valueOf(jComboBox1.getSelectedItem());
-        if (!"Stock".equalsIgnoreCase(type)) return false;   // only the Stock template is provided
-        return JasperReportUtil.viewReport("/reports/stock_report.jrxml", new HashMap<>());
+        String jrxml;
+        if      ("Stock".equalsIgnoreCase(type))          jrxml = "/reports/stock_report.jrxml";
+        else if ("Sales".equalsIgnoreCase(type))          jrxml = "/reports/sales_report.jrxml";
+        else if ("Receiving".equalsIgnoreCase(type))      jrxml = "/reports/receiving_report.jrxml";
+        else if ("Audit variance".equalsIgnoreCase(type)) jrxml = "/reports/audit_variance_report.jrxml";
+        else return false;
+        return JasperReportUtil.viewReport(jrxml, new HashMap<>());
     }
 
     private void previewReport() {
-        if (tryJasperStock()) return;
+        if (tryJasper()) return;
         showReportDialog();
     }
 
     private void exportReport() {
-        if (tryJasperStock()) return;   // JasperViewer has the Export-PDF button
+        if (tryJasper()) return;
         JOptionPane.showMessageDialog(this,
-                "Export PDF aktif untuk report 'Stock' setelah library JasperReports ditambahkan.\n"
-              + "(JasperViewer menyediakan tombol Print & Export PDF/Excel.)\n"
-              + "Untuk sekarang gunakan Preview + Print.");
+                "JasperReports library is not loaded. Add the Jasper jars to lib/ to enable PDF/Excel export.\n"
+              + "(Use Preview + Print for now.)");
     }
 
     private String buildReport() {
@@ -128,7 +124,7 @@ public class ReportPanel extends javax.swing.JPanel {
                 for (StockOnHandRow r : rows) {
                     sb.append(String.format("%-12s %-26s %10s %12s %14s%n",
                             trunc(r.getItemCode(), 12), trunc(r.getDescription(), 26),
-                            r.getOnHand().toPlainString(), Fmt.number(r.getUnitCost()),
+                            Fmt.qty(r.getOnHand()), Fmt.number(r.getUnitCost()),
                             Fmt.number(r.getStockValue())));
                     totalValue = totalValue.add(r.getStockValue());
                 }
@@ -276,7 +272,7 @@ public class ReportPanel extends javax.swing.JPanel {
         jButton6.setText("Print");
         jButton6.addActionListener(this::jButton6ActionPerformed);
 
-        jButton7.setBackground(new java.awt.Color(51, 102, 255));
+        jButton7.setBackground(new java.awt.Color(0, 102, 204));
         jButton7.setForeground(new java.awt.Color(255, 255, 255));
         jButton7.setText("Preview");
         jButton7.addActionListener(this::jButton7ActionPerformed);

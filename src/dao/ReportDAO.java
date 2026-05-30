@@ -12,14 +12,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Read-only queries against the 4 SQL views + aggregates.
- * Backs Stock On Hand, Audit (system SOH), End Balance preview, Dashboard KPIs, and Charts.
- * (Not an entity DAO — the views have no table to own.)
- */
 public class ReportDAO {
 
-    // ---- Stock On Hand (also used by Audit + End Balance) ----
     public List<StockOnHandRow> stockOnHand(Integer categoryId, Integer outletId,
                                             boolean activeOnly, String search) {
         StringBuilder sql = new StringBuilder(
@@ -68,7 +62,6 @@ public class ReportDAO {
         }
     }
 
-    // ---- Charts ----
     public List<NameValue> topSellers(int limit) {
         return nameValue("SELECT description, total_qty_sold FROM v_top_sellers LIMIT " + limit);
     }
@@ -105,7 +98,6 @@ public class ReportDAO {
         }
     }
 
-    // ---- Dashboard KPIs ----
     public BigDecimal todaySales() {
         String sql = "SELECT COALESCE(SUM(sd.extended_price),0) FROM sales_detail sd "
                    + "JOIN sales_header sh ON sh.sales_id = sd.sales_id WHERE sh.sale_date = CURDATE()";

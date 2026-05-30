@@ -4,7 +4,7 @@ public class Category {
     private int categoryId;
     private String categoryCode;
     private String categoryName;
-    private int itemCount; // transient, for table display
+    private int itemCount;
 
     public Category() {}
 

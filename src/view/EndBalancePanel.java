@@ -24,10 +24,6 @@ import javax.swing.table.DefaultTableModel;
  */
 public class EndBalancePanel extends javax.swing.JPanel {
 
-    // --- wiring (added; not part of generated form) ---
-    // ASSUMPTION: jDateChooser1=Period date, jComboBox1=Outlet, jButton1=Generate Snapshot,
-    //   jButton2=Preview, jTable1=preview, jButton4=Commit, jButton3=Cancel, jLabel6=summary.
-    //   Snapshot reads current SOH from v_stock_on_hand via ReportDAO. Period defaults to today.
     private List<Outlet> outletList = new ArrayList<>();
     private List<StockOnHandRow> loadedRows = new ArrayList<>();
     private DefaultTableModel previewModel;
@@ -42,7 +38,7 @@ public class EndBalancePanel extends javax.swing.JPanel {
 
     private void initEndBalance() {
         previewModel = new DefaultTableModel(new Object[]{
-                "Item Code", "Description", "Category", "End Balance", "Unit Cost", "Extended Cost", "Unit"}, 0) {
+                "Item Code", "Description", "Category", "End Balance", "Unit Cost (Rp)", "Extended Cost (Rp)", "Unit"}, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         jTable1.setModel(previewModel);
@@ -70,7 +66,7 @@ public class EndBalancePanel extends javax.swing.JPanel {
         BigDecimal totalValue = BigDecimal.ZERO;
         for (StockOnHandRow r : loadedRows) {
             previewModel.addRow(new Object[]{ r.getItemCode(), r.getDescription(), r.getCategoryName(),
-                    r.getOnHand().toPlainString(), Fmt.number(r.getUnitCost()),
+                    Fmt.qty(r.getOnHand()), Fmt.number(r.getUnitCost()),
                     Fmt.number(r.getStockValue()), r.getBaseUnit() });
             totalValue = totalValue.add(r.getStockValue());
         }
@@ -265,7 +261,7 @@ public class EndBalancePanel extends javax.swing.JPanel {
 
         jButton3.setText("Cancel");
 
-        jButton4.setBackground(new java.awt.Color(0, 90, 191));
+        jButton4.setBackground(new java.awt.Color(0, 102, 204));
         jButton4.setForeground(new java.awt.Color(255, 255, 255));
         jButton4.setText("Commit Snapshot");
 

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="audit_variance_report" pageWidth="595" pageHeight="842" columnWidth="555"
+              leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+
+    <property name="net.sf.jasperreports.report.locale" value="en-US"/>
+
+    <queryString>
+        <![CDATA[SELECT a.audit_date,
+                        mi.item_code,
+                        mi.description,
+                        mi.base_unit,
+                        a.audit_quantity,
+                        a.variance,
+                        mi.current_cost,
+                        (a.variance * mi.current_cost) AS variance_value
+                 FROM audit a
+                 JOIN master_item mi ON mi.item_id = a.item_id
+                 ORDER BY a.audit_date DESC, ABS(a.variance) DESC]]>
+    </queryString>
+
+    <field name="audit_date"     class="java.sql.Date"/>
+    <field name="item_code"      class="java.lang.String"/>
+    <field name="description"    class="java.lang.String"/>
+    <field name="base_unit"      class="java.lang.String"/>
+    <field name="audit_quantity" class="java.math.BigDecimal"/>
+    <field name="variance"       class="java.math.BigDecimal"/>
+    <field name="current_cost"   class="java.math.BigDecimal"/>
+    <field name="variance_value" class="java.math.BigDecimal"/>
+
+    <variable name="totalVarianceValue" class="java.math.BigDecimal" calculation="Sum">
+        <variableExpression><![CDATA[$F{variance_value}]]></variableExpression>
+    </variable>
+
+    <title>
+        <band height="44">
+            <staticText>
+                <reportElement x="0" y="0" width="555" height="26"/>
+                <textElement><font size="18" isBold="true"/></textElement>
+                <text><![CDATA[Audit Variance Report]]></text>
+            </staticText>
+            <textField pattern="EEE, d MMM yyyy">
+                <reportElement x="0" y="28" width="555" height="14"/>
+                <textElement><font size="9"/></textElement>
+                <textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="20">
+            <staticText><reportElement x="0"   y="0" width="70"  height="20"/><textElement><font isBold="true"/></textElement><text><![CDATA[Date]]></text></staticText>
+            <staticText><reportElement x="70"  y="0" width="80"  height="20"/><textElement><font isBold="true"/></textElement><text><![CDATA[Item Code]]></text></staticText>
+            <staticText><reportElement x="150" y="0" width="170" height="20"/><textElement><font isBold="true"/></textElement><text><![CDATA[Description]]></text></staticText>
+            <staticText><reportElement x="320" y="0" width="45"  height="20"/><textElement><font isBold="true"/></textElement><text><![CDATA[Unit]]></text></staticText>
+            <staticText><reportElement x="365" y="0" width="50"  height="20"/><textElement textAlignment="Right"><font isBold="true"/></textElement><text><![CDATA[Counted]]></text></staticText>
+            <staticText><reportElement x="415" y="0" width="50"  height="20"/><textElement textAlignment="Right"><font isBold="true"/></textElement><text><![CDATA[Variance]]></text></staticText>
+            <staticText><reportElement x="465" y="0" width="90"  height="20"/><textElement textAlignment="Right"><font isBold="true"/></textElement><text><![CDATA[Var. Value (Rp)]]></text></staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="18">
+            <textField pattern="yyyy-MM-dd"><reportElement x="0"   y="0" width="70" height="18"/><textFieldExpression><![CDATA[$F{audit_date}]]></textFieldExpression></textField>
+            <textField><reportElement x="70"  y="0" width="80"  height="18"/><textFieldExpression><![CDATA[$F{item_code}]]></textFieldExpression></textField>
+            <textField><reportElement x="150" y="0" width="170" height="18"/><textFieldExpression><![CDATA[$F{description}]]></textFieldExpression></textField>
+            <textField><reportElement x="320" y="0" width="45"  height="18"/><textFieldExpression><![CDATA[$F{base_unit}]]></textFieldExpression></textField>
+            <textField pattern="#,##0.##"><reportElement x="365" y="0" width="50" height="18"/><textElement textAlignment="Right"/><textFieldExpression><![CDATA[$F{audit_quantity}]]></textFieldExpression></textField>
+            <textField pattern="#,##0.##"><reportElement x="415" y="0" width="50" height="18"/><textElement textAlignment="Right"/><textFieldExpression><![CDATA[$F{variance}]]></textFieldExpression></textField>
+            <textField pattern="#,##0"><reportElement x="465" y="0" width="90" height="18"/><textElement textAlignment="Right"/><textFieldExpression><![CDATA[$F{variance_value}]]></textFieldExpression></textField>
+        </band>
+    </detail>
+
+    <summary>
+        <band height="30">
+            <line><reportElement x="0" y="2" width="555" height="1"/></line>
+            <staticText><reportElement x="0"   y="6" width="400" height="20"/><textElement><font isBold="true"/></textElement><text><![CDATA[TOTAL VARIANCE VALUE]]></text></staticText>
+            <textField pattern="Rp #,##0"><reportElement x="400" y="6" width="155" height="20"/><textElement textAlignment="Right"><font isBold="true"/></textElement><textFieldExpression><![CDATA[$V{totalVarianceValue}]]></textFieldExpression></textField>
+        </band>
+    </summary>
+</jasperReport>

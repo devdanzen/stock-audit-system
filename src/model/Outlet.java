@@ -4,8 +4,8 @@ public class Outlet {
     private int outletId;
     private String outletCode;
     private String outletName;
-    private String status; // Active | Inactive
-    private int itemCount;  // transient, for table display
+    private String status;
+    private int itemCount;
 
     public Outlet() {}
 

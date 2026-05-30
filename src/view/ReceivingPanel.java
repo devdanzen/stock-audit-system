@@ -28,14 +28,6 @@ import javax.swing.table.DefaultTableModel;
  */
 public class ReceivingPanel extends javax.swing.JPanel {
 
-    // --- wiring (added; not part of generated form) ---
-    // ASSUMPTION (generic names mapped by labels/position):
-    //   jTextField2 = Receipt Number (auto, read-only), jTextField3 = PO Number,
-    //   jComboBox1 = Receipt Type, jTextField1 = Receipt Date, jComboBox3 = Destination Outlet,
-    //   jComboBox4 = Vendor, jComboBox5 = Status, jComboBox2 = Item,
-    //   jTextField4 = Qty Received, jTextField5 = Unit Cost,
-    //   jButton1 = Add line, jButton3 = Save Receipt, jButton2 = Cancel.
-    //   Saved as posting_status 'Posted' so Stock On Hand counts it.
     private List<MasterItem> itemList = new ArrayList<>();
     private List<Outlet> outletList = new ArrayList<>();
     private List<Vendor> vendorList = new ArrayList<>();
@@ -52,7 +44,7 @@ public class ReceivingPanel extends javax.swing.JPanel {
 
     private void initReceiving() {
         lineModel = new DefaultTableModel(
-                new Object[]{"Item Code", "Description", "Qty", "Unit Cost", "Subtotal"}, 0);
+                new Object[]{"Item Code", "Description", "Qty", "Unit Cost (Rp)", "Subtotal (Rp)"}, 0);
         jTable1.setModel(lineModel);
 
         jTextField2.setText(new ReceivingDAO().getNextReceiptNumber());
@@ -69,11 +61,15 @@ public class ReceivingPanel extends javax.swing.JPanel {
 
         itemList = new MasterItemDAO().findActive();
         jComboBox2.removeAllItems();
+        jComboBox2.addItem("=== Pilih Item ===");
         for (MasterItem it : itemList) jComboBox2.addItem(it.getItemCode() + " - " + it.getDescription());
+        jComboBox2.setSelectedIndex(0);
         jComboBox2.addActionListener(e -> {
             MasterItem it = lineItem();
             if (it != null && it.getCurrentCost() != null)
-                jTextField5.setText(it.getCurrentCost().toPlainString());
+                jTextField5.setText(Fmt.number(it.getCurrentCost()));
+            else
+                jTextField5.setText("");
         });
 
         jButton1.addActionListener(e -> addReceiptLine());
@@ -83,7 +79,7 @@ public class ReceivingPanel extends javax.swing.JPanel {
 
     private MasterItem lineItem() {
         int i = jComboBox2.getSelectedIndex();
-        return (i >= 0 && i < itemList.size()) ? itemList.get(i) : null;
+        return (i >= 1 && i <= itemList.size()) ? itemList.get(i - 1) : null;
     }
 
     private void addReceiptLine() {
@@ -107,7 +103,7 @@ public class ReceivingPanel extends javax.swing.JPanel {
         lines.add(d);
 
         lineModel.addRow(new Object[]{ it.getItemCode(), it.getDescription(),
-                qty.toPlainString(), Fmt.number(cost), Fmt.number(subtotal) });
+                Fmt.qty(qty), Fmt.number(cost), Fmt.number(subtotal) });
         jTextField4.setText("");
     }
 
@@ -205,7 +201,7 @@ public class ReceivingPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("New Receiving---Goods Receipt Entry");
+        jLabel1.setText("Receiving — Goods Receipt Entry");
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Receipt Header", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 12))); // NOI18N
@@ -323,7 +319,7 @@ public class ReceivingPanel extends javax.swing.JPanel {
 
         jLabel11.setText("Unit cost:");
 
-        jButton1.setText("+Add to Receipt");
+        jButton1.setText("+ Add to Receipt");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -371,7 +367,7 @@ public class ReceivingPanel extends javax.swing.JPanel {
 
         jButton2.setText("Cancel");
 
-        jButton3.setBackground(new java.awt.Color(13, 156, 204));
+        jButton3.setBackground(new java.awt.Color(0, 102, 204));
         jButton3.setForeground(new java.awt.Color(255, 255, 255));
         jButton3.setText("Save Receipt");
 
@@ -388,7 +384,7 @@ public class ReceivingPanel extends javax.swing.JPanel {
         ));
         jScrollPane1.setViewportView(jTable1);
 
-        jLabel13.setText("jLabel13");
+        jLabel13.setText("");
         jLabel13.addContainerListener(new java.awt.event.ContainerAdapter() {
             public void componentAdded(java.awt.event.ContainerEvent evt) {
                 jLabel13ComponentAdded(evt);

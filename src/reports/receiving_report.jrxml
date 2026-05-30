@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="receiving_report" pageWidth="595" pageHeight="842" columnWidth="555"
+              leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+
+    <property name="net.sf.jasperreports.report.locale" value="en-US"/>
+
+    <queryString>
+        <![CDATA[SELECT rh.receipt_number,
+                        rh.receipt_date,
+                        COALESCE(v.vendor_name, '-') AS vendor_name,
+                        COALESCE(o.outlet_code, '-') AS outlet_code,
+                        (SELECT COALESCE(SUM(rd.extended_cost), 0)
+                         FROM receiving_detail rd
+                         WHERE rd.receiving_id = rh.receiving_id) AS total_cost
+                 FROM receiving_header rh
+                 LEFT JOIN vendor v ON v.vendor_id = rh.vendor_id
+                 LEFT JOIN outlet o ON o.outlet_id = rh.outlet_id
+                 ORDER BY rh.receipt_date DESC, rh.receiving_id DESC]]>
+    </queryString>
+
+    <field name="receipt_number" class="java.lang.String"/>
+    <field name="receipt_date"   class="java.sql.Date"/>
+    <field name="vendor_name"    class="java.lang.String"/>
+    <field name="outlet_code"    class="java.lang.String"/>
+    <field name="total_cost"     class="java.math.BigDecimal"/>
+
+    <variable name="grandTotal" class="java.math.BigDecimal" calculation="Sum">
+        <variableExpression><![CDATA[$F{total_cost}]]></variableExpression>
+    </variable>
+
+    <title>
+        <band height="44">
+            <staticText>
+                <reportElement x="0" y="0" width="555" height="26"/>
+                <textElement><font size="18" isBold="true"/></textElement>
+                <text><![CDATA[Receiving Report]]></text>
+            </staticText>
+            <textField pattern="EEE, d MMM yyyy">
+                <reportElement x="0" y="28" width="555" height="14"/>
+                <textElement><font size="9"/></textElement>
+                <textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="20">
+            <staticText><reportElement x="0"   y="0" width="110" height="20"/><textElement><font isBold="true"/></textElement><text><![CDATA[Receipt #]]></text></staticText>
+            <staticText><reportElement x="110" y="0" width="80"  height="20"/><textElement><font isBold="true"/></textElement><text><![CDATA[Date]]></text></staticText>
+            <staticText><reportElement x="190" y="0" width="200" height="20"/><textElement><font isBold="true"/></textElement><text><![CDATA[Vendor]]></text></staticText>
+            <staticText><reportElement x="390" y="0" width="60"  height="20"/><textElement><font isBold="true"/></textElement><text><![CDATA[Outlet]]></text></staticText>
+            <staticText><reportElement x="450" y="0" width="105" height="20"/><textElement textAlignment="Right"><font isBold="true"/></textElement><text><![CDATA[Total (Rp)]]></text></staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="18">
+            <textField><reportElement x="0"   y="0" width="110" height="18"/><textFieldExpression><![CDATA[$F{receipt_number}]]></textFieldExpression></textField>
+            <textField pattern="yyyy-MM-dd"><reportElement x="110" y="0" width="80" height="18"/><textFieldExpression><![CDATA[$F{receipt_date}]]></textFieldExpression></textField>
+            <textField><reportElement x="190" y="0" width="200" height="18"/><textFieldExpression><![CDATA[$F{vendor_name}]]></textFieldExpression></textField>
+            <textField><reportElement x="390" y="0" width="60"  height="18"/><textFieldExpression><![CDATA[$F{outlet_code}]]></textFieldExpression></textField>
+            <textField pattern="#,##0"><reportElement x="450" y="0" width="105" height="18"/><textElement textAlignment="Right"/><textFieldExpression><![CDATA[$F{total_cost}]]></textFieldExpression></textField>
+        </band>
+    </detail>
+
+    <summary>
+        <band height="30">
+            <line><reportElement x="0" y="2" width="555" height="1"/></line>
+            <staticText><reportElement x="0"   y="6" width="300" height="20"/><textElement><font isBold="true"/></textElement><text><![CDATA[GRAND TOTAL]]></text></staticText>
+            <textField pattern="Rp #,##0"><reportElement x="350" y="6" width="205" height="20"/><textElement textAlignment="Right"><font isBold="true"/></textElement><textFieldExpression><![CDATA[$V{grandTotal}]]></textFieldExpression></textField>
+        </band>
+    </summary>
+</jasperReport>

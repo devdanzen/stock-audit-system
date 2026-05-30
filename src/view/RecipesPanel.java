@@ -22,12 +22,6 @@ import javax.swing.table.DefaultTableModel;
  */
 public class RecipesPanel extends javax.swing.JPanel {
 
-    // --- wiring (added; not part of generated form) ---
-    // ASSUMPTION (generic names mapped by labels/position):
-    //   jTextField2 = Recipe Code (auto, read-only), jComboBox2 = Finished Item,
-    //   jComboBox1 = Item Class, jComboBox3 = Ingredient,
-    //   jTextField1 = Initial Weight, jTextField3 = Final Weight,
-    //   jButton1 = Add Ingredient, jButton3 = Save Recipe, jButton2 = Cancel.
     private List<MasterItem> finishedList = new ArrayList<>();
     private List<MasterItem> ingredientList = new ArrayList<>();
     private final List<RecipeDetail> lines = new ArrayList<>();
@@ -107,8 +101,8 @@ public class RecipesPanel extends javax.swing.JPanel {
         lines.add(d);
 
         lineModel.addRow(new Object[]{ ing.getItemCode(), ing.getDescription(),
-                initial.toPlainString(), finalW.toPlainString(),
-                waste.setScale(2, RoundingMode.HALF_UP).toPlainString(),
+                util.Fmt.qty(initial), util.Fmt.qty(finalW),
+                waste.setScale(2, RoundingMode.HALF_UP).toPlainString() + "%",
                 ing.getBaseUnit() });
         jTextField1.setText("");
         jTextField3.setText("");
@@ -182,12 +176,12 @@ public class RecipesPanel extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
 
-        jLabel1.setText("jLabel1");
+        jLabel1.setText("");
 
         setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI Black", 1, 18)); // NOI18N
-        jLabel2.setText("Recipe Entry--Manage Recipes");
+        jLabel2.setText("Recipes — Manage Recipes");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -205,7 +199,7 @@ public class RecipesPanel extends javax.swing.JPanel {
         jButton2.setText("Cancel");
         jButton2.addActionListener(this::jButton2ActionPerformed);
 
-        jButton3.setBackground(new java.awt.Color(7, 127, 207));
+        jButton3.setBackground(new java.awt.Color(0, 102, 204));
         jButton3.setForeground(new java.awt.Color(255, 255, 255));
         jButton3.setText("Save Recipe");
         jButton3.addActionListener(this::jButton3ActionPerformed);
@@ -269,7 +263,7 @@ public class RecipesPanel extends javax.swing.JPanel {
 
         jLabel8.setText("Final Weight:");
 
-        jButton1.setText("+Add Ingredient");
+        jButton1.setText("+ Add Ingredient");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);

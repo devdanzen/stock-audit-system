@@ -3,7 +3,7 @@ package model;
 public class RecipeHeader {
     private int recipeId;
     private String recipeCode;
-    private int itemId;       // finished item (UNIQUE -> 1:0..1)
+    private int itemId;
     private String itemClass;
 
     public RecipeHeader() {}

@@ -15,7 +15,6 @@ import java.util.List;
 
 public class ReceivingDAO {
 
-    /** Atomic save: one receiving_header + N receiving_detail. Saved as 'Posted' so SOH counts it. */
     public int insertWithDetails(ReceivingHeader h, List<ReceivingDetail> lines) {
         String hSql = "INSERT INTO receiving_header(receipt_number, receipt_type, receipt_date, po_number, "
                     + "vendor_id, outlet_id, posting_status, posted_user_id) VALUES (?,?,?,?,?,?,?,?)";

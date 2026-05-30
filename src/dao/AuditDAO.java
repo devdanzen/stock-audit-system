@@ -11,10 +11,6 @@ import java.util.List;
 
 public class AuditDAO {
 
-    /**
-     * Saves all counted rows in one transaction. UNIQUE(item_id, audit_date) means a
-     * re-count on the same date overwrites the previous one (ON DUPLICATE KEY UPDATE).
-     */
     public int saveAll(List<Audit> rows) {
         String sql = "INSERT INTO audit(item_id, category_id, audit_date, audit_quantity, variance, note) "
                    + "VALUES (?,?,?,?,?,?) "

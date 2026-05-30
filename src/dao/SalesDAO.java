@@ -16,7 +16,6 @@ import java.util.List;
 
 public class SalesDAO {
 
-    /** Atomic save: one sales_header + N sales_detail in a single transaction. */
     public int insertWithDetails(SalesHeader h, List<SalesDetail> lines) {
         String hSql = "INSERT INTO sales_header(invoice_number, sale_date, outlet_id, total_amount) VALUES (?,?,?,?)";
         String dSql = "INSERT INTO sales_detail(sales_id, item_id, quantity, unit_price, extended_price) VALUES (?,?,?,?,?)";
@@ -59,7 +58,6 @@ public class SalesDAO {
         }
     }
 
-    /** Generates INV-yyyy-00001 style numbers. */
     public String getNextInvoiceNumber() {
         int year = LocalDate.now().getYear();
         String prefix = "INV-" + year + "-";

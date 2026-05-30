@@ -2,7 +2,6 @@ package model;
 
 import java.math.BigDecimal;
 
-/** Read-only row from v_stock_on_hand joined with master_item. */
 public class StockOnHandRow {
     private int itemId;
     private String itemCode;
@@ -10,9 +9,9 @@ public class StockOnHandRow {
     private String categoryName;
     private String outletName;
     private String baseUnit;
-    private BigDecimal onHand;     // soh_computed
-    private BigDecimal unitCost;   // master_item.current_cost
-    private BigDecimal stockValue; // onHand * unitCost
+    private BigDecimal onHand;
+    private BigDecimal unitCost;
+    private BigDecimal stockValue;
 
     public int getItemId() { return itemId; }
     public void setItemId(int itemId) { this.itemId = itemId; }

@@ -5,8 +5,8 @@ public class Vendor {
     private String vendorCode;
     private String vendorName;
     private String contactPhone;
-    private String status; // Active | Inactive
-    private int totalReceipts; // transient, for table display
+    private String status;
+    private int totalReceipts;
 
     public Vendor() {}
 

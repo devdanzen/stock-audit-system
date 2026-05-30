@@ -14,7 +14,6 @@ import java.util.List;
 
 public class UserDAO {
 
-    /** Returns the authenticated active user, or null if username/password invalid. */
     public User login(String username, String password) {
         String sql = "SELECT * FROM `user` WHERE username = ? AND status = 'Active'";
         try (Connection c = DBConnection.connect();
@@ -72,7 +71,6 @@ public class UserDAO {
         }
     }
 
-    /** If plainPassword is null/blank, keeps the existing password. */
     public boolean update(User u, String plainPassword) {
         boolean changePw = plainPassword != null && !plainPassword.trim().isEmpty();
         String sql = "UPDATE `user` SET username=?, role=?, outlet_id=?, status=?"
@@ -108,7 +106,6 @@ public class UserDAO {
             ps.setInt(1, userId);
             ps.executeUpdate();
         } catch (SQLException ignored) {
-            // last-login is non-critical
         }
     }
 

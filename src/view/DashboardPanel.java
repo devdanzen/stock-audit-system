@@ -20,11 +20,6 @@ import javax.swing.table.DefaultTableModel;
  */
 public class DashboardPanel extends javax.swing.JPanel {
 
-    // --- wiring (added; not part of generated form) ---
-    // ASSUMPTION: jLabel7=Today's sales, jLabel8=Low stock count, jLabel10=Total items,
-    //   jLabel12=Pending audits, jTable1=Recent Transactions, jTable2=Low Stock Alerts,
-    //   jButton1=New Sale, jButton2=New Receiving, jButton4=Run Audit, jButton3=View Reports.
-    //   KPIs/tables read via ReportDAO; guarded so DB issues don't crash startup.
 
     /**
      * Creates new form Dashboard
@@ -44,7 +39,7 @@ public class DashboardPanel extends javax.swing.JPanel {
             jLabel12.setText(String.valueOf(dao.pendingAudits()));
 
             DefaultTableModel recent = new DefaultTableModel(
-                    new Object[]{"Date", "Type", "Reference", "Amount"}, 0) {
+                    new Object[]{"Date", "Type", "Reference", "Amount (Rp)"}, 0) {
                 @Override public boolean isCellEditable(int r, int c) { return false; }
             };
             for (Object[] row : dao.recentTransactions(10)) {
@@ -59,11 +54,10 @@ public class DashboardPanel extends javax.swing.JPanel {
             };
             for (Object[] row : dao.lowStockAlerts(10)) {
                 BigDecimal soh = (BigDecimal) row[2];
-                low.addRow(new Object[]{ row[0], row[1], soh == null ? "0" : soh.toPlainString() });
+                low.addRow(new Object[]{ row[0], row[1], soh == null ? "0" : util.Fmt.qty(soh) });
             }
             jTable2.setModel(low);
         } catch (RuntimeException ex) {
-            // dashboard is non-critical; show nothing rather than crash
             System.out.println("Dashboard load failed: " + ex.getMessage());
         }
     }

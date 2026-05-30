@@ -6,13 +6,12 @@ public class User {
     private int userId;
     private String username;
     private String passwordHash;
-    private String role;        // Administrator | Manager | Staff
-    private Integer outletId;   // nullable
-    private String status;      // Active | Inactive
+    private String role;
+    private Integer outletId;
+    private String status;
     private LocalDateTime createdAt;
     private LocalDateTime lastLoginAt;
 
-    // transient (for table display)
     private String outletName;
 
     public User() {}

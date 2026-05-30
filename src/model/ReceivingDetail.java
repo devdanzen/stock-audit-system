@@ -13,7 +13,6 @@ public class ReceivingDetail {
     private BigDecimal unitCost;
     private BigDecimal extendedCost;
 
-    // transient (for line table display)
     private String itemCode;
     private String description;
 

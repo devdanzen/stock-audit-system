@@ -5,13 +5,12 @@ import java.math.BigDecimal;
 public class RecipeDetail {
     private int recipeDetailId;
     private int recipeId;
-    private int itemId;       // the ingredient
+    private int itemId;
     private BigDecimal initialWeight;
     private BigDecimal finalWeight;
     private BigDecimal wastePercentage;
     private String unit;
 
-    // transient (for line table display)
     private String itemCode;
     private String description;
 

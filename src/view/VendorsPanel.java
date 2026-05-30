@@ -347,15 +347,15 @@ private int selectedVendorId = -1;
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btnReset = new java.awt.Button();
+        btnReset = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
-        btnAdd = new java.awt.Button();
-        btnUpdate = new java.awt.Button();
-        btnDelete = new java.awt.Button();
-        btnClear = new java.awt.Button();
+        btnAdd = new javax.swing.JButton();
+        btnUpdate = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
+        btnClear = new javax.swing.JButton();
         btnRefresh = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         btnSearch = new javax.swing.JTextField();
@@ -370,7 +370,7 @@ private int selectedVendorId = -1;
         jLabel7 = new javax.swing.JLabel();
         txtStatus = new javax.swing.JComboBox<>();
 
-        btnReset.setLabel("Update");
+        btnReset.setText("Update");
         btnReset.setName(""); // NOI18N
         btnReset.addActionListener(this::btnResetActionPerformed);
 
@@ -378,7 +378,7 @@ private int selectedVendorId = -1;
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Vendors--Manage Suppliers");
+        jLabel1.setText("Vendors — Manage Suppliers");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -393,23 +393,23 @@ private int selectedVendorId = -1;
         ));
         jScrollPane1.setViewportView(jTable1);
 
-        btnAdd.setBackground(new java.awt.Color(0, 102, 255));
+        btnAdd.setBackground(new java.awt.Color(0, 102, 204));
         btnAdd.setForeground(new java.awt.Color(255, 255, 255));
-        btnAdd.setLabel("+Add Item");
+        btnAdd.setText("+ Add");
         btnAdd.addActionListener(this::btnAddActionPerformed);
 
-        btnUpdate.setLabel("Update");
+        btnUpdate.setText("Update");
         btnUpdate.setName(""); // NOI18N
         btnUpdate.addActionListener(this::btnUpdateActionPerformed);
 
-        btnDelete.setBackground(new java.awt.Color(255, 102, 102));
+        btnDelete.setBackground(new java.awt.Color(204, 0, 0));
         btnDelete.setForeground(new java.awt.Color(255, 255, 255));
-        btnDelete.setLabel("Delete ");
+        btnDelete.setText("Delete");
         btnDelete.addActionListener(this::btnDeleteActionPerformed);
 
         btnClear.setActionCommand("Update Item");
         btnClear.setBackground(new java.awt.Color(242, 242, 242));
-        btnClear.setLabel("Clear");
+        btnClear.setText("Clear");
         btnClear.addActionListener(this::btnClearActionPerformed);
 
         btnRefresh.setBackground(new java.awt.Color(242, 242, 242));
@@ -420,6 +420,8 @@ private int selectedVendorId = -1;
         jLabel5.setText("Search:");
 
         btnSearch.addActionListener(this::btnSearchActionPerformed);
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -458,7 +460,7 @@ private int selectedVendorId = -1;
                 .addGap(0, 21, Short.MAX_VALUE))
         );
 
-        jPanel2.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Vendor Details", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 12))); // NOI18N
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
@@ -636,13 +638,13 @@ private int selectedVendorId = -1;
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private java.awt.Button btnAdd;
-    private java.awt.Button btnClear;
-    private java.awt.Button btnDelete;
+    private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnClear;
+    private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnRefresh;
-    private java.awt.Button btnReset;
+    private javax.swing.JButton btnReset;
     private javax.swing.JTextField btnSearch;
-    private java.awt.Button btnUpdate;
+    private javax.swing.JButton btnUpdate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

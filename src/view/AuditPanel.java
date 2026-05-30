@@ -30,11 +30,6 @@ import javax.swing.table.DefaultTableModel;
  */
 public class AuditPanel extends javax.swing.JPanel {
 
-    // --- wiring (added; not part of generated form) ---
-    // ASSUMPTION: jDateChooser1=Audit Date, jComboBox3=Category, jComboBox4=Outlet,
-    //   jButton2=Load Items, jTable2=audit grid, jButton4=Save, jButton3=Cancel,
-    //   jLabel2=summary, jLabel3=total variance. Physical Count (col 5) editable -> Variance (col 6) auto.
-    //   System SOH read from v_stock_on_hand via ReportDAO.
     private List<Category> categoryList = new ArrayList<>();
     private List<Outlet> outletList = new ArrayList<>();
     private List<StockOnHandRow> loadedRows = new ArrayList<>();
@@ -88,7 +83,7 @@ public class AuditPanel extends javax.swing.JPanel {
         auditModel.setRowCount(0);
         for (StockOnHandRow r : loadedRows) {
             auditModel.addRow(new Object[]{ r.getItemCode(), r.getDescription(), r.getCategoryName(),
-                    r.getBaseUnit(), r.getOnHand().toPlainString(), "", "" });
+                    r.getBaseUnit(), util.Fmt.qty(r.getOnHand()), "", "" });
         }
         updatingVariance = false;
         updateSummary();
@@ -103,7 +98,7 @@ public class AuditPanel extends javax.swing.JPanel {
             auditModel.setValueAt("", row, 6);
         } else {
             BigDecimal variance = parse(pcRaw).subtract(soh);
-            auditModel.setValueAt(variance.toPlainString(), row, 6);
+            auditModel.setValueAt(util.Fmt.qty(variance), row, 6);
         }
         updatingVariance = false;
         updateSummary();
@@ -165,7 +160,6 @@ public class AuditPanel extends javax.swing.JPanel {
         catch (Exception e) { return BigDecimal.ZERO; }
     }
 
-    /** Variance color: negative=red (shortage), positive=green (surplus), zero=black. */
     private static class VarianceRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable t, Object value, boolean sel,
@@ -292,7 +286,7 @@ public class AuditPanel extends javax.swing.JPanel {
         jButton3.setText("Cancel");
         jButton3.addActionListener(this::jButton3ActionPerformed);
 
-        jButton4.setBackground(new java.awt.Color(51, 51, 255));
+        jButton4.setBackground(new java.awt.Color(0, 102, 204));
         jButton4.setForeground(new java.awt.Color(255, 255, 255));
         jButton4.setText("Save Audit Result");
         jButton4.addActionListener(this::jButton4ActionPerformed);

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="sales_report" pageWidth="595" pageHeight="842" columnWidth="555"
+              leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+
+    <property name="net.sf.jasperreports.report.locale" value="en-US"/>
+
+    <queryString>
+        <![CDATA[SELECT DATE_FORMAT(sale_date, '%d %b %Y') AS sale_date_label,
+                        daily_revenue
+                 FROM v_daily_sales
+                 WHERE sale_date >= (CURDATE() - INTERVAL 30 DAY)
+                 ORDER BY sale_date]]>
+    </queryString>
+
+    <field name="sale_date_label" class="java.lang.String"/>
+    <field name="daily_revenue"   class="java.math.BigDecimal"/>
+
+    <variable name="totalRevenue" class="java.math.BigDecimal" calculation="Sum">
+        <variableExpression><![CDATA[$F{daily_revenue}]]></variableExpression>
+    </variable>
+
+    <title>
+        <band height="44">
+            <staticText>
+                <reportElement x="0" y="0" width="555" height="26"/>
+                <textElement><font size="18" isBold="true"/></textElement>
+                <text><![CDATA[Sales Report]]></text>
+            </staticText>
+            <textField pattern="EEE, d MMM yyyy">
+                <reportElement x="0" y="28" width="555" height="14"/>
+                <textElement><font size="9"/></textElement>
+                <textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="20">
+            <staticText><reportElement x="0"   y="0" width="200" height="20"/><textElement><font isBold="true"/></textElement><text><![CDATA[Date]]></text></staticText>
+            <staticText><reportElement x="355" y="0" width="200" height="20"/><textElement textAlignment="Right"><font isBold="true"/></textElement><text><![CDATA[Revenue (Rp)]]></text></staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="18">
+            <textField><reportElement x="0"   y="0" width="200" height="18"/><textFieldExpression><![CDATA[$F{sale_date_label}]]></textFieldExpression></textField>
+            <textField pattern="#,##0"><reportElement x="355" y="0" width="200" height="18"/><textElement textAlignment="Right"/><textFieldExpression><![CDATA[$F{daily_revenue}]]></textFieldExpression></textField>
+        </band>
+    </detail>
+
+    <summary>
+        <band height="30">
+            <line><reportElement x="0" y="2" width="555" height="1"/></line>
+            <staticText><reportElement x="0"   y="6" width="200" height="20"/><textElement><font isBold="true"/></textElement><text><![CDATA[TOTAL]]></text></staticText>
+            <textField pattern="Rp #,##0"><reportElement x="355" y="6" width="200" height="20"/><textElement textAlignment="Right"><font isBold="true"/></textElement><textFieldExpression><![CDATA[$V{totalRevenue}]]></textFieldExpression></textField>
+        </band>
+    </summary>
+</jasperReport>

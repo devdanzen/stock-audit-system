@@ -26,13 +26,6 @@ import javax.swing.table.DefaultTableModel;
  */
 public class SalesPanel extends javax.swing.JPanel {
 
-    // --- wiring (added; not part of generated form) ---
-    // ASSUMPTION (generic names mapped by labels/position):
-    //   txtOutletID = Invoice Number (auto-generated, read-only),
-    //   jComboBox1 = Outlet, jComboBox2 = Item, jTextField1 = Quantity,
-    //   jTextField2 = Unit Price, jTextField3 = Total (read-only),
-    //   jTable1 = invoice lines, jButton1 = Add line, jButton3 = Save, jButton2 = Cancel.
-    //   There is no Sale Date field, so sale_date defaults to today.
     private List<MasterItem> itemList = new ArrayList<>();
     private List<Outlet> outletList = new ArrayList<>();
     private final List<SalesDetail> lines = new ArrayList<>();
@@ -48,7 +41,7 @@ public class SalesPanel extends javax.swing.JPanel {
 
     private void initSales() {
         lineModel = new DefaultTableModel(
-                new Object[]{"Item Code", "Description", "Qty", "Unit Price", "Subtotal"}, 0);
+                new Object[]{"Item Code", "Description", "Qty", "Unit Price (Rp)", "Subtotal (Rp)"}, 0);
         jTable1.setModel(lineModel);
 
         txtOutletID.setText(new SalesDAO().getNextInvoiceNumber());
@@ -66,20 +59,26 @@ public class SalesPanel extends javax.swing.JPanel {
 
         itemList = new MasterItemDAO().findActive();
         jComboBox2.removeAllItems();
+        jComboBox2.addItem("=== Pilih Item ===");
         for (MasterItem it : itemList) jComboBox2.addItem(it.getItemCode() + " - " + it.getDescription());
+        jComboBox2.setSelectedIndex(0);
+        jTextField2.setEditable(false);
         jComboBox2.addActionListener(e -> {
             MasterItem it = lineItem();
             if (it != null && it.getSellingPrice() != null)
-                jTextField2.setText(it.getSellingPrice().toPlainString());
+                jTextField2.setText(Fmt.number(it.getSellingPrice()));
+            else
+                jTextField2.setText("");
         });
 
         jButton3.addActionListener(e -> saveSale());
         jButton2.addActionListener(e -> resetForm());
+        jDateChooser1.setDate(new java.util.Date());
     }
 
     private MasterItem lineItem() {
         int i = jComboBox2.getSelectedIndex();
-        return (i >= 0 && i < itemList.size()) ? itemList.get(i) : null;
+        return (i >= 1 && i <= itemList.size()) ? itemList.get(i - 1) : null;
     }
 
     private Integer selectedOutletId() {
@@ -105,7 +104,7 @@ public class SalesPanel extends javax.swing.JPanel {
         lines.add(d);
 
         lineModel.addRow(new Object[]{ it.getItemCode(), it.getDescription(),
-                qty.toPlainString(), Fmt.number(price), Fmt.number(subtotal) });
+                Fmt.qty(qty), Fmt.number(price), Fmt.number(subtotal) });
         recomputeTotal();
         jTextField1.setText("");
     }
@@ -123,7 +122,8 @@ public class SalesPanel extends javax.swing.JPanel {
 
         SalesHeader h = new SalesHeader();
         h.setInvoiceNumber(txtOutletID.getText());
-        h.setSaleDate(LocalDate.now());
+        java.util.Date d = jDateChooser1.getDate();
+        h.setSaleDate(d == null ? LocalDate.now() : new java.sql.Date(d.getTime()).toLocalDate());
         h.setOutletId(selectedOutletId());
         h.setTotalAmount(total);
 
@@ -143,6 +143,7 @@ public class SalesPanel extends javax.swing.JPanel {
         jTextField2.setText("");
         jTextField3.setText("");
         txtOutletID.setText(new SalesDAO().getNextInvoiceNumber());
+        jDateChooser1.setDate(new java.util.Date());
     }
 
     private BigDecimal parse(String s) {
@@ -160,6 +161,7 @@ public class SalesPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         jComboBox1 = new javax.swing.JComboBox<>();
+        jDateChooser1 = new com.toedter.calendar.JDateChooser();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
@@ -226,7 +228,7 @@ public class SalesPanel extends javax.swing.JPanel {
 
         txtOutletID.addActionListener(this::txtOutletIDActionPerformed);
 
-        jButton3.setBackground(new java.awt.Color(51, 102, 255));
+        jButton3.setBackground(new java.awt.Color(0, 102, 204));
         jButton3.setForeground(new java.awt.Color(255, 255, 255));
         jButton3.setText("Save Transaction");
 
@@ -279,7 +281,9 @@ public class SalesPanel extends javax.swing.JPanel {
                                                 .addComponent(txtOutletID, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(53, 53, 53)
                                                 .addComponent(jLabel5)
-                                                .addGap(204, 204, 204)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(36, 36, 36)
                                                 .addComponent(jLabel4)))
                                         .addGap(18, 18, 18)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -311,7 +315,8 @@ public class SalesPanel extends javax.swing.JPanel {
                         .addComponent(jLabel2)
                         .addComponent(jLabel5)
                         .addComponent(jLabel4)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGap(18, 18, 18)
                     .addComponent(jLabel6)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -360,6 +365,7 @@ public class SalesPanel extends javax.swing.JPanel {
     private javax.swing.JButton jButton3;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
+    private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;

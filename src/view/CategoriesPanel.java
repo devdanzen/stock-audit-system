@@ -369,7 +369,7 @@ public class CategoriesPanel extends javax.swing.JPanel {
 
         txtSearch.addActionListener(this::txtSearchActionPerformed);
 
-        btnAdd.setBackground(new java.awt.Color(0, 0, 153));
+        btnAdd.setBackground(new java.awt.Color(0, 102, 204));
         btnAdd.setForeground(new java.awt.Color(255, 255, 255));
         btnAdd.setText("+ Add");
         btnAdd.addActionListener(this::btnAddActionPerformed);

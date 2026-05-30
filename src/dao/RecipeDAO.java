@@ -16,7 +16,6 @@ import java.util.List;
 
 public class RecipeDAO {
 
-    /** Atomic save: one recipe_header + N recipe_detail (ingredients). */
     public int insertWithDetails(RecipeHeader h, List<RecipeDetail> lines) {
         String hSql = "INSERT INTO recipe_header(recipe_code, item_id, item_class) VALUES (?,?,?)";
         String dSql = "INSERT INTO recipe_detail(recipe_id, item_id, initial_weight, final_weight, "
@@ -60,7 +59,6 @@ public class RecipeDAO {
         }
     }
 
-    /** Active items that do NOT already have a recipe (candidates for a finished item). */
     public List<MasterItem> findItemsWithoutRecipe() {
         String sql = "SELECT mi.* FROM master_item mi "
                    + "WHERE mi.status='Active' AND mi.item_id NOT IN (SELECT item_id FROM recipe_header) "

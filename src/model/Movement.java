@@ -6,9 +6,9 @@ import java.time.LocalDate;
 public class Movement {
     private int movementId;
     private int itemId;
-    private Integer destinationOutletId; // only for OUT
+    private Integer destinationOutletId;
     private LocalDate movementDate;
-    private String movementType; // IN | OUT | WASTE | CONSUMPTION
+    private String movementType;
     private String note;
     private String deliveryNoteNumber;
     private BigDecimal quantity;
